@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import UpdatePasswordForm from './UpdatePasswordForm';
 import UpdateProfileForm from './UpdateProfileForm';
-import WishlistTable from './WishlistTable';
+import WishlistTable from '../../../components/user/WishlistTable';
+import OrdersTable from '../../../components/user/OrdersTable';
 
 const MyAccount = () => {
     const [activeTab, setActiveTab] = useState('my-profile');
@@ -33,26 +34,7 @@ const MyAccount = () => {
                                 <UpdatePasswordForm />
                             </div>
                             <div id="all-orders" className={activeTab === 'all-orders' ? '' : 'd-none'}>
-                                <table className="table cart-table text-nowrap">
-                                    <thead>
-                                        <tr className="heading">
-                                            <td>Order ID</td>
-                                            <td>Order Date</td>
-                                            <td>Quantity</td>
-                                            <td>Total Price</td>
-                                            <td>View Orders</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>12345</td>
-                                            <td>2025-03-10</td>
-                                            <td>2</td>
-                                            <td>₹1000.00</td>
-                                            <td><a className="primary-btn order-link" href="#">View Order</a></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <OrdersTable />
                             </div>
                             <div id="my-wishlist" className={activeTab === 'my-wishlist' ? '' : 'd-none'}>
                                 <WishlistTable />
