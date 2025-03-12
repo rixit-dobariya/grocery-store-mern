@@ -1,4 +1,5 @@
 import React from 'react'
+import { ToastContainer } from 'react-toastify'
 
 const Footer =(props)=> {
 
@@ -43,6 +44,7 @@ const Footer =(props)=> {
             <li className="ms-4"><a className="link-body-emphasis" href="#"><i className="fa fa-facebook font-black"></i></a></li>
             </ul>
         </div>
+        <ToastContainer />
     </div>
     )
 }

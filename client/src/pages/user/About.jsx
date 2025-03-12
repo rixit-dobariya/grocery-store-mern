@@ -13,7 +13,7 @@ const About = ({ content}) => {
       </p>
       <div className="about row justify-content-center">
         <div className="col-lg-12">
-            <h1 className="mb-4">About Us</h1>
+            <h2 className="mb-4">About Us</h2>
             <p>
                 Welcome to <strong>PureBite</strong>, your trusted destination for high-quality and 
                 pure vegetarian products. We are committed to providing you with the best selection 

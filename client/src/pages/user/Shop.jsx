@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Link, Links } from "react-router-dom";
+import { toast } from "react-toastify";
+import ProductList from "../../components/user/ProductList";
 
 const products = [
   {
@@ -46,18 +49,21 @@ const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Selected Filters:", filters);
 };
+const handleWishlistClick = (e) => {
+    toast.success("Added to wishlist");
+};
 
   return (
     <div className="container">
       <div className="row align-items-center sitemap">
         <div className="col-6">
           <p className="mt-5">
-            <a href="index.php" className="text-decoration-none dim link">
+            <Link to="/" className="text-decoration-none dim link">
               Home
-            </a>
-            <a className="text-decoration-none dim link">
+            </Link>
+            <Link className="text-decoration-none dim link">
               / Shop
-            </a>
+            </Link>
           </p>
         </div>
         <div className="col-6 justify-content-end d-flex">
@@ -151,33 +157,40 @@ const handleSubmit = (e) => {
         </form>
     
       )}
-      <div className="row justify-content-start">
+      <ProductList />
+    </div>
+  );
+}
+
+const oldShop = () =>{
+    return (
+        <div className="row justify-content-start">
         {products.map((product) => (
           <div className="col-md-3 gap col-sm-4 p-2 col-6 mt-2" key={product.id}>
             <div className={`card h-100 ${product.stock === 0 ? "disabled-card" : ""}`}>
               <div className="product-image">
-                <a href={`product-details.php?product_id=${product.id}`}>
+                <Link to="/product">
                   <img
                     className="img-thumbnail p-4"
                     style={{ height: "300px" }}
                     src={product.image}
                     alt={product.name}
                   />
-                </a>
-                <a href="wishlist.php" className="like text-decoration-none">
+                </Link>
+                <button href="wishlist.php" className="like text-decoration-none" onClick={handleWishlistClick}>
                   <i className="fa-regular fa-heart"></i>
-                </a>
+                </button>
                 <div className="label">
                   {product.stock > 0 ? `Save ${product.discount}%` : "Out Of Stock"}
                 </div>
               </div>
               <div className="card-body product-body px-3">
-                <a className="category-name category-link" href={`categories.php?category_id=${product.categoryId}`}>
+                <Link className="category-name category-link" to="/category">
                   {product.category}
-                </a>
-                <a className="card-title category-link font-black" href={`product-details.php?product_id=${product.id}`}>
+                </Link>
+                <Link className="card-title category-link font-black" href={`product-details.php?product_id=${product.id}`}>
                   <h6 className="not-link text-decoration-none">{product.name}</h6>
-                </a>
+                </Link>
                 <div className="rating-section">
                   <div className="ratings">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -192,9 +205,9 @@ const handleSubmit = (e) => {
                     <span className="striked-price">₹{product.salePrice}</span>
                   </div>
                   {product.stock > 0 ? (
-                    <a className="primary-btn order-link mt-sm-1" href="cart.php">
+                    <Link className="primary-btn order-link mt-sm-1" to="/cart">
                       <i className="fa-solid fa-cart-shopping pe-2"></i>Add
-                    </a>
+                    </Link>
                   ) : (
                     <button className="primary-btn order-link mt-sm-1" disabled>
                       <i className="fa-solid fa-cart-shopping pe-2"></i>Add
@@ -206,6 +219,5 @@ const handleSubmit = (e) => {
           </div>
         ))}
       </div>
-    </div>
-  );
+    );
 }

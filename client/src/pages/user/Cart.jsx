@@ -64,7 +64,6 @@ const Cart = () => {
 						))}
 					</tbody>
 				</table>
-				<ToastContainer />
 			</div>
 			<CartActions />
 			<CartSummary

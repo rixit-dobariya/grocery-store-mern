@@ -13,7 +13,7 @@ const Header = ({ isLoggedIn = true }) => {
         <>
             {isLoggedIn ? (
                 <nav id="navibar" className="navbar navbar-expand-lg navbar-light sticky-top container-fluid">
-                    <div className="container-fluid">
+                    <div className="container">
                         <button
                             id="collapse-btn"
                             className="navbar-toggler"

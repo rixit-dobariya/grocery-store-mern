@@ -159,7 +159,6 @@ const UpdateProfileForm = () => {
                     <input type="submit" value="Update Profile" className="btn-msg mt-2 " />
                 </div>
             </form>
-            <ToastContainer />
         </div>
     );
 };

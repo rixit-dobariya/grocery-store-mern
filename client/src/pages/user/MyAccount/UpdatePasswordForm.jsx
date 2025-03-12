@@ -118,7 +118,6 @@ const UpdatePasswordForm = () => {
                     <input type="submit" name="change" value="Change Password" className="btn-msg mt-2" />
                 </div>
             </form>
-            <ToastContainer />
         </div>
     );
 };
