@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import { Link } from "react-router-dom";
+
 const Cart = () => {
 	const shippingCharge = 50;
 	const subtotal = 500; // Static subtotal

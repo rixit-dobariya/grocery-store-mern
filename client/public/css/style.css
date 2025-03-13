@@ -591,6 +591,10 @@ input[type="submit"],button{border:none;}
 .login-form input[type="text"],.login-form input[type="number"],.login-form input[type="password"]{
     border-width: 0px 0px 1px 0px;
     padding:8px 0px;
+    background-color: white;
+    border-color: black;
+    border-style: solid;
+    font-size:inherit;
 }
 
 .arrow{
@@ -1137,3 +1141,4 @@ sidebar h6{
 .margin-half{
     margin:12px !important;
 }
+

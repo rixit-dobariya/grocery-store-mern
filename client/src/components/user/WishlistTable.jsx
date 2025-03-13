@@ -18,7 +18,7 @@ const WishlistTable = () => {
         <thead>
           <tr className="heading">
             <td>Product</td>
-            <td>Price</td>
+            <td className="text-center">Price</td>
             <td>Actions</td>
           </tr>
         </thead>
