@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const ProductList = () => {
     const products = [
@@ -66,7 +65,7 @@ const ProductList = () => {
                     <div key={product.id} className="col-md-3 gap col-sm-4 p-2 col-6 mt-2">
                         <div className={`card h-100 ${isOutOfStock ? 'disabled-card' : ''}`}>
                             <div className="product-image">
-                                <Link to="/product-details">
+                                <Link to="/product">
                                     <img className="img-thumbnail img-fluid p-4" style={{ height: "300px" }} src={`/img/items/products/${product.image}`} alt={product.name} />
                                 </Link>
                                 <p className="like text-decoration-none" onClick={handleWishlistClick}>
@@ -75,8 +74,8 @@ const ProductList = () => {
                                 <div className="label">{isOutOfStock ? "Out Of Stock" : `Save ${product.discount}%`}</div>
                             </div>
                             <div className="card-body product-body px-3">
-                                <Link className="category-name category-link" to="/categories">{product.category}</Link>
-                                <Link className="card-title category-link font-black" to="/product-details">
+                                <Link className="category-name category-link" to="/shop">{product.category}</Link>
+                                <Link className="card-title category-link font-black" to="/product">
                                     <h6 className="not-link text-decoration-none">{product.name}</h6>
                                 </Link>
                                 <div className="rating-section">

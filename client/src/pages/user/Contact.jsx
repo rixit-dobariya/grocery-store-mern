@@ -75,7 +75,6 @@ const Contact = () => {
 
 	return (
 		<>
-			<ToastContainer position="top-right" autoClose={3000} />
 			<div className="container mt-4">
 				<p>
 					<a
