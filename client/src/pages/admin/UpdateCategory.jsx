@@ -60,7 +60,7 @@ const UpdateCategory = () => {
             <h1 className="mt-4">Update Category</h1>
             <ol className="breadcrumb mb-4">
                 <li className="breadcrumb-item">
-                    <Link to="/dashboard">Dashboard</Link>
+                    <Link to="/admin">Dashboard</Link>
                 </li>
                 <li className="breadcrumb-item active">Update Category</li>
             </ol>

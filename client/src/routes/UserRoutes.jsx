@@ -30,7 +30,7 @@ const UserRoutes = () => {
         <Route path="checkout" element={<Checkout />} />
         <Route path="contact" element={<Contact />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="login" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="order" element={<OrderDetails />} />
         <Route path="order-confirm" element={<OrderConfirmation />} />
         <Route path="verify-otp" element={<OtpVerification />} />

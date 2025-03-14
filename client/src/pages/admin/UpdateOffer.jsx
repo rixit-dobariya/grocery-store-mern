@@ -81,7 +81,7 @@ const UpdateOffer = () => {
         <div>
             <h1 className="mt-4">Update Offer</h1>
             <ol className="breadcrumb mb-4">
-                <li className="breadcrumb-item"><Link to="/dashboard">Dashboard</Link></li>
+                <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
                 <li className="breadcrumb-item"><Link to="/offers">Offers</Link></li>
                 <li className="breadcrumb-item active">Update Offer</li>
             </ol>

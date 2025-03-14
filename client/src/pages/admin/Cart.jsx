@@ -34,7 +34,7 @@ const Cart = () => {
                 <div>
                     <h1>Cart of {user.firstName} {user.lastName}</h1>
                     <ol className="breadcrumb mb-0">
-                        <li className="breadcrumb-item"><Link to="/">Dashboard</Link></li>
+                        <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
                         <li className="breadcrumb-item"><Link to="/users">Users</Link></li>
                         <li className="breadcrumb-item active">Cart</li>
                     </ol>

@@ -37,12 +37,12 @@ const Header = () => {
             </a>
             <ul className="dropdown-menu dropdown-menu-end">
               <li>
-                <Link className="dropdown-item" to="/admin/settings">
+                <Link className="dropdown-item" to="/admin/my-profile">
                   Settings
                 </Link>
               </li>
               <li>
-                <Link className="dropdown-item" to="/admin-logout">
+                <Link className="dropdown-item" to="/login">
                   Logout
                 </Link>
               </li>

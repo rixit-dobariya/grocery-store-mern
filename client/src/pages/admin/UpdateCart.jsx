@@ -27,7 +27,7 @@ const UpdateCart = () => {
       <div>
         <h1 className="mt-4">Update Cart</h1>
         <ol className="breadcrumb mb-4">
-          <li className="breadcrumb-item"><a href="#">Dashboard</a></li>
+          <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
           <li className="breadcrumb-item active">Update Cart</li>
         </ol>
         <div className="card mb-4">

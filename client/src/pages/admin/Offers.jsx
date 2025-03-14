@@ -68,7 +68,7 @@ const Offers = () => {
 					<h1 className="mt-4">Offers Management</h1>
 					<ol class="breadcrumb mb-4">
 						<li class="breadcrumb-item">
-							<Link to="/">Dashboard</Link>
+							<Link to="/admin">Dashboard</Link>
 						</li>
 						<li class="breadcrumb-item active">Offers</li>
 					</ol>
