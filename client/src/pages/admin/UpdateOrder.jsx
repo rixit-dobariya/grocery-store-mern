@@ -1,21 +1,26 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {toast} from "react-toastify";
-const AddOrder = () => {
+import { toast } from 'react-toastify';
+
+const UpdateOrder = () => {
     const [formData, setFormData] = useState({
-        userId: "",
-        orderDate: "",
-        products: [{ productId: "", quantity: 1 }],
-        firstName: "",
-        lastName: "",
-        address: "",
-        city: "",
-        state: "",
-        pinCode: "",
-        phone: "",
-        shippingCharge: "",
+        userId: "12345",
+        orderDate: "2025-03-15",
+        products: [
+            { productId: "1 - Apple", quantity: 2 },
+            { productId: "2 - Carrot", quantity: 1 }
+        ],
+        firstName: "John",
+        lastName: "Doe",
+        address: "123 Main Street",
+        city: "New York",
+        state: "NY",
+        pinCode: "10001",
+        phone: "9876543210",
+        shippingCharge: "50",
         status: "Pending"
     });
+    
 
     const [errors, setErrors] = useState({});
 
@@ -109,7 +114,7 @@ const AddOrder = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            toast.success("Order added successfully")
+            toast.success("Order updated successfully")
         }
     };
 
@@ -117,11 +122,11 @@ const AddOrder = () => {
         <div>
             <div className="d-flex justify-content-between align-items-center mt-4 mb-4">
                 <div>
-                    <h1>Add New Order</h1>
+                    <h1>Update Order</h1>
                     <ol className="breadcrumb mb-0">
                         <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
                         <li className="breadcrumb-item"><Link to="/admin/orders">Orders</Link></li>
-                        <li className="breadcrumb-item active">Add Order</li>
+                        <li className="breadcrumb-item active">Update Order</li>
                     </ol>
                 </div>
             </div>
@@ -239,11 +244,11 @@ const AddOrder = () => {
                         {errors.status && <div className="error-message">{errors.status}</div>}
                     </div>
 
-                    <button type="submit" className="btn btn-primary" name="add-order">Add Order</button>
+                    <button type="submit" className="btn btn-primary" name="add-order">Update Order</button>
                 </form>
             </div>
         </div>
     );
 };
 
-export default AddOrder;
+export default UpdateOrder;

@@ -41,7 +41,7 @@ const OrderTable = () => {
               <tr key={order.orderId}>
                 <td>{order.orderId}</td>
                 <td>
-                  <Link to={`/user-profile/${order.customerName}`}>{order.customerName}</Link>
+                  <Link to={`/admin/user-profile`}>{order.customerName}</Link>
                 </td>
                 <td>{order.orderDate}</td>
                 <td>{order.totalQuantity}</td>
@@ -49,10 +49,10 @@ const OrderTable = () => {
                 <td>{order.orderStatus}</td>
                 <td>
                   <div className="d-flex flex-nowrap">
-                    <Link to={`admin/view-order/${order.orderId}`} className="btn btn-info btn-sm me-1">
+                    <Link to={`/admin/view-order`} className="btn btn-info btn-sm me-1">
                       View
                     </Link>
-                    <Link to={`admin/update-order/${order.orderId}`} className="btn btn-primary btn-sm me-1">
+                    <Link to={`/admin/update-order`} className="btn btn-primary btn-sm me-1">
                       Edit
                     </Link>
                     <button className="btn btn-danger btn-sm" onClick={() => handleDelete(order.orderId)}>

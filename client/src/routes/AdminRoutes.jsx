@@ -13,42 +13,74 @@ import Cart from "../pages/admin/Cart";
 import Users from "../pages/admin/Users";
 import UpdateUser from "../pages/admin/UpdateUser";
 import AddUser from "../pages/admin/AddUser";
-// import Products from "../pages/admin/Products";
-// import Reviews from "../pages/admin/Reviews";
-// import Orders from "../pages/admin/Orders";
-// import Categories from "../pages/admin/Categories";
-// import Users from "../pages/admin/Users";
-// import Offers from "../pages/admin/Offers";
-// import Banners from "../pages/admin/Banners";
-// import Responses from "../pages/admin/Responses";
-// import SiteSettings from "../pages/admin/SiteSettings";
-// import Login from "../pages/admin/Login";
+import Products from "../pages/admin/Products";
+import ViewProduct from "../pages/admin/ViewProduct";
+import MyProfile from "../pages/admin/MyProfile";
+import Reviews from "../pages/admin/Reviews";
+import Responses from "../pages/admin/Responses";
+import SiteSettings from "../pages/admin/SiteSettings";
+import Offers from "../pages/admin/Offers";
+import UpdateCategory from "../pages/admin/UpdateCategory";
+import UpdateOffer from "../pages/admin/UpdateOffer";
+import UpdateReview from "../pages/admin/UpdateReview";
+import ViewOrder from "../pages/admin/ViewOrder";
+import Orders from "../pages/admin/Orders";
+import UpdateCart from "../pages/admin/UpdateCart";
+import UpdateBanner from "../pages/admin/UpdateBanner";
+import Banners from "../pages/admin/Banners";
+import Categories from "../pages/admin/Categories";
+import UpdateProduct from "../pages/admin/UpdateProduct";
+import UserDetails from "../pages/admin/UserDetails";
+import UpdateOrder from "../pages/admin/UpdateOrder";
 
 const AdminRoutes = () => {
   return (
     <Routes>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path="add-banner" element={<AddBanner />} />
-        <Route path="add-to-cart" element={<AddToCart />} />
-        <Route path="add-category" element={<AddCategory />} />
-        <Route path="add-offer" element={<AddOffer />} />
-        <Route path="add-order" element={<AddOrder />} />
-        <Route path="add-product" element={<AddProduct />} />
-        <Route path="add-review" element={<AddReview />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="users" element={<Users />} />
-        <Route path="update-user" element={<UpdateUser />} />
-        <Route path="add-user" element={<AddUser />} />
-        {/* <Route path="products" element={<Products />} />
-        <Route path="reviews" element={<Reviews />} />
-        <Route path="orders" element={<Orders />} />
-        <Route path="categories" element={<Categories />} />
-        <Route path="users" element={<Users />} />
-        <Route path="offers" element={<Offers />} />
+
         <Route path="banners" element={<Banners />} />
+        <Route path="add-banner" element={<AddBanner />} />
+        <Route path="update-banner" element={<UpdateBanner />} />
+        
+        <Route path="orders" element={<Orders />} />
+        <Route path="add-order" element={<AddOrder />} />
+        <Route path="update-order" element={<UpdateOrder />} />
+        <Route path="view-order" element={<ViewOrder />} />
+
+        <Route path="categories" element={<Categories />} />
+        <Route path="add-category" element={<AddCategory />} />
+        <Route path="update-category" element={<UpdateCategory />} />
+
+        <Route path="offers" element={<Offers />} />
+        <Route path="add-offer" element={<AddOffer />} />
+        <Route path="update-offer" element={<UpdateOffer />} />
+
+        <Route path="cart" element={<Cart />} />
+        <Route path="add-to-cart" element={<AddToCart />} />
+        <Route path="update-cart" element={<UpdateCart />} />
+
+        <Route path="users" element={<Users />} />
+        <Route path="add-user" element={<AddUser />} />
+        <Route path="update-user" element={<UpdateUser />} />
+        <Route path="user-details" element={<UserDetails />} />
+
+        <Route path="products" element={<Products />} />
+        <Route path="add-product" element={<AddProduct />} />
+        <Route path="update-product" element={<UpdateProduct />} />
+        <Route path="view-product" element={<ViewProduct />} />
+
+        <Route path="my-profile" element={<MyProfile />} />
+
+        <Route path="reviews" element={<Reviews />} />
+        <Route path="add-review" element={<AddReview />} />
+        <Route path="update-review" element={<UpdateReview />} />
+
         <Route path="responses" element={<Responses />} />
-        <Route path="site-settings" element={<SiteSettings />} /> */}
+
+        <Route path="site-settings" element={<SiteSettings />} />
+
+        
       </Route>
     </Routes>
   );

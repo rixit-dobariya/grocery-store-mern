@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/admin/Sidebar";
 import Header from "../components/admin/Header";
@@ -6,9 +6,8 @@ import Footer from "../components/admin/Footer";
 import { loadAdminAssets } from "../utils/loadAdminAssets";
 
 const AdminLayout = () => {
-    useEffect(() => {
-        loadAdminAssets(); // ✅ Load admin assets on component mount
-      }, []);
+    loadAdminAssets(); // ✅ Load admin assets on component mount
+      
     
   return (
     <>

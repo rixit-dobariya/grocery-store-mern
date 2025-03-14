@@ -5,18 +5,16 @@ import Footer from "../components/user/Footer";
 import { loadUserAssets } from "../utils/LoadUserAssets";
 
 const UserLayout = () => {
-    useEffect(() => {
-        loadUserAssets(); // ✅ Load CSS & JS on app start
-      }, []);
-  return (
-    <>
-      <Header />
-      <main>
-        <Outlet />
-      </main>
-      <Footer />
-    </>
-  );
+	loadUserAssets(); // ✅ Load CSS & JS on app start
+	return (
+		<>
+			<Header />
+			<main>
+				<Outlet />
+			</main>
+			<Footer />
+		</>
+	);
 };
 
 export default UserLayout;
