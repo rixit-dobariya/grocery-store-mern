@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import ProductList from "../../../components/user/ProductList";
+import ProductList from "../../components/user/ProductList";
 import { useState } from "react";
 
 const Home = () => {
@@ -134,9 +134,9 @@ const Carousel = () => {
 
 const ExclusiveOffers = () => {
     const offers = [
-        { id: 1, discount: 20, minimumOrder: 500 },
-        { id: 2, discount: 15, minimumOrder: 300 },
-        { id: 3, discount: 25, minimumOrder: 700 },
+        { id: 1, code: "SAVE20", discount: 20, minimumOrder: 500 },
+        { id: 2, code: "OFF15", discount: 15, minimumOrder: 300 },
+        { id: 3, code: "BIG25", discount: 25, minimumOrder: 700 },
     ];
 
     return (
@@ -149,6 +149,7 @@ const ExclusiveOffers = () => {
                             <div className="card-body text-center">
                                 <h5 className="card-title text-success">{offer.discount}% Discount</h5>
                                 <p className="card-text">On orders above ₹{offer.minimumOrder}</p>
+                                <p className="card-text"><strong>Use Code:</strong> <span className="badge bg-success">{offer.code}</span></p>
                             </div>
                         </div>
                     </div>
@@ -157,6 +158,7 @@ const ExclusiveOffers = () => {
         </div>
     );
 };
+
 
   
 export default Home

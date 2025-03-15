@@ -27,7 +27,7 @@ const OrdersTable = () => {
             <td>{order.quantity}</td>
             <td>₹{order.total}.00</td>
             <td>
-              <Link className="primary-btn order-link" to={`/order/${order.id}`}>
+              <Link className="primary-btn order-link" to="/order">
                 View Order
               </Link>
             </td>

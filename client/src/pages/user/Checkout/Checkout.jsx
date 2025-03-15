@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import BillingAddressForm from "./BillingAddressForm";
-import { Link } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const Checkout = () => {
@@ -9,6 +8,7 @@ const Checkout = () => {
 	const [selectedAddress, setSelectedAddress] = useState(null);
 	const [selectedPayment, setSelectedPayment] = useState(null);
     const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -22,7 +22,9 @@ const Checkout = () => {
         }
 
         setErrors({});
-        toast.success("Order placed successfully!", "Success");
+        // toast.success("Order placed successfully!", "Success");
+
+        navigate(`/order-confirm`);
     };
 
 	const addresses = [

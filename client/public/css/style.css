@@ -251,7 +251,10 @@ input[type="checkbox"]:checked {
 .featured-products>div>div:hover{
     cursor:pointer;
 }
-
+.primary-bg{
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
 .label-red{
     background-color: #f35244;
     color:white;
@@ -458,6 +461,13 @@ input[type="checkbox"]:checked {
 }
 .active{
     color:var(--primary) !important;
+}
+.dropdown-item.active{
+    background-color: var(--primary) !important;
+    color: white !important;
+}
+#pro-drop .dropdown-item.active{
+    color:white !important;
 }
 .invisible{display:none;}
 .flex{

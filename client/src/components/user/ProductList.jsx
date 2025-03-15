@@ -45,21 +45,13 @@ const ProductList = () => {
         }
     ];
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const productsPerPage = 8;
-    const totalPages = Math.ceil(products.length / productsPerPage);
-
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
-
     const handleWishlistClick = () => {
         toast.success("Product added to wishlist successfully!");
     };
 
     return (
         <div className="row justify-content-start align-items-stretch">
-            {products.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage).map((product) => {
+            {products.map((product) => {
                 const isOutOfStock = product.stock <= 0;
                 return (
                     <div key={product.id} className="col-md-3 gap col-sm-4 p-2 col-6 mt-2">
@@ -109,21 +101,9 @@ const ProductList = () => {
             <div className="d-flex justify-content-end">
                 <nav aria-label="Page navigation">
                     <ul className="pagination">
-                        {currentPage > 1 && (
-                            <li className="page-item">
-                                <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>Previous</button>
+                            <li className="page-item active">
+                                <button className="page-link primary-bg" >1</button>
                             </li>
-                        )}
-                        {Array.from({ length: totalPages }, (_, i) => (
-                            <li key={i} className={`page-item ${i + 1 === currentPage ? 'active' : ''}`}>
-                                <button className="page-link" onClick={() => handlePageChange(i + 1)}>{i + 1}</button>
-                            </li>
-                        ))}
-                        {currentPage < totalPages && (
-                            <li className="page-item">
-                                <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>Next</button>
-                            </li>
-                        )}
                     </ul>
                 </nav>
             </div>

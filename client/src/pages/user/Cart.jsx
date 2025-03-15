@@ -122,60 +122,60 @@ const CartItem = ({ product, onQuantityChange }) => {
 };
 
 const CartActions = () => {
-	const [offerCode, setOfferCode] = useState("");
-	const [error, setError] = useState("");
+    const [offerCode, setOfferCode] = useState("");
+    const [error, setError] = useState("");
 
-	const handleApply = (e) => {
-		e.preventDefault();
-		if (!offerCode.trim()) {
-			setError("Please enter an offer code!");
-		} else {
-			setError("");
-			toast.success("Offer code applied successfully!");
-		}
-	};
+    const handleApply = (e) => {
+        e.preventDefault();
+        if (!validateOfferCode()) return; // Stop execution if validation fails
+        toast.success("Offer code applied successfully!");
+    };
 
-	return (
-		<div className="container mb-5">
-			<div className="d-flex justify-content-between align-items-center cart-page mb-5">
-				<Link
-					className="btn-msg px-sm-4 py-sm-2 px-2 py-1 mt-2"
-					to="/shop"
-				>
-					Return to shop
-				</Link>
-				<div className="flex flex-col m-0">
-					<div className="d-flex justify-content-end align-items-center not-hidden">
-						<form
-							className="d-flex justify-content-end flex-column w-100"
-							onSubmit={handleApply}
-						>
-							<div className="d-flex">
-								<input
-									className="search-input"
-									type="search"
-									placeholder="Add offer code"
-									size="25"
-									name="offer_code"
-									id="offerCodeText"
-									value={offerCode}
-									onChange={(e) =>
-										setOfferCode(e.target.value)
-									}
-								/>
-								<button className="primary-btn" type="submit">
-									Apply
-								</button>
-							</div>
-							{error && (
-								<div className="text-danger mt-1">{error}</div>
-							)}
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+    const handleChange = (e) => {
+        setOfferCode(e.target.value);
+        validateOfferCode(e.target.value); // Validate dynamically as user types
+    };
+
+    const validateOfferCode = (code = offerCode) => {
+        if (!code.trim()) {
+            setError("Please enter an offer code!");
+            return false; // Indicate validation failure
+        }
+        setError(""); // Clear error if valid
+        return true; // Indicate validation success
+    };
+
+    return (
+        <div className="container mb-5">
+            <div className="d-flex justify-content-between align-items-center cart-page mb-5">
+                <Link className="btn-msg px-sm-4 py-sm-2 px-2 py-1 mt-2" to="/shop">
+                    Return to shop
+                </Link>
+                <div className="flex flex-col m-0">
+                    <div className="d-flex justify-content-end align-items-center not-hidden">
+                        <form className="d-flex justify-content-end flex-column w-100" onSubmit={handleApply}>
+                            <div className="d-flex">
+                                <input
+                                    className="search-input"
+                                    type="search"
+                                    placeholder="Add offer code"
+                                    size="25"
+                                    name="offer_code"
+                                    id="offerCodeText"
+                                    value={offerCode}
+                                    onChange={handleChange}
+                                />
+                                <button className="primary-btn" type="submit">
+                                    Apply
+                                </button>
+                            </div>
+                            {error && <div className="text-danger mt-1">{error}</div>}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 const CartSummary = ({ subtotal, shippingCharge, total }) => {

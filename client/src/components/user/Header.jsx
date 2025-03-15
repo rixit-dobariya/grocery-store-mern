@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Header = ({}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(true);
 	const [query, setQuery] = useState("");
+    const navigate = useNavigate();
 
 	const validateSearch = (event) => {
 		event.preventDefault();
@@ -12,6 +14,11 @@ const Header = ({}) => {
 	const handleDoubleClick = () => {
 		setIsLoggedIn((prev) => !prev);
 	};
+    const handleLogout = ()=>{
+        toast.success("You have been logged out successfully!");
+        navigate("/");
+    }
+    
 	return (
 		<>
 			{isLoggedIn ? (
@@ -116,7 +123,7 @@ const Header = ({}) => {
 													marginRight: "10px",
 												}}
 											/>
-											User name
+											Rixit
 										</a>
 
 										<ul
@@ -125,7 +132,7 @@ const Header = ({}) => {
 										>
 											<li>
 												<NavLink
-													className="dropdown-item"
+													className="dropdown-item nav-link"
 													to="/account"
 												>
 													My Profile
@@ -133,19 +140,19 @@ const Header = ({}) => {
 											</li>
 											<li>
 												<NavLink
-													className="dropdown-item"
+													className="dropdown-item nav-link"
 													to="/order-history"
 												>
 													Your Orders
 												</NavLink>
 											</li>
 											<li>
-												<NavLink
-													className="dropdown-item"
-													to="/logout"
+												<button
+													className="dropdown-item nav-link"
+													onClick={handleLogout}
 												>
 													Log out
-												</NavLink>
+												</button>
 											</li>
 										</ul>
 									</li>
