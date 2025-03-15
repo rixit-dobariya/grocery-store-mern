@@ -70,7 +70,7 @@ const AddBanner = () => {
             <h1>Add Banner</h1>
             <nav aria-label="breadcrumb">
                 <ol className="breadcrumb mb-4">
-                    <li className="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li className="breadcrumb-item"><a href="/admin">Dashboard</a></li>
                     <li className="breadcrumb-item active" aria-current="page">Add Banner</li>
                 </ol>
             </nav>

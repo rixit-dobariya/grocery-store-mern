@@ -114,7 +114,7 @@ const Reviews = () => {
             <div>
                 <h1 class="mt-4">Review Management</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><Link to="/">Dashboard</Link></li>
+                    <li class="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
                     <li class="breadcrumb-item active">Reviews</li>
                 </ol>
             </div>

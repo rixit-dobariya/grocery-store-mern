@@ -68,7 +68,7 @@ const AddReview = () => {
         <div>
             <h1 className="mt-4">Add Review</h1>
             <ol className="breadcrumb mb-4">
-                <li className="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+                <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
                 <li className="breadcrumb-item active">Add Review</li>
             </ol>
             

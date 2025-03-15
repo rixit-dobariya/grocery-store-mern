@@ -68,15 +68,15 @@ const Responses = () => {
 						<li className="breadcrumb-item">
 							<Link to="/admin">Dashboard</Link>
 						</li>
-						<li className="breadcrumb-item active">Products</li>
+						<li className="breadcrumb-item active">Responses</li>
 					</ol>
 				</div>
-				<Link
+				{/* <Link
 					className="btn btn-primary text-nowrap"
-					to="/admin/add-product"
+					to="/admin/add-response"
 				>
-					Add Product
-				</Link>
+					Add Response
+				</Link> */}
 			</div>
 			<div className="card-body">
 				<table className="table border text-nowrap">

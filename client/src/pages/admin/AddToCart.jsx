@@ -66,7 +66,7 @@ const AddToCart = () => {
             <h1>Add Product to Cart</h1>
             <nav aria-label="breadcrumb">
                 <ol className="breadcrumb mb-4">
-                    <li className="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
                     <li className="breadcrumb-item active" aria-current="page">Add Product to Cart</li>
                 </ol>
             </nav>
