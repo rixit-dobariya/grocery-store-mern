@@ -142,8 +142,19 @@ const ProductDetails = () => {
     return (
         <div className="container sitemap mt-5">
             <p>
-                <Link to="/" className="text-decoration-none dim link">Home /</Link>
-                <Link to="/shop" className="text-decoration-none dim link">Shop /</Link>
+                <Link
+                    to="/"
+                    className="text-decoration-none dim link"
+                >
+                    Home /
+                </Link>{" "}
+                <Link
+                    to="/shop"
+                    className="text-decoration-none dim link"
+                >
+                    Shop /
+                </Link>{" "}
+                Apple 1KG
             </p>
 
             <div className="row">

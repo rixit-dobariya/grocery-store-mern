@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Contact = () => {
 	const [formData, setFormData] = useState({
@@ -77,12 +77,12 @@ const Contact = () => {
 		<>
 			<div className="container sitemap mt-5">
 				<p>
-					<a
-						href="index.php"
+					<Link
+						to="/"
 						className="text-decoration-none dim link"
 					>
 						Home /
-					</a>{" "}
+					</Link>{" "}
 					Contact
 				</p>
 			</div>
@@ -132,11 +132,9 @@ const Contact = () => {
 											value={formData.contactName}
 											onChange={handleChange}
 										/>
-										{errors.contactName && (
-											<p className="error">
-												{errors.contactName}
-											</p>
-										)}
+                                        <p className="error">
+                                            {errors.contactName}
+                                        </p>
 									</div>
 									<div className="flex-item">
 										<input
@@ -148,11 +146,9 @@ const Contact = () => {
 											value={formData.contactEmail}
 											onChange={handleChange}
 										/>
-										{errors.contactEmail && (
-											<p className="error">
-												{errors.contactEmail}
-											</p>
-										)}
+                                        <p className="error">
+                                        {errors.contactEmail}
+                                        </p>
 									</div>
 									<div className="flex-item">
 										<input
@@ -164,11 +160,9 @@ const Contact = () => {
 											value={formData.contactPhone}
 											onChange={handleChange}
 										/>
-										{errors.contactPhone && (
-											<p className="error">
-												{errors.contactPhone}
-											</p>
-										)}
+                                        <p className="error">
+                                            {errors.contactPhone}
+                                        </p>
 									</div>
 								</div>
 								<div className="flex flex-column align-items-start">
@@ -181,11 +175,9 @@ const Contact = () => {
 										value={formData.contactMessage}
 										onChange={handleChange}
 									></textarea>
-									{errors.contactMessage && (
-										<p className="error">
-											{errors.contactMessage}
-										</p>
-									)}
+                                    <p className="error">
+                                        {errors.contactMessage}
+                                    </p>
 								</div>
 								<div className="d-flex justify-content-end">
 									<input

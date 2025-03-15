@@ -86,34 +86,34 @@ const UpdatePasswordForm = () => {
                         <input 
                             type="password" 
                             name="currentPassword" 
-                            className="w-100 mb-2" 
+                            className="w-100" 
                             placeholder="Current password"
                             value={formData.currentPassword}
                             onChange={handleChange}
                         />
-                        {errors.currentPassword && <p className="error">{errors.currentPassword}</p>}
+                        <p className="error mb-2">{errors.currentPassword}</p>
 
-                        <label className="form-label d-block">New Password</label>
+                        <label className="form-label d-block mt-1">New Password</label>
                         <input 
                             type="password" 
                             name="newPassword" 
-                            className="w-100 mb-2" 
+                            className="w-100 " 
                             placeholder="New password" 
                             value={formData.newPassword}
                             onChange={handleChange}
                         />
-                        {errors.newPassword && <p className="error">{errors.newPassword}</p>}
+                        <p className="error mb-2">{errors.newPassword}</p>
 
-                        <label className="form-label d-block">Confirm Password</label>
+                        <label className="form-label d-block mt-1">Confirm Password</label>
                         <input 
                             type="password" 
                             name="confirmPassword" 
-                            className="w-100 mb-2" 
+                            className="w-100" 
                             placeholder="Confirm password" 
                             value={formData.confirmPassword}
                             onChange={handleChange}
                         />
-                        {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
+                        <p className="error  mb-2">{errors.confirmPassword}</p>
                     </div>
                 </div>
                 <div className="d-flex justify-content-end">

@@ -11,12 +11,12 @@ const OrdersTable = () => {
   return (
     <table className="table cart-table text-nowrap">
       <thead>
-        <tr className="heading">
-          <td>Order ID</td>
-          <td>Order Date</td>
-          <td>Quantity</td>
-          <td>Total Price</td>
-          <td>View Orders</td>
+        <tr className="heading text-center">
+          <th className='text-start'>Order ID</th>
+          <th>Order Date</th>
+          <th>Quantity</th>
+          <th>Total Price</th>
+          <th>View Orders</th>
         </tr>
       </thead>
       <tbody>

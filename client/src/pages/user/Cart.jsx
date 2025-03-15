@@ -43,16 +43,24 @@ const Cart = () => {
 
 	return (
 		<>
-			<div className="container cart-table">
-				<h2 className="my-5">Cart</h2>
-				<table className="table cart-table text-nowrap">
+				<div className="container sitemap mt-5">
+				<p>
+					<Link
+						to="/"
+						className="text-decoration-none dim link"
+					>
+						Home /
+					</Link>{" "}
+					Cart
+				</p>
+				<table className="table cart-table text-nowrap mt-5">
 					<thead>
-						<tr className="heading">
-							<td>Product</td>
-							<td className="text-center">Price</td>
-							<td>Quantity</td>
-							<td className="text-center">Subtotal</td>
-							<td className="text-center">Actions</td>
+						<tr className="heading ">
+							<th>Product</th>
+							<th className="text-center">Price</th>
+							<th>Quantity</th>
+							<th className="text-center">Subtotal</th>
+							<th className="text-center">Actions</th>
 						</tr>
 					</thead>
 					<tbody>

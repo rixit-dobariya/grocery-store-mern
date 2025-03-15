@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
+    const handleChange = (e) => {
+        const newEmail = e.target.value;
+        setEmail(newEmail);
+    
+        if (!newEmail.trim()) {
+            setError('Email is required');
+            return;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+            setError('Enter a valid email address');
+            return;
+        }
+        setError('');
+    };
+    
     const handleSubmit = (e) => {
         e.preventDefault();
         
@@ -18,7 +32,7 @@ const ForgotPassword = () => {
         }
         
         setError('');
-        toast.success('OTP sent to your email!', { position: "top-right" });
+        navigate("/verify-otp");
     };
 
     return (
@@ -34,13 +48,13 @@ const ForgotPassword = () => {
                                     type="text" 
                                     id="otpEmail" 
                                     name="email" 
-                                    className="w-100 mb-2" 
+                                    className="w-100" 
                                     placeholder="Email" 
                                     value={email} 
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={handleChange}
                                 />
-                                {error && <p className="error">{error}</p>}
-                                <input type="submit" value="Send OTP" className="btn-msg w-100" />
+                                <p className="error">{error}</p>
+                                <input type="submit" value="Send OTP" className="btn-msg w-100 mt-2" />
                                 <div className="mt-4 text-center">
                                     <a href="login.php" className="dim link ms-2">Back to log in</a>
                                 </div>

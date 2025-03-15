@@ -127,7 +127,7 @@ input[type="checkbox"]:checked {
     font-size: 7vw;
 }
 .btns{
-    background-color: #198754;
+    background-color: var(--primary);
     display: flex;
     align-items: center;
     text-align: center;
@@ -136,7 +136,10 @@ input[type="checkbox"]:checked {
     color: #fff;
     border-radius: 0.7vh;
 }
-
+.btns:hover{
+    color:white;
+    background-color: var(--dark-primary);
+}
 @media (max-width:600px) {
     .btns{
         align-content: center;
@@ -519,7 +522,8 @@ input[type="checkbox"]:checked {
     text-decoration: none;
 }
 .view-order-btn:hover{
-    color:var(--primary);
+    background-color:var(--primary);
+    color:white;
 }
 .content{
     display:flex;
@@ -568,14 +572,14 @@ input[type="checkbox"]:checked {
     grid-template-columns: 1fr 1fr 1fr;
     column-gap: 10px;
 }
-.form input[type="text"],textarea, input[type="password"]{
+.form input[type="text"],textarea, input[type="password"], input[type="number"]{
     padding:20px;
     background-color: var(--form-bg);
     border: none;
     resize: none;
     font-size: 14px;
 }
-.form input[type="text"]::placeholder,input[type="password"]::placeholder {
+.form input[type="text"]::placeholder,input[type="password"]::placeholder, input[type="number"]::placeholder {
     color: var(--form);
     opacity: 1;
 }
@@ -585,6 +589,9 @@ input[type="submit"],button{border:none;}
     background-color: var(--primary);
     color:white;
     border-radius: 3px;
+}
+.btn-msg:hover{
+    background-color: var(--dark-primary);
 }
 .gap-row{
     row-gap: 10px;
@@ -716,7 +723,7 @@ input::-webkit-inner-spin-button {
 .cart-page button:hover,.cart-page a:hover{
     color:white;
     background-color: var(--primary);
-    border:none;
+    border-color:white;
 }
 .checkout-link{
     text-decoration: none;
@@ -909,7 +916,7 @@ input[type="radio"] , input[type="radio"]:hover{
     cursor: pointer;
 }
 .order-link:hover{
-    color:black;
+    color:white;
 }
 .category-link{
     text-decoration: none;
@@ -1108,6 +1115,12 @@ sidebar h6{
 
 }
 .cart-table>tbody>tr>th{
+    padding:20px;
+    font-weight: normal;
+    color:black;
+    vertical-align: middle;
+}
+.cart-table>thead>tr>th{
     padding:20px;
     font-weight: normal;
     color:black;

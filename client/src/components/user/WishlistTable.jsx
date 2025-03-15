@@ -16,10 +16,10 @@ const WishlistTable = () => {
     <>
       <table className="table cart-table text-nowrap">
         <thead>
-          <tr className="heading">
-            <td>Product</td>
-            <td className="text-center">Price</td>
-            <td>Actions</td>
+          <tr className="heading text-center">
+            <th className='text-start'>Product</th>
+            <th >Price</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>

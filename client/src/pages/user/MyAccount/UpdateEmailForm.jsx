@@ -48,7 +48,7 @@ const UpdateEmailForm = () => {
                 </div>
 
                 <div className="d-flex justify-content-end">
-                    <input type="submit" value="Update Email" className="btn-msg mt-2" />
+                    <input type="submit" value="Update Email" className="btn-msg mt-3" />
                 </div>
             </form>
         </div>

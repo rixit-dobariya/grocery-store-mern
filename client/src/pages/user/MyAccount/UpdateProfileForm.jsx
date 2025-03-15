@@ -93,7 +93,7 @@ const UpdateProfileForm = () => {
         <div>
             <form className="edit-profile form" onSubmit={handleSubmit} encType="multipart/form-data">
                 <div className="row g-2">
-                    <div className="col-12 col-sm-6">
+                    <div className="col-12 col-sm-6 mb-1">
                         <label className="form-label">First Name</label>
                         <input 
                             type="text" 
@@ -119,15 +119,10 @@ const UpdateProfileForm = () => {
                         {errors.lastName && <p className="error">{errors.lastName}</p>}
                     </div>
 
-                    <div className="col-12 col-sm-6">
-                        <label className="form-label">Email</label>
-                        <input type="text" className="w-100" placeholder="Your Email*" defaultValue="john.doe@example.com" disabled />
-                    </div>
-
-                    <div className="col-12 col-sm-6">
+                    <div className="col-12 col-sm-6  mb-1">
                         <label className="form-label">Phone</label>
                         <input 
-                            type="text" 
+                            type="number" 
                             className="w-100" 
                             name="phone" 
                             placeholder="Your Phone*" 
@@ -137,10 +132,6 @@ const UpdateProfileForm = () => {
                         {errors.phone && <p className="error">{errors.phone}</p>}
                     </div>
 
-                    <div className="col-12 col-sm-6">
-                        <img src="img/users/default.jpg" alt="Profile Picture" height="200" width="200" />
-                        <input type="hidden" name="old_image" defaultValue="default.jpg" />
-                    </div>
 
                     <div className="col-md-6">
                         <label className="form-label">User Image</label>
@@ -153,10 +144,14 @@ const UpdateProfileForm = () => {
                         />
                         {errors.userImage && <p className="error">{errors.userImage}</p>}
                     </div>
+                    <div className="col-md-6"></div>
+                    <div className="col-md-6 text-center">
+                        <img src="/img/users/default-img.png" alt="Profile Picture" height="100" />
+                    </div>
                 </div>
 
                 <div className="d-flex justify-content-end">
-                    <input type="submit" value="Update Profile" className="btn-msg mt-2 " />
+                    <input type="submit" value="Update Profile" className="btn-msg mt-3" />
                 </div>
             </form>
         </div>

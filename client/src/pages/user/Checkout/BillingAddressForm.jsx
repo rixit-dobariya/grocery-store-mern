@@ -110,7 +110,7 @@ const BillingAddressForm = () => {
                     </div>
                 </div>
                 <div className="d-flex justify-content-end">
-                    <input type="submit" value="Save Address" className="btn btn-success mt-2"  />
+                    <input type="submit" value="Save Address" className="primary-btn js-filter-btn mt-2"  />
                 </div>
             </form>
         </div>

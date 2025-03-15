@@ -1,15 +1,17 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const About = ({ content}) => {
   return (
     <div className="container sitemap mt-5">
       <p>
-        <a href="/" className="text-decoration-none dim link">
-          Home /
-        </a>
-        <a href="/about" className="text-decoration-none dim link">
-          About /
-        </a>
+        <Link
+            to="/"
+            className="text-decoration-none dim link"
+        >
+            Home /
+        </Link>{" "}
+        About
       </p>
       <div className="about row justify-content-center">
         <div className="col-lg-12">
@@ -31,6 +33,20 @@ const About = ({ content}) => {
             <p>
                 Thank you for choosing <strong>PureBite</strong>. We look forward to serving you with the best 
                 vegetarian products available!
+            </p>
+            <p>
+                Our journey started with a simple vision – to make high-quality, vegetarian food accessible 
+                to everyone. Over the years, we have built strong relationships with farmers and suppliers 
+                who share our values of sustainability and ethical sourcing.
+            </p>
+            <p>
+                We continuously strive to expand our product range, bringing you new and exciting vegetarian 
+                options. From farm-fresh vegetables to ready-to-eat healthy meals, we are here to cater to all 
+                your dietary needs.
+            </p>
+            <p>
+                Connect with us on social media to stay updated with our latest products, offers, and healthy 
+                eating tips. We love hearing from our customers and are always happy to assist you with any queries.
             </p>
         </div>
       </div>

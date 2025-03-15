@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Links } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import ProductList from "../../components/user/ProductList";
 
@@ -31,11 +31,9 @@ const handleWishlistClick = (e) => {
         <div className="col-6">
           <p className="mt-5">
             <Link to="/" className="text-decoration-none dim link">
-              Home
-            </Link>
-            <Link className="text-decoration-none dim link">
-              / Shop
-            </Link>
+              Home / 
+            </Link>{" "}
+              Shop
           </p>
         </div>
         <div className="col-6 justify-content-end d-flex">
@@ -132,64 +130,4 @@ const handleWishlistClick = (e) => {
       <ProductList />
     </div>
   );
-}
-
-const oldShop = () =>{
-    return (
-        <div className="row justify-content-start">
-        {products.map((product) => (
-          <div className="col-md-3 gap col-sm-4 p-2 col-6 mt-2" key={product.id}>
-            <div className={`card h-100 ${product.stock === 0 ? "disabled-card" : ""}`}>
-              <div className="product-image">
-                <Link to="/product">
-                  <img
-                    className="img-thumbnail p-4"
-                    style={{ height: "300px" }}
-                    src={product.image}
-                    alt={product.name}
-                  />
-                </Link>
-                <button href="wishlist.php" className="like text-decoration-none" onClick={handleWishlistClick}>
-                  <i className="fa-regular fa-heart"></i>
-                </button>
-                <div className="label">
-                  {product.stock > 0 ? `Save ${product.discount}%` : "Out Of Stock"}
-                </div>
-              </div>
-              <div className="card-body product-body px-3">
-                <Link className="category-name category-link" to="/category">
-                  {product.category}
-                </Link>
-                <Link className="card-title category-link font-black" href={`product-details.php?product_id=${product.id}`}>
-                  <h6 className="not-link text-decoration-none">{product.name}</h6>
-                </Link>
-                <div className="rating-section">
-                  <div className="ratings">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span key={star} className={`fa fa-star ${product.rating >= star ? "checked" : ""}`}></span>
-                    ))}
-                  </div>
-                  <div className="review-count ps-1">({product.reviewCount})</div>
-                </div>
-                <div className="d-flex justify-content-between align-items-end mt-sm-2 flex-sm-column flex-row align-items-sm-center flex-lg-row">
-                  <div>
-                    <span className="price">₹{product.price}</span>
-                    <span className="striked-price">₹{product.salePrice}</span>
-                  </div>
-                  {product.stock > 0 ? (
-                    <Link className="primary-btn order-link mt-sm-1" to="/cart">
-                      <i className="fa-solid fa-cart-shopping pe-2"></i>Add
-                    </Link>
-                  ) : (
-                    <button className="primary-btn order-link mt-sm-1" disabled>
-                      <i className="fa-solid fa-cart-shopping pe-2"></i>Add
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const OtpVerification = () => {
     const email = "user@example.com"; // Static email for display
@@ -7,7 +8,7 @@ const OtpVerification = () => {
     const [errors, setErrors] = useState({});
     const [timeLeft, setTimeLeft] = useState(60);
     const [resendEnabled, setResendEnabled] = useState(false);
-
+    const navigate = useNavigate();
     // Countdown Timer
     useEffect(() => {
         if (timeLeft <= 0) {
@@ -43,7 +44,7 @@ const OtpVerification = () => {
             setErrors({ otp: error });
             return;
         }
-        toast.success("OTP verified successfully!");
+        navigate("/reset-password");
     };
 
     // Handle Resend OTP
@@ -64,7 +65,7 @@ const OtpVerification = () => {
                             <div className="mb-2">OTP sent to: <small>{email}</small></div>
                             <form onSubmit={handleSubmit}>
                                 <input
-                                    type="text"
+                                    type="number"
                                     name="otp"
                                     className="w-100"
                                     placeholder="Enter OTP"

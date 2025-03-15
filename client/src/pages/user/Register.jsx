@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 
 const Register = () => {
     const [formData, setFormData] = useState({
-        fname: "",
-        lname: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phone: "",
         password: "",
@@ -25,10 +25,10 @@ const Register = () => {
     const validateField = (name, value) => {
         let error = null;
         if (!value.trim()) {
-            error = `${name.charAt(0).toUpperCase() + name.slice(1)} is required`;
-        } else if (name === "fname" && (value.length < 3 || value.length > 50)) {
+            error = `${name.charAt(0).toUpperCase() + name.slice(1).replace(/([a-z])([A-Z])/g, '$1 $2')} is required`;        
+        } else if (name === "firstName" && (value.length < 3 || value.length > 50)) {
             error = "First Name must be between 3 and 50 characters";
-        } else if (name === "lname" && (value.length < 3 || value.length > 50)) {
+        } else if (name === "lastName" && (value.length < 3 || value.length > 50)) {
             error = "Last Name must be between 3 and 50 characters";
         } else if (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
             error = "Enter a valid email address";
@@ -72,24 +72,24 @@ const Register = () => {
                                 <div className="names d-flex gap-3">
                                     <input 
                                         type="text" 
-                                        name="fname" 
+                                        name="firstName" 
                                         className="w-50 p-2" 
                                         placeholder="First Name" 
-                                        value={formData.fname} 
+                                        value={formData.firstName} 
                                         onChange={handleChange} 
                                     />
                                     <input 
                                         type="text" 
-                                        name="lname" 
+                                        name="lastName" 
                                         className="w-50 p-2" 
                                         placeholder="Last Name" 
-                                        value={formData.lname} 
+                                        value={formData.lastName} 
                                         onChange={handleChange} 
                                     />
                                 </div>
                                 <div className="d-flex gap-3">
-                                <p className="error mb-3 w-50">{errors.fname}</p>
-                                <p className="error mb-3 w-50">{errors.lname}</p>
+                                <p className="error mb-3 w-50">{errors.firstName}</p>
+                                <p className="error mb-3 w-50">{errors.lastName}</p>
                                 </div>
                                 
                                 <input 

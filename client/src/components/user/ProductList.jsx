@@ -56,9 +56,9 @@ const ProductList = () => {
                 return (
                     <div key={product.id} className="col-md-3 gap col-sm-4 p-2 col-6 mt-2">
                         <div className={`card h-100 ${isOutOfStock ? 'disabled-card' : ''}`}>
-                            <div className="product-image">
+                            <div className="product-image text-center">
                                 <Link to="/product">
-                                    <img className="img-thumbnail img-fluid p-4" style={{ height: "300px" }} src={`/img/items/products/${product.image}`} alt={product.name} />
+                                    <img className="img-thumbnail img-fluid p-4" style={{ height: "225px" }} src={`/img/items/products/${product.image}`} alt={product.name} />
                                 </Link>
                                 <p className="like text-decoration-none" onClick={handleWishlistClick}>
                                     <i className="fa-regular fa-heart"></i>

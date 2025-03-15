@@ -7,7 +7,7 @@ const OrderHistory = () => {
 
   return (
     <div className="container cart-table">
-      <p class="my-5"><Link to="/" class="text-decoration-none dim link ">Home /</Link> Order History</p>
+      <p className="my-5"><Link to="/" className="text-decoration-none dim link ">Home /</Link> Order History</p>
         <OrdersTable />
     </div>
   );

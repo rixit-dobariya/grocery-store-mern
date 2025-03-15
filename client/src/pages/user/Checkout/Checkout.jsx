@@ -85,13 +85,19 @@ const Checkout = () => {
 												type="button"
 												id="add-new-address"
 												onClick={toggleBillingForm}
-												className="btn btn-success mt-2"
+												className="primary-btn js-filter-btn mt-2"
 											>
 												Add New Address
 											</button>
 										</div>
 									</div>
-									<AddressList addresses={addresses} setSelectedAddress={setSelectedAddress} selectedAddress={selectedAddress} />
+									<AddressList 
+                                        addresses={addresses} 
+                                        setSelectedAddress={setSelectedAddress} 
+                                        selectedAddress={selectedAddress} 
+                                        errors={errors}
+                                        setErrors={setErrors}
+                                    />
                                     {errors.address && <p className="text-danger">{errors.address}</p>}
                                 </form>
 							</div>
@@ -102,6 +108,7 @@ const Checkout = () => {
                         selectedPayment={selectedPayment}
                         handleSubmit={handleSubmit}
                         errors={errors}
+                        setErrors={setErrors}
                      />
 				</div>
 			</div>
@@ -109,10 +116,17 @@ const Checkout = () => {
 	);
 };
 
-const AddressList = ({ addresses,setSelectedAddress,selectedAddress }) => {
+const AddressList = ({ addresses,setSelectedAddress,selectedAddress, errors, setErrors }) => {
 
 	const handleAddressChange = (event) => {
-		setSelectedAddress(Number(event.target.value)); // Convert to number if needed
+        const selectedAddressId = Number(event.target.value);
+		setSelectedAddress(selectedAddressId); // Convert to number if needed
+        if(selectedAddressId < 0){
+            setErrors({...errors, address:"Please select an address"});
+        }
+        else{
+            setErrors({...errors, address:""});
+        }
 	};
 
 	return (
@@ -151,7 +165,7 @@ const AddressList = ({ addresses,setSelectedAddress,selectedAddress }) => {
 	);
 };
 
-const CheckoutSummary = ({setSelectedPayment, selectedPayment, handleSubmit, errors}) => {
+const CheckoutSummary = ({setSelectedPayment, selectedPayment, handleSubmit, errors, setErrors}) => {
 
 	// Static product data
 	const products = [
@@ -186,6 +200,12 @@ const CheckoutSummary = ({setSelectedPayment, selectedPayment, handleSubmit, err
 
 	const handlePaymentChange = (event) => {
 		setSelectedPayment(event.target.value);
+        if(event.target.value ===""){
+            setErrors({...errors, payment:"Please select a payment method"});
+        }
+        else{
+            setErrors({...errors, payment:""});
+        }
 	};
 
 	return (
