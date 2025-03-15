@@ -46,7 +46,6 @@ const Header = ({}) => {
 						>
 							<Link
 								className="logo navbar-brand fs-1 fw-bold"
-								style={{ color: "#198754" }}
 								to="/"
 							>
 								PureBite
