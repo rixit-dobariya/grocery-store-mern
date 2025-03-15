@@ -12,10 +12,10 @@ const Cart = () => {
         { id: 3, name: "Hide & Seek", quantity: 3, price: 20, image: "hide&seek.webp" },
     ]);
 
-    const handleRemove = (productId, productName) => {
+    const handleRemove = () => {
         Swal.fire({
             title: "Are you sure?",
-            text: `Do you want to remove ${productName} from the cart?`,
+            text: `Do you want to remove this product from the cart?`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
@@ -23,7 +23,7 @@ const Cart = () => {
             confirmButtonText: "Yes, remove it!",
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire("Removed!", `${productName} has been removed.`, "success");
+                Swal.fire("Removed!", `Product has been removed.`, "success");
             }
         });
     };
@@ -35,11 +35,11 @@ const Cart = () => {
                     <h1>Cart of {user.firstName} {user.lastName}</h1>
                     <ol className="breadcrumb mb-0">
                         <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
-                        <li className="breadcrumb-item"><Link to="/users">Users</Link></li>
+                        <li className="breadcrumb-item"><Link to="/admin/users">Users</Link></li>
                         <li className="breadcrumb-item active">Cart</li>
                     </ol>
                 </div>
-                <Link className="btn btn-primary text-nowrap" to="#">Add Items</Link>
+                <Link className="btn btn-primary text-nowrap" to="/admin/add-to-cart">Add Items</Link>
             </div>
 
             <div className="card-body">
@@ -60,16 +60,21 @@ const Cart = () => {
                                     <td>
                                         <div className="d-flex align-items-center">
                                             <img src={`/img/items/products/${item.image}`} alt={item.name} style={{ width: 50, height: 50, objectFit: "cover" }} className="me-2" />
-                                            <Link to="/admin/product">{item.name}</Link>
+                                            <Link to="/admin/view-product">{item.name}</Link>
                                         </div>
                                     </td>
                                     <td>{item.quantity}</td>
                                     <td>₹{item.price}</td>
                                     <td>₹{item.quantity * item.price}</td>
                                     <td>
-                                        <button className="btn btn-danger" onClick={() => handleRemove(item.id, item.name)}>
-                                            Remove
-                                        </button>
+                                        <div class="d-flex gap-1">
+                                            <Link className="btn btn-info" to="/admin/update-cart">
+                                                Update
+                                            </Link>
+                                            <button className="btn btn-danger" onClick={() => handleRemove()}>
+                                                Remove
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))

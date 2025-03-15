@@ -32,6 +32,7 @@ import Categories from "../pages/admin/Categories";
 import UpdateProduct from "../pages/admin/UpdateProduct";
 import UserDetails from "../pages/admin/UserDetails";
 import UpdateOrder from "../pages/admin/UpdateOrder";
+import EmailVerification from "../pages/admin/EmailVerification";
 
 const AdminRoutes = () => {
   return (
@@ -43,10 +44,23 @@ const AdminRoutes = () => {
         <Route path="add-banner" element={<AddBanner />} />
         <Route path="update-banner" element={<UpdateBanner />} />
         
-        <Route path="orders" element={<Orders />} />
-        <Route path="add-order" element={<AddOrder />} />
-        <Route path="update-order" element={<UpdateOrder />} />
-        <Route path="view-order" element={<ViewOrder />} />
+        <Route path="users" element={<Users />} />
+        <Route path="add-user" element={<AddUser />} />
+        <Route path="update-user" element={<UpdateUser />} />
+        <Route path="user-details" element={<UserDetails />} />
+
+        <Route path="cart" element={<Cart />} />
+        <Route path="add-to-cart" element={<AddToCart />} />
+        <Route path="update-cart" element={<UpdateCart />} />
+
+        <Route path="reviews" element={<Reviews />} />
+        <Route path="add-review" element={<AddReview />} />
+        <Route path="update-review" element={<UpdateReview />} />
+
+        <Route path="products" element={<Products />} />
+        <Route path="add-product" element={<AddProduct />} />
+        <Route path="update-product" element={<UpdateProduct />} />
+        <Route path="view-product" element={<ViewProduct />} />
 
         <Route path="categories" element={<Categories />} />
         <Route path="add-category" element={<AddCategory />} />
@@ -56,31 +70,18 @@ const AdminRoutes = () => {
         <Route path="add-offer" element={<AddOffer />} />
         <Route path="update-offer" element={<UpdateOffer />} />
 
-        <Route path="cart" element={<Cart />} />
-        <Route path="add-to-cart" element={<AddToCart />} />
-        <Route path="update-cart" element={<UpdateCart />} />
-
-        <Route path="users" element={<Users />} />
-        <Route path="add-user" element={<AddUser />} />
-        <Route path="update-user" element={<UpdateUser />} />
-        <Route path="user-details" element={<UserDetails />} />
-
-        <Route path="products" element={<Products />} />
-        <Route path="add-product" element={<AddProduct />} />
-        <Route path="update-product" element={<UpdateProduct />} />
-        <Route path="view-product" element={<ViewProduct />} />
-
-        <Route path="my-profile" element={<MyProfile />} />
-
-        <Route path="reviews" element={<Reviews />} />
-        <Route path="add-review" element={<AddReview />} />
-        <Route path="update-review" element={<UpdateReview />} />
-
         <Route path="responses" element={<Responses />} />
 
         <Route path="site-settings" element={<SiteSettings />} />
 
-        
+        <Route path="my-profile" element={<MyProfile />} />
+        <Route path="verify-email" element={<EmailVerification />} />
+
+        <Route path="orders" element={<Orders />} />
+        <Route path="add-order" element={<AddOrder />} />
+        <Route path="update-order" element={<UpdateOrder />} />
+        <Route path="view-order" element={<ViewOrder />} />
+
       </Route>
     </Routes>
   );

@@ -3,34 +3,6 @@ import { Link, Links } from "react-router-dom";
 import { toast } from "react-toastify";
 import ProductList from "../../components/user/ProductList";
 
-const products = [
-  {
-    id: 1,
-    image: "https://picsum.photos/300",
-    name: "Product 1",
-    category: "Category 1",
-    categoryId: 1,
-    price: 500,
-    salePrice: 450,
-    discount: 10,
-    stock: 5,
-    rating: 4,
-    reviewCount: 20,
-  },
-  {
-    id: 2,
-    image: "https://picsum.photos/300",
-    name: "Product 2",
-    category: "Category 2",
-    categoryId: 2,
-    price: 800,
-    salePrice: 700,
-    discount: 12,
-    stock: 0,
-    rating: 5,
-    reviewCount: 35,
-  },
-];
 
 export default function Shop() {
   const [filterVisible, setFilterVisible] = useState(false);

@@ -6,7 +6,7 @@ const Reviews = () => {
     const [reviews, setReviews] = useState([
         {
           id: 1,
-          productImage: "product1.jpg",
+          productImage: "66ee9001ceeaeapple.webp",
           productName: "Product 1",
           productId: 101,
           userName: "John Doe",
@@ -17,7 +17,7 @@ const Reviews = () => {
         },
         {
           id: 2,
-          productImage: "product2.jpg",
+          productImage: "cookiecake.webp",
           productName: "Product 2",
           productId: 102,
           userName: "Alice Smith",
@@ -28,7 +28,7 @@ const Reviews = () => {
         },
         {
           id: 3,
-          productImage: "product3.jpg",
+          productImage: "vaghbakri.webp",
           productName: "Product 3",
           productId: 103,
           userName: "Bob Johnson",
@@ -39,7 +39,7 @@ const Reviews = () => {
         },
         {
           id: 4,
-          productImage: "product4.jpg",
+          productImage: "66ee9001ceeaeapple.webp",
           productName: "Product 4",
           productId: 104,
           userName: "Emma Brown",
@@ -50,7 +50,7 @@ const Reviews = () => {
         },
         {
           id: 5,
-          productImage: "product5.jpg",
+          productImage: "cookiecake.webp",
           productName: "Product 5",
           productId: 105,
           userName: "David White",
@@ -61,7 +61,7 @@ const Reviews = () => {
         },
         {
           id: 6,
-          productImage: "product6.jpg",
+          productImage: "vaghbakri.webp",
           productName: "Product 6",
           productId: 106,
           userName: "Sophia Green",
@@ -110,12 +110,12 @@ const Reviews = () => {
   
   return (
     <div>
-        <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+        <div className="d-flex justify-content-between align-items-center mt-4 mb-4">
             <div>
-                <h1 class="mt-4">Review Management</h1>
-                <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
-                    <li class="breadcrumb-item active">Reviews</li>
+                <h1 className="mt-4">Review Management</h1>
+                <ol className="breadcrumb mb-4">
+                    <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
+                    <li className="breadcrumb-item active">Reviews</li>
                 </ol>
             </div>
             <Link to="/admin/add-review" className="btn btn-primary text-nowrap">Add Review</Link>
@@ -139,16 +139,16 @@ const Reviews = () => {
                   <td>
                     <div className="d-flex align-items-center">
                       <img
-                        src={review.productImage}
+                        src={`/img/items/products/${review.productImage}`}
                         alt={review.productName}
                         style={{ width: 50, height: 50, objectFit: "cover" }}
                         className="me-2"
                       />
-                      <a href="#">{review.productName}</a>
+                      <Link to="/admin/view-product">{review.productName}</Link>
                     </div>
                   </td>
                   <td>
-                    <a href="#">{review.userName}</a>
+                    <Link to="/admin/user-details">{review.userName}</Link>
                   </td>
                   <td>
                     <span className="text-warning">
@@ -158,7 +158,7 @@ const Reviews = () => {
                     </span>
                   </td>
                   <td>{review.review}</td>
-                  <td>{review.reply ? review.reply : "No reply yet"}</td>
+                  <td>{review.reply ? review.reply : "-"}</td>
                   <td>
                     <div className="d-flex flex-nowrap gap-1">
                       <button
@@ -173,7 +173,7 @@ const Reviews = () => {
                       >
                         {review.reply ? "Update Reply" : "Reply"}
                       </button>
-                      <Link class="btn btn-info btn-sm" to="/admin/update-review">Update</Link>
+                      <Link className="btn btn-info btn-sm" to="/admin/update-review">Update</Link>
 
                       <button
                         className="btn btn-danger btn-sm"

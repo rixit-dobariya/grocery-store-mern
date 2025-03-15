@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const orders = [
   {
@@ -41,7 +42,7 @@ const OrderTable = () => {
               <tr key={order.orderId}>
                 <td>{order.orderId}</td>
                 <td>
-                  <Link to={`/admin/user-profile`}>{order.customerName}</Link>
+                  <Link to={`/admin/user-details`}>{order.customerName}</Link>
                 </td>
                 <td>{order.orderDate}</td>
                 <td>{order.totalQuantity}</td>
@@ -55,7 +56,7 @@ const OrderTable = () => {
                     <Link to={`/admin/update-order`} className="btn btn-primary btn-sm me-1">
                       Edit
                     </Link>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(order.orderId)}>
+                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete()}>
                       Delete
                     </button>
                   </div>
@@ -75,8 +76,20 @@ const OrderTable = () => {
   );
 };
 
-const handleDelete = (orderId) => {
-  alert(`Delete order with ID: ${orderId}`);
+const handleDelete = () => {
+  Swal.fire({
+			title: "Are you sure?",
+			text: "You won't be able to revert this!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#d33",
+			cancelButtonColor: "#3085d6",
+			confirmButtonText: "Yes, delete it!",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				Swal.fire("Deleted!", "Order has been deleted.", "success");
+			}
+		});
 };
 
 export default OrderTable;

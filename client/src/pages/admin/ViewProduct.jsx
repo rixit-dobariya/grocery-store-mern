@@ -51,7 +51,7 @@ const ViewProduct = () => {
     setReplyText(""); // Clear input
     setSelectedReview(null); // Close modal
 
-    Swal.fire("Success!", "Reply added successfully.", "success");
+    Swal.fire("Success!", "Reply updated successfully.", "success");
   };
 
   // Handle delete confirmation
@@ -91,6 +91,7 @@ const ViewProduct = () => {
       <h1 className="mt-4">View Product</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
+        <li className="breadcrumb-item"><Link to="/admin/products">Products</Link></li>
         <li className="breadcrumb-item active">View Product</li>
       </ol>
 
@@ -108,7 +109,7 @@ const ViewProduct = () => {
             <p><strong>Price After Discount:</strong> ₹{product.priceAfterDiscount}</p>
             <p><strong>Category:</strong> {product.category}</p>
             <p><strong>Total Sales:</strong> {product.soldQuantity}</p>
-            <Link to="/admin/edit-product/1" className="btn btn-success me-2">
+            <Link to="/admin/update-product" className="btn btn-success me-2">
                 Update Product
             </Link>
             <button className="btn btn-danger" onClick={() => handleProductDelete()}>Delete Product</button>
@@ -147,12 +148,12 @@ const ViewProduct = () => {
                     <button
                       className="btn btn-primary btn-sm me-2"
                       onClick={() => setSelectedReview(review.reviewId)}
-                      disabled={!!review.reply} // Disable if already replied
                       data-bs-toggle="modal"
                       data-bs-target="#replyModal"
                     >
-                      {review.reply ? "Replied" : "Reply"}
+                      {review.reply==""?"":"Update"} Reply
                     </button>
+                    <Link to="/admin/update-review" className="btn btn-info btn-sm me-2">Update</Link>
                     <button
                       className="btn btn-danger btn-sm"
                       onClick={() => handleDelete()}
@@ -168,53 +169,24 @@ const ViewProduct = () => {
       </div>
 
       {/* Bootstrap Modal for Reply */}
-      <div
-        className="modal fade"
-        id="replyModal"
-        tabIndex="-1"
-        aria-labelledby="replyModalLabel"
-        aria-hidden="true"
-      >
+      <div className="modal fade" id="replyModal" tabIndex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="replyModalLabel">Reply to Review</h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                onClick={() => setSelectedReview(null)}
-              ></button>
+              <h5 className="modal-title" id="replyModalLabel">Reply</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              <textarea
-                className="form-control"
-                rows="3"
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-              />
+              <textarea className="form-control" rows="3" value={replyText} onChange={(e) => setReplyText(e.target.value)} />
               {replyError && <p className="text-danger mt-2">{replyError}</p>}
             </div>
             <div className="modal-footer">
-              <button
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-                onClick={() => setSelectedReview(null)}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={handleReplySubmit}
-              >
-                Submit Reply
-              </button>
+              <button className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button className="btn btn-primary" onClick={handleReplySubmit}>Submit Reply</button>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   );
 };

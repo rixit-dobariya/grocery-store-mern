@@ -74,7 +74,7 @@ const UpdatePasswordForm = () => {
         }
 
         setErrors({});
-        toast.success('Form submitted successfully!', { position: "top-right" });
+        toast.success('Form submitted successfully!');
     };
 
     return (
@@ -82,7 +82,7 @@ const UpdatePasswordForm = () => {
             <form className="edit-profile form" onSubmit={handleSubmit}>
                 <div className="row g-2">
                     <div className="col-12">
-                        <label className="form-label d-block">Password</label>
+                        <label className="form-label d-block">Current Password</label>
                         <input 
                             type="password" 
                             name="currentPassword" 
@@ -93,6 +93,7 @@ const UpdatePasswordForm = () => {
                         />
                         {errors.currentPassword && <p className="error">{errors.currentPassword}</p>}
 
+                        <label className="form-label d-block">New Password</label>
                         <input 
                             type="password" 
                             name="newPassword" 
@@ -103,6 +104,7 @@ const UpdatePasswordForm = () => {
                         />
                         {errors.newPassword && <p className="error">{errors.newPassword}</p>}
 
+                        <label className="form-label d-block">Confirm Password</label>
                         <input 
                             type="password" 
                             name="confirmPassword" 

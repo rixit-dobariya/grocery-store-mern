@@ -15,7 +15,7 @@ const Orders = () => {
             <li className="breadcrumb-item active">Orders</li>
             </ol>
         </div>
-        <Link className="btn btn-primary text-nowrap" to="/add-order">
+        <Link className="btn btn-primary text-nowrap" to="/admin/add-order">
             Add Order
         </Link>
         </div>

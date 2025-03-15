@@ -62,6 +62,9 @@ const UpdateCategory = () => {
                 <li className="breadcrumb-item">
                     <Link to="/admin">Dashboard</Link>
                 </li>
+                <li className="breadcrumb-item">
+                    <Link to="/admin/categories">Categories</Link>
+                </li>
                 <li className="breadcrumb-item active">Update Category</li>
             </ol>
 

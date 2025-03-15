@@ -1,110 +1,68 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const UpdateReview = () => {
-    const { id } = useParams();
     const [formData, setFormData] = useState({
-        productid: "",
-        userid: "",
-        rating: "",
-        review: "",
+        productid: "Apple",
+        rname: "John Doe",
+        rating: "5",
+        review: "Great product! Highly recommended."
     });
-
+    
     const [errors, setErrors] = useState({});
-
-    const products = [
-        { id: "1", name: "Apple" },
-        { id: "2", name: "Milk" },
-        { id: "3", name: "Carrot" },
-    ];
-
-    const users = [
-        { id: "101", name: "John Doe" },
-        { id: "102", name: "Jane Smith" },
-        { id: "103", name: "David Johnson" },
-    ];
-
-    useEffect(() => {
-        // Fetch review details from API using ID (Replace with actual API call later)
-        console.log(`Fetching review with ID: ${id}`);
-        setFormData({
-            productid: "1",
-            userid: "101",
-            rating: "5",
-            review: "Great product! Highly recommended.",
-        });
-    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-
+        // Validate field
         const error = validateField(name, value);
-        setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+        setErrors((prevErrors) => ({...prevErrors, [name]: error }));
     };
 
     const validateField = (name, value) => {
-        let error = null;
-
-        if (!value || value.trim() === "") {
-            return `${name.charAt(0).toUpperCase() + name.slice(1)} is required.`;
-        }
-
         if (name === "review") {
+            if (!value || value.trim() === "") return "Review is required.";
             if (value.length < 10) return "Review must be at least 10 characters long.";
             if (value.length > 500) return "Review cannot exceed 500 characters.";
         }
-
-        return error;
+        return null;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         let newErrors = {};
-        Object.keys(formData).forEach((key) => {
-            newErrors[key] = validateField(key, formData[key]);
-        });
-
+        newErrors.review = validateField("review", formData.review);
+        newErrors.rating = formData.rating ? null : "Rating is required.";
         setErrors(newErrors);
-
-        if (Object.values(newErrors).every((err) => !err)) {
+        if (!newErrors.review && !newErrors.rating) {
             toast.success("Review updated successfully!");
         }
     };
 
     return (
         <div>
-            <h1 className="mt-4">Update Review</h1>
+        <h1 className="mt-4">Update Review</h1>
             <ol className="breadcrumb mb-4">
-                <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
-                <li className="breadcrumb-item active">Update Review</li>
-            </ol>
-            
+				<li className="breadcrumb-item">
+					<Link to="/admin">Dashboard</Link>
+				</li>
+                <li className="breadcrumb-item">
+					<Link to="/admin/reviews">Reviews</Link>
+				</li>
+				<li className="breadcrumb-item active">Update Review</li>
+			</ol>
             <div className="card">
                 <div className="card-body">
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label htmlFor="productid" className="form-label">Product</label>
-                            <select className="form-select" id="productid" name="productid" value={formData.productid} onChange={handleChange}>
-                                <option value="" disabled>Select a product</option>
-                                {products.map((product) => (
-                                    <option key={product.id} value={product.id}>{product.name}</option>
-                                ))}
-                            </select>
-                            {errors.productid && <div className="text-danger">{errors.productid}</div>}
+                            <label className="form-label">Product</label>
+                            <input type="text" className="form-control" value={formData.productid} disabled />
                         </div>
 
                         <div className="mb-3">
-                            <label htmlFor="userid" className="form-label">User</label>
-                            <select className="form-select" id="userid" name="userid" value={formData.userid} onChange={handleChange}>
-                                <option value="" disabled>Select a user</option>
-                                {users.map((user) => (
-                                    <option key={user.id} value={user.id}>{user.name}</option>
-                                ))}
-                            </select>
-                            {errors.userid && <div className="text-danger">{errors.userid}</div>}
+                            <label className="form-label">User</label>
+                            <input type="text" className="form-control" value={formData.rname} disabled />
                         </div>
 
                         <div className="mb-3">

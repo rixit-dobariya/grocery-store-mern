@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const AddBanner = () => {
@@ -66,14 +67,18 @@ const AddBanner = () => {
     };
 
     return (
-        <div className="container mt-4">
-            <h1>Add Banner</h1>
-            <nav aria-label="breadcrumb">
-                <ol className="breadcrumb mb-4">
-                    <li className="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                    <li className="breadcrumb-item active" aria-current="page">Add Banner</li>
-                </ol>
-            </nav>
+        <div>
+            <h1 className="mt-4">Add Banner</h1>
+            <ol className="breadcrumb mb-4">
+				<li className="breadcrumb-item">
+					<Link to="/admin">Dashboard</Link>
+				</li>
+                <li className="breadcrumb-item">
+					<Link to="/admin/banners">Banners</Link>
+				</li>
+				<li className="breadcrumb-item active">Add Banner</li>
+			</ol>
+            
 
             <div className="card mb-4">
                 <div className="card-body">

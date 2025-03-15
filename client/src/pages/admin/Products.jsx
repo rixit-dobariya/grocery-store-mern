@@ -7,7 +7,7 @@ const ProductList = () => {
         {
             id: 1,
             name: "Fresh Apples",
-            image: "../img/items/products/apples.jpg",
+            image: "/img/items/products/66ee9001ceeaeapple.webp",
             salePrice: 150,
             discount: 5,
             soldQuantity: 500,
@@ -17,7 +17,7 @@ const ProductList = () => {
         {
             id: 2,
             name: "Organic Carrots",
-            image: "../img/items/products/carrots.jpg",
+            image: "/img/items/products/carrots.webp",
             salePrice: 80,
             discount: 10,
             soldQuantity: 300,
@@ -87,8 +87,8 @@ const ProductList = () => {
                                     <td>{product.category}</td>
                                     <td>
                                         <div className="d-flex flex-nowrap">
-                                            <Link className="btn btn-info btn-sm me-1" to={`/admin/view-product/${product.id}`}>View</Link>
-                                            <Link className="btn btn-success btn-sm me-1" to={`/admin/update-product/${product.id}`}>Update</Link>
+                                            <Link className="btn btn-info btn-sm me-1" to="/admin/view-product">View</Link>
+                                            <Link className="btn btn-success btn-sm me-1" to="/admin/update-product">Update</Link>
                                             <button className="btn btn-danger btn-sm" onClick={() => handleDelete(product.id)}>Delete</button>
                                         </div>
                                     </td>

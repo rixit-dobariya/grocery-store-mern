@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
 const OtpVerification = () => {
+    const email = "user@example.com"; // Static email for display
     const [otp, setOtp] = useState("");
     const [errors, setErrors] = useState({});
     const [timeLeft, setTimeLeft] = useState(60);
@@ -60,6 +61,7 @@ const OtpVerification = () => {
                         <div className="mb-3 w-75">
                             <h2 className="mb-3">Enter OTP</h2>
                             <div className="mb-4">Enter the OTP we sent to your email</div>
+                            <div className="mb-2">OTP sent to: <small>{email}</small></div>
                             <form onSubmit={handleSubmit}>
                                 <input
                                     type="text"

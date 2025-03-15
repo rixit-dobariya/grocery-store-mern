@@ -17,31 +17,33 @@ import ProductDetails from "../pages/user/ProductDetails";
 import Register from "../pages/user/Register";
 import ResetPassword from "../pages/user/ResetPassword";
 import Wishlist from "../pages/user/Wishlist";
-import OrderHistory from "../pages/OrderHistory";
+import OrderHistory from "../pages/user/OrderHistory";
+import EmailVerification from "../pages/user/EmailVerification";
 
 const UserRoutes = () => {
   return (
     <Routes>
         <Route path="/" element={<UserLayout />}>
-        <Route index element={<Home />} />
-        <Route path="shop" element={<Shop />} />
-        <Route path="about" element={<About />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="product" element={<ProductDetails />} />
+            <Route index element={<Home />} />
+            <Route path="shop" element={<Shop />} />
+            <Route path="about" element={<About />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="product" element={<ProductDetails />} />
 
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="login" element={<Login />} />
-        <Route path="verify-otp" element={<OtpVerification />} />
-        <Route path="register" element={<Register />} />
-        <Route path="reset-password" element={<ResetPassword />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="login" element={<Login />} />
+            <Route path="verify-otp" element={<OtpVerification />} />
+            <Route path="register" element={<Register />} />
+            <Route path="reset-password" element={<ResetPassword />} />
 
-        <Route path="cart" element={<Cart />}  />
-        <Route path="checkout" element={<Checkout />} />
-        <Route path="account" element={<MyAccount />} />
-        <Route path="order" element={<OrderDetails />} />
-        <Route path="order-confirm" element={<OrderConfirmation />} />
-        <Route path="wishlist" element={<Wishlist />} />
-        <Route path="order-history" element={<OrderHistory />} />
+            <Route path="cart" element={<Cart />}  />
+            <Route path="verify-email" element={<EmailVerification />}  />
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="account" element={<MyAccount />} />
+            <Route path="order" element={<OrderDetails />} />
+            <Route path="order-confirm" element={<OrderConfirmation />} />
+            <Route path="wishlist" element={<Wishlist />} />
+            <Route path="order-history" element={<OrderHistory />} />
         </Route>
   </Routes>
   );

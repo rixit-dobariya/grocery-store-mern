@@ -103,7 +103,7 @@ const AddOffer = () => {
             <h1 className="mt-4">Add New Offer</h1>
             <ol className="breadcrumb mb-4">
                 <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
-                <li className="breadcrumb-item"><Link to="/offers">Offers</Link></li>
+                <li className="breadcrumb-item"><Link to="/admin/offers">Offers</Link></li>
                 <li className="breadcrumb-item active">Add Offer</li>
             </ol>
 

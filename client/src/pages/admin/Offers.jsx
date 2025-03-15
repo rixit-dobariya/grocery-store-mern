@@ -22,7 +22,7 @@ const Offers = () => {
 		},
 	]);
 
-	const handleDelete = (offerId) => {
+	const handleDelete = () => {
 		Swal.fire({
 			title: "Are you sure?",
 			text: "You won't be able to revert this!",
@@ -63,7 +63,7 @@ const Offers = () => {
 
 	return (
 		<div>
-			<div class="d-flex justify-content-between align-items-center mt-4">
+			<div className="d-flex justify-content-between align-items-center">
 				<div>
 					<h1 className="mt-4">Offers Management</h1>
 					<ol class="breadcrumb mb-4">

@@ -6,15 +6,15 @@ const Users = () => {
     const navigate = useNavigate();
 
     const [users, setUsers] = useState([
-        { id: 1, profilePicture: "user1.jpg", fullName: "John Doe", email: "john@example.com", phone: "1234567890", status: 1 },
-        { id: 2, profilePicture: "user2.jpg", fullName: "Jane Smith", email: "jane@example.com", phone: "9876543210", status: 0 },
-        { id: 3, profilePicture: "user3.jpg", fullName: "Alice Brown", email: "alice@example.com", phone: "4567891230", status: -1 },
+        { id: 1, profilePicture: "default-img.png", fullName: "John Doe", email: "john@example.com", phone: "1234567890", status: 1 },
+        { id: 2, profilePicture: "default-img.png", fullName: "Jane Smith", email: "jane@example.com", phone: "9876543210", status: 0 },
+        { id: 3, profilePicture: "default-img.png", fullName: "Alice Brown", email: "alice@example.com", phone: "4567891230", status: -1 },
     ]);
 
-    const handleDelete = (userId, userName) => {
+    const handleDelete = () => {
         Swal.fire({
             title: "Are you sure?",
-            text: `Do you want to delete ${userName}? This action cannot be undone!`,
+            text: `Do you want to delete this user? This action cannot be undone!`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
@@ -22,8 +22,7 @@ const Users = () => {
             confirmButtonText: "Yes, delete it!",
         }).then((result) => {
             if (result.isConfirmed) {
-                setUsers(users.filter(user => user.id !== userId));
-                Swal.fire("Deleted!", `${userName} has been removed.`, "success");
+                Swal.fire("Deleted!", `User has been removed.`, "success");
             }
         });
     };
@@ -40,7 +39,7 @@ const Users = () => {
                         <li className="breadcrumb-item active">Users</li>
                     </ol>
                 </div>
-                <Link className="btn btn-primary" to="/add-user">Add User</Link>
+                <Link className="btn btn-primary" to="/admin/add-user">Add User</Link>
             </div>
 
             <div className="card-body">
@@ -69,10 +68,10 @@ const Users = () => {
                                         {user.status === 1 ? "Active" : user.status === 0 ? "Inactive" : "Deleted"}
                                     </td>
                                     <td className="d-flex gap-1">
-                                        <Link to={`/user-profile/${user.id}`} className="btn btn-info btn-sm">View</Link>
-                                        <Link to={`/edit-user/${user.id}`} className="btn btn-warning btn-sm">Edit</Link>
-                                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(user.id, user.fullName)}>Delete</button>
-                                        <Link to={`/admin/cart`} className="btn btn-info btn-sm">Cart</Link>
+                                        <Link to="/admin/user-details" className="btn btn-info btn-sm">View</Link>
+                                        <Link to="/admin/update-user" className="btn btn-warning btn-sm">Edit</Link>
+                                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete()}>Delete</button>
+                                        <Link to="/admin/cart" className="btn btn-info btn-sm">Cart</Link>
                                     </td>
                                 </tr>
                             ))

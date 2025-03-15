@@ -101,6 +101,7 @@ const UpdateProduct = () => {
             <h1 className="mt-4">Update Product</h1>
             <ol className="breadcrumb mb-4">
                 <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
+                <li className="breadcrumb-item"><Link to="/admin/products">Products</Link></li>
                 <li className="breadcrumb-item active">Update Product</li>
             </ol>
 
@@ -161,6 +162,7 @@ const UpdateProduct = () => {
                             <label className="form-label">Product Image</label>
                             <input type="file" className="form-control" name="productImage" onChange={handleChange} />
                             {errors.productImage && <div className="text-danger">{errors.productImage}</div>}
+                            <img src="/img/items/products/66ee9001ceeaeapple.webp" alt="Product" height="150px" className="mt-2" />
                         </div>
 
 

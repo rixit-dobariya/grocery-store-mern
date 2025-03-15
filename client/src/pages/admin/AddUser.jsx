@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const AddUser = () => {
@@ -8,8 +9,7 @@ const AddUser = () => {
         email: "",
         phone: "",
         password: "",
-        userImage: "",
-        imagePreview: "../img/users/default.png" // Default user image
+        userImage: ""
     });
 
     const [errors, setErrors] = useState({});
@@ -56,20 +56,36 @@ const AddUser = () => {
     
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            setFormData({ ...formData, userImage: file, imagePreview: URL.createObjectURL(file) });
+        if (!file) {
+            setErrors({ ...errors, userImage: "Profile image is required." });
+            return;
         }
+        
+        const allowedExtensions = ["jpg", "jpeg", "png"];
+        const fileExtension = file.name.split(".").pop().toLowerCase();
+        
+        if (!allowedExtensions.includes(fileExtension)) {
+            setErrors({ ...errors, userImage: "Profile image must be a JPG, JPEG, or PNG file." });
+            return;
+        }
+        
+        setErrors({ ...errors, userImage: null });
+        setFormData({ ...formData, userImage: file });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const formErrors = {};
         Object.keys(formData).forEach(field => {
-            if (field !== "userImage" && field !== "imagePreview") {
+            if (field !== "userImage") {
                 const error = validateField(field, formData[field]);
                 if (error) formErrors[field] = error;
             }
         });
+
+        if (!formData.userImage) {
+            formErrors.userImage = "Profile image is required.";
+        }
 
         if (Object.keys(formErrors).length > 0) {
             setErrors(formErrors);
@@ -83,17 +99,17 @@ const AddUser = () => {
             email: "",
             phone: "",
             password: "",
-            userImage: "",
-            imagePreview: "../img/users/default.png"
+            userImage: ""
         });
     };
 
     return (
         <div>
-            <h1 class="mt-4">Update User</h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><Link to="/admin/">Dashboard</Link></li>
-                <li class="breadcrumb-item active">Update User</li>
+            <h1 className="mt-4">Add User</h1>
+            <ol className="breadcrumb mb-4">
+                <li className="breadcrumb-item"><Link to="/admin/">Dashboard</Link></li>
+                <li className="breadcrumb-item"><Link to="/admin/users">Users</Link></li>
+                <li className="breadcrumb-item active">Add User</li>
             </ol>
             <div className="card mb-4">
                 <div className="card-body">
@@ -133,7 +149,7 @@ const AddUser = () => {
                             <div className="col-md-6 mb-3">
                                 <label className="form-label">User Image</label>
                                 <input type="file" className="form-control" onChange={handleFileChange} accept="image/*" />
-                                <img src={formData.imagePreview} alt="User" height="150px" width="150px" className="mt-2" />
+                                {errors.userImage && <p className="text-danger">{errors.userImage}</p>}
                             </div>
                         </div>
 

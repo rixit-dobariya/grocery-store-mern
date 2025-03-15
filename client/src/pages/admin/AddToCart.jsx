@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const AddToCart = () => {
     const [formData, setFormData] = useState({
         productId: "",
-        quantity: null,
+        quantity: "",
     });
 
     const [errors, setErrors] = useState({});
@@ -67,9 +68,12 @@ const AddToCart = () => {
             <nav aria-label="breadcrumb">
                 <ol className="breadcrumb mb-4">
                     <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
+                    <li className="breadcrumb-item"><Link to="/admin/users">Users</Link></li>
+                    <li className="breadcrumb-item"><Link to="/admin/cart">Cart</Link></li>
                     <li className="breadcrumb-item active" aria-current="page">Add Product to Cart</li>
                 </ol>
             </nav>
+            <h5>User: John Doe</h5>
 
             <div className="card mb-4">
                 <div className="card-body">

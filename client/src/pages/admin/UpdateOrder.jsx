@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const UpdateOrder = () => {
+const AddOrder = () => {
     const [formData, setFormData] = useState({
-        userId: "12345",
+        userId: "",
         orderDate: "2025-03-15",
         products: [
-            { productId: "1 - Apple", quantity: 2 },
-            { productId: "2 - Carrot", quantity: 1 }
+            { productId: "", quantity: "" }
         ],
         firstName: "John",
         lastName: "Doe",
@@ -18,11 +17,24 @@ const UpdateOrder = () => {
         pinCode: "10001",
         phone: "9876543210",
         shippingCharge: "50",
-        status: "Pending"
+        status: "Pending",
     });
-    
 
-    const [errors, setErrors] = useState({});
+    
+    const [errors, setErrors] = useState({
+        userId: "",
+        orderDate: "",
+        products: [], // Array to store errors for each product
+        firstName: "",
+        lastName: "",
+        address: "",
+        city: "",
+        state: "",
+        pinCode: "",
+        phone: "",
+        shippingCharge: "",
+        status: "",
+    });
 
     // Static data for users and products
     const users = [
@@ -35,39 +47,58 @@ const UpdateOrder = () => {
         { id: "102", name: "Product 2" },
     ];
 
-    
     const handleProductChange = (index, e) => {
         const { name, value } = e.target;
         const newProducts = [...formData.products];
-        newProducts[index][name.split('[')[2].replace(']', '')] = value;
+        newProducts[index][name] = value;
         setFormData({ ...formData, products: newProducts });
+
+        // Validate the changed field
+        const errorMessage = validateField(name, value);
+        const newErrors = { ...errors };
+        if (!newErrors.products[index]) {
+            newErrors.products[index] = {};
+        }
+        newErrors.products[index][name] = errorMessage || undefined;
+        setErrors(newErrors);
     };
 
     const addProduct = () => {
         setFormData({
             ...formData,
-            products: [...formData.products, { productId: "", quantity: 1 }]
+            products: [...formData.products, { productId: "", quantity: 1 }],
+        });
+        setErrors({
+            ...errors,
+            products: [...errors.products, {}], // Add an empty error object for the new product
         });
     };
 
     const removeProduct = (index) => {
         const newProducts = formData.products.filter((_, i) => i !== index);
+        
         setFormData({ ...formData, products: newProducts });
+    
+        setErrors(prevErrors => {
+            const newErrors = { ...prevErrors };
+            newErrors.products = prevErrors.products.filter((_, i) => i !== index);
+            return newErrors;
+        });
     };
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-    
+
         const errorMessage = validateField(name, value);
         setErrors((prevErrors) => ({
             ...prevErrors,
             [name]: errorMessage || undefined,
         }));
     };
-    
 
     const validateField = (name, value) => {
-        if (!value.trim()) {
+        if (!value || (typeof value === "string" && !value.trim())) {
             const fieldNames = {
                 userId: "User ID",
                 orderDate: "Order Date",
@@ -80,41 +111,62 @@ const UpdateOrder = () => {
                 phone: "Phone Number",
                 shippingCharge: "Shipping Charge",
                 status: "Order Status",
+                productId: "Product ID",
+                quantity: "Quantity",
             };
             return `${fieldNames[name] || "This field"} is required.`;
         }
-        return ""; // No error
+    
+        if (name === "quantity" && (isNaN(value) || value <= 0)) {
+            return "Quantity must be greater than 0.";
+        }
+    
+        return undefined; // Instead of empty string
     };
     
-
     const validateForm = () => {
-        const newErrors = {};
-    
+        const newErrors = { userId: "", orderDate: "", products: [], firstName: "", lastName: "", address: "", city: "", state: "", pinCode: "", phone: "", shippingCharge: "", status: "" };
+
+
         // Validate user and order details
         if (!formData.userId) newErrors.userId = "Please select a user.";
         if (!formData.orderDate) newErrors.orderDate = "Please enter an order date.";
-    
+
         // Validate each product
         formData.products.forEach((product, index) => {
-            if (!product.productId) newErrors[`products.${index}.productId`] = `Product ${index + 1} ID is required.`;
-            if (!product.quantity || product.quantity <= 0) newErrors[`products.${index}.quantity`] = `Product ${index + 1} quantity must be greater than 0.`;
+            newErrors.products[index] = {};
+            if (!product.productId) {
+                newErrors.products[index].productId = "Product ID is required.";
+            }
+            if (!product.quantity || product.quantity <= 0) {
+                newErrors.products[index].quantity = "Quantity must be greater than 0.";
+            }
         });
-    
+
         // Validate shipping details
         const requiredFields = ["firstName", "lastName", "address", "city", "state", "pinCode", "phone", "shippingCharge"];
         requiredFields.forEach((field) => {
-            if (!formData[field]) newErrors[field] = `${field.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase())} is required.`; 
+            if (!formData[field]) {
+                newErrors[field] = `${field.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase())} is required.`;
+            }
         });
-    
+
         setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+        
+
+        // Check if there are any errors
+        const hasErrors = 
+        Object.entries(newErrors)
+            .some(([key, value]) => key !== "products" && value) || 
+        newErrors.products.some(productErrors => Object.values(productErrors).some(error => error));
     
+        return !hasErrors;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            toast.success("Order updated successfully")
+            toast.success("Order updated successfully");
         }
     };
 
@@ -132,6 +184,7 @@ const UpdateOrder = () => {
             </div>
             <div>
                 <form onSubmit={handleSubmit}>
+                    {/* User ID and Order Date */}
                     <div className="mb-3">
                         <label htmlFor="userId" className="form-label">User ID</label>
                         <select className="form-select" id="userId" name="userId" value={formData.userId} onChange={handleChange}>
@@ -149,6 +202,7 @@ const UpdateOrder = () => {
                         {errors.orderDate && <div className="error-message">{errors.orderDate}</div>}
                     </div>
 
+                    {/* Products Section */}
                     <div id="productContainer">
                         {formData.products.map((product, index) => (
                             <div className="product-entry mb-3" key={index}>
@@ -156,19 +210,37 @@ const UpdateOrder = () => {
                                 <div className="row align-items-end">
                                     <div className="col-md-5">
                                         <label htmlFor={`productId${index}`} className="form-label">Product ID</label>
-                                        <select className="form-select product-dropdown" id={`productId${index}`} name={`products[${index}][productId]`} value={product.productId} onChange={(e) => handleProductChange(index, e)}>
+                                        <select
+                                            className={`form-select`}
+                                            id={`productId${index}`}
+                                            name="productId"
+                                            value={product.productId}
+                                            onChange={(e) => handleProductChange(index, e)}
+                                        >
                                             <option value="">Select Product</option>
                                             {products.map(prod => (
                                                 <option key={prod.id} value={prod.id}>{prod.name}</option>
                                             ))}
                                         </select>
-                                        {errors[`productId${index}`] && <div className="error-message">{errors[`productId${index}`]}</div>}
+                                        {errors.products[index]?.productId && (
+                                            <div className="error-message">{errors.products[index].productId}</div>
+                                        )}
                                     </div>
 
                                     <div className="col-md-5">
                                         <label htmlFor={`quantity${index}`} className="form-label">Quantity</label>
-                                        <input type="number" className="form-control" id={`quantity${index}`} name={`products[${index}][quantity]`} min="1" value={product.quantity} onChange={(e) => handleProductChange(index, e)} />
-                                        {errors[`quantity${index}`] && <div className="error-message">{errors[`quantity${index}`]}</div>}
+                                        <input
+                                            type="number"
+                                            className={`form-control`}
+                                            id={`quantity${index}`}
+                                            name="quantity"
+                                            min="1"
+                                            value={product.quantity}
+                                            onChange={(e) => handleProductChange(index, e)}
+                                        />
+                                        {errors.products[index]?.quantity && (
+                                            <div className="error-message">{errors.products[index].quantity}</div>
+                                        )}
                                     </div>
 
                                     <div className="col-md-2">
@@ -181,10 +253,11 @@ const UpdateOrder = () => {
 
                     <button type="button" className="btn btn-secondary" onClick={addProduct}>Add Another Product</button>
 
+                    {/* Shipping Details Section */}
                     <div id="shippingDetailsSection" className="mb-4">
                         <h2 className="mt-3">Shipping Details</h2>
                         <div className="row g-5">
-                            <div className="col-md-12">
+                        <div className="col-md-12">
                                 <div className="row gx-2 gy-3">
                                     <div className="col-12 col-sm-6">
                                         <label htmlFor="shippingFirstName" className="form-label d-block">First Name<span className="required">*</span></label>
@@ -225,7 +298,6 @@ const UpdateOrder = () => {
                             </div>
                         </div>
                     </div>
-
                     <div className="mb-3 mt-4">
                         <label htmlFor="shippingCharge" className="form-label">Shipping Charge</label>
                         <input type="number" step="0.01" id="shippingCharge" name="shippingCharge" className="form-control" placeholder="Enter shipping charge" value={formData.shippingCharge} onChange={handleChange} />
@@ -244,6 +316,7 @@ const UpdateOrder = () => {
                         {errors.status && <div className="error-message">{errors.status}</div>}
                     </div>
 
+                    {/* Submit Button */}
                     <button type="submit" className="btn btn-primary" name="add-order">Update Order</button>
                 </form>
             </div>
@@ -251,4 +324,4 @@ const UpdateOrder = () => {
     );
 };
 
-export default UpdateOrder;
+export default AddOrder;

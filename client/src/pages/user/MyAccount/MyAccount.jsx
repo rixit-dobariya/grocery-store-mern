@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import UpdatePasswordForm from './UpdatePasswordForm';
 import UpdateProfileForm from './UpdateProfileForm';
 import WishlistTable from '../../../components/user/WishlistTable';
 import OrdersTable from '../../../components/user/OrdersTable';
+import UpdateEmailForm from './UpdateEmailForm';
+import { useLocation } from "react-router-dom";
+import { toast } from 'react-toastify';
+
 
 const MyAccount = () => {
     const [activeTab, setActiveTab] = useState('my-profile');
-
+    const location = useLocation();
+    const message = location.state?.message;
+    useEffect(() => {
+        if (message) {
+            toast.success(message);
+        }
+    }, []);
+    
     return (
         <div>
             <div className="container ">
@@ -31,6 +42,9 @@ const MyAccount = () => {
                             <div id="my-profile" className={activeTab === 'my-profile' ? '' : 'd-none'}>
                                 <p className="highlight title">Edit Your Profile</p>
                                 <UpdateProfileForm/>
+                                <p className="highlight title">Change Email</p>
+                                <UpdateEmailForm />
+                                <p className="highlight title">Change Password</p>
                                 <UpdatePasswordForm />
                             </div>
                             <div id="all-orders" className={activeTab === 'all-orders' ? '' : 'd-none'}>

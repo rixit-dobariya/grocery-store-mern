@@ -75,7 +75,7 @@ const Contact = () => {
 
 	return (
 		<>
-			<div className="container mt-4">
+			<div className="container sitemap mt-5">
 				<p>
 					<a
 						href="index.php"

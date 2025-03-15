@@ -108,6 +108,7 @@ const AddProduct = () => {
             <h1 className="mt-4">Add Product</h1>
             <ol className="breadcrumb mb-4">
                 <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
+                <li className="breadcrumb-item"><Link to="/admin/products">Products</Link></li>
                 <li className="breadcrumb-item active">Add Product</li>
             </ol>
 

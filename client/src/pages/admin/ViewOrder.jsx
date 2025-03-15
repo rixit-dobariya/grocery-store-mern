@@ -25,24 +25,24 @@ const ViewOrder = () => {
         },
         items: [
             {
-                productId: "P001",
+                productId: "1",
                 productName: "Apple",
                 price: 200,
                 quantity: 2,
-                image: "apple.jpg",
+                image: "/img/items/products/66ee9001ceeaeapple.webp",
             },
             {
-                productId: "P002",
-                productName: "Banana",
+                productId: "2",
+                productName: "Carrots",
                 price: 150,
                 quantity: 3,
-                image: "banana.jpg",
+                image: "/img/items/products/carrots.webp",
             },
         ],
     };
 
     return (
-        <div className="container-fluid px-4">
+        <div>
             <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
                 <div>
                     <h1>View Order</h1>
