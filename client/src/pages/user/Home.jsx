@@ -106,7 +106,6 @@ const Carousel = () => {
                                         <h1 className="text-black" style={{color:"black"}}>PureBite</h1>
                                         <p>
                                             Discover a world of fresh, quality groceries delivered straight to your door. 
-                                            From farm-fresh produce to pantry essentials, we bring convenience and freshness to your daily life.
                                         </p>
                                         <Link to="/shop" className="btn btn-primary text-center align-self-sm-center align-self-md-start">Explore</Link>
                                     </div>
