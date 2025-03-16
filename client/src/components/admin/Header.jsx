@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-const Header = () => {
+const Header = ({toggleSidebar}) => {
     
   const [search, setSearch] = useState("");
   return (
@@ -11,6 +11,7 @@ const Header = () => {
         <button
           className="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0"
           id="sidebarToggle"
+          onClick={toggleSidebar}
         >
           <i className="fas fa-bars"></i>
         </button>

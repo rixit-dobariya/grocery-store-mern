@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-const Sidebar = () => {
+const Sidebar = ({isSidebarToggled}) => {
 
+  
   return (
 
-        <div id="layoutSidenav_nav">
+        <div id="layoutSidenav_nav"  className={isSidebarToggled ? "sb-sidenav-toggled" : ""}>
           <nav className="sb-sidenav accordion sb-sidenav-dark">
             <div className="sb-sidenav-menu">
               <div className="nav">
