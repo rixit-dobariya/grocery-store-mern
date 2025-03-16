@@ -76,7 +76,7 @@ const Header = ({}) => {
 							<div className="d-flex justify-content-end align-items-center flex-sm-row flex-column">
 								<div
 									className="d-flex justify-content-end align-items-center not-hidden"
-									id="SearchSection2"
+									id="SearchSection"
 								>
 									<form
 										className="d-flex justify-content-end"

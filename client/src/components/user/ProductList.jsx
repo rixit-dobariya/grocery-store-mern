@@ -54,11 +54,11 @@ const ProductList = () => {
             {products.map((product) => {
                 const isOutOfStock = product.stock <= 0;
                 return (
-                    <div key={product.id} className="col-md-3 gap col-sm-4 p-2 col-6 mt-2">
+                    <div key={product.id} className="col-lg-3 col-md-4 col-6 gap p-2 mt-2">
                         <div className={`card h-100 ${isOutOfStock ? 'disabled-card' : ''}`}>
                             <div className="product-image text-center">
                                 <Link to="/product">
-                                    <img className="img-thumbnail img-fluid p-4" style={{ height: "225px" }} src={`/img/items/products/${product.image}`} alt={product.name} />
+                                    <img className="img-thumbnail img-fluid p-4" style={{ maxHeight: "225px" }} src={`/img/items/products/${product.image}`} alt={product.name} />
                                 </Link>
                                 <p className="like text-decoration-none" onClick={handleWishlistClick}>
                                     <i className="fa-regular fa-heart"></i>
@@ -66,19 +66,21 @@ const ProductList = () => {
                                 <div className="label">{isOutOfStock ? "Out Of Stock" : `Save ${product.discount}%`}</div>
                             </div>
                             <div className="card-body product-body px-3">
-                                <Link className="category-name category-link" to="/shop">{product.category}</Link>
-                                <Link className="card-title category-link font-black" to="/product">
-                                    <h6 className="not-link text-decoration-none">{product.name}</h6>
-                                </Link>
-                                <div className="rating-section">
-                                    <div className="ratings">
-                                        {[...Array(5)].map((_, index) => (
-                                            <span key={index} className={`fa fa-star ${index < product.rating ? 'checked' : ''}`}></span>
-                                        ))}
+                                <div className="d-flex flex-col gap-0 align-items-sm-start align-items-center ">
+                                    <Link className="category-name category-link" to="/shop">{product.category}</Link>
+                                    <Link className="card-title category-link font-black" to="/product">
+                                        <h6 className="not-link text-decoration-none mb-0">{product.name}</h6>
+                                    </Link>
+                                    <div className="rating-section mb-sm-0 mb-2">
+                                        <div className="ratings">
+                                            {[...Array(5)].map((_, index) => (
+                                                <span key={index} className={`fa fa-star ${index < product.rating ? 'checked' : ''}`}></span>
+                                            ))}
+                                        </div>
+                                        <div className="review-count ps-1">({product.reviews})</div>
                                     </div>
-                                    <div className="review-count ps-1">({product.reviews})</div>
                                 </div>
-                                <div className="d-flex justify-content-between align-items-end mt-sm-2 flex-sm-column flex-row align-items-sm-center flex-lg-row">
+                                <div className="d-flex flex-sm-row flex-column justify-content-sm-between justify-content-center align-items-sm-end mt-sm-2  align-items-center gap-sm-0 gap-2">
                                     <div>
                                         <span className="price">₹{product.price}</span>
                                         <span className="striked-price">₹{product.salePrice}</span>

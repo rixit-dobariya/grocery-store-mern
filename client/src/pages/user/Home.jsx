@@ -19,25 +19,25 @@ const Home = () => {
                 </div> --> */}
             </div>
             <ProductList />
-            <div className="row my-5">
-                <div className="col-md-6 col-6 ps-2 pe-2">
+            <div className="row my-5 gap-md-0 gap-3">
+                <div className="col-md-6 col-12">
                     <div className="border position-relative banner">
                         <img src="img/banners/670ea91823ea4banner-1.png" alt="" className="img-fluid" />
                         <div className="banner-content">
                             <p className="label">Free delivery</p>
-                            <h5 className="heading">Free shipping over ₹5000</h5>
-                            <p className="content">Shop ₹5000 products and get free delivery anywhere</p>
+                            <h5 className="heading my-2">Free shipping over ₹5000</h5>
+                            <p className="content p-0 align-self-start">Shop ₹5000 products and get free delivery anywhere</p>
                             <Link className="primary-btn order-link" to="/shop">Shop Now <i className='fas fa-arrow-right ms-2'></i></Link>
                         </div>
                     </div>
                 </div>
-                <div className="col-md-6 col-6 pe-2 ps-2">
+                <div className="col-md-6 col-12">
                     <div className="border position-relative banner">
                         <img src="img/banners/670ea92192b5bbanner-2.png" alt="" className="img-fluid" />
                         <div className="banner-content">
                             <p className="label">10% off</p>
-                            <h5 className="heading">Organic Food</h5>
-                            <p className="content">Save up to 10% off on your first order</p>
+                            <h5 className="heading my-2">Organic Food</h5>
+                            <p className="cocontent p-0 align-self-startntent">Save up to 10% off on your first order</p>
                             <Link className="primary-btn order-link" to="/shop">Shop Now <i className='fas fa-arrow-right ms-2'></i></Link>
                         </div>
                     </div>

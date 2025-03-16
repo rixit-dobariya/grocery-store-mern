@@ -47,9 +47,9 @@ const handleWishlistClick = (e) => {
       </div>
       {filterVisible && (
         <form onSubmit={handleSubmit} method="post">
-            <div className=" border p-3 row" id="filter-section">
+            <div className=" border p-3 row " id="filter-section">
                 {/* Customer Ratings Section */}
-                <div className="col-6 col-sm-4 col-md-3  mb-2">
+                <div className="col-md-3 col-sm-4 col-6   mb-2">
                     <h6 className="mb-2"><span>Customer Ratings</span></h6>
                     <div>
                         {[4, 3, 2, 1].map((rating) => (
@@ -70,7 +70,7 @@ const handleWishlistClick = (e) => {
                 </div>
 
                 {/* Price Section */}
-                <div className="col-6 col-sm-4 col-md-3  mb-2">
+                <div className="col-md-3 col-sm-4 col-6 mb-2">
                     <h6 className="mb-2"><span>Price</span></h6>
                     <div>
                         {["lt50", "51to100", "101to200", "201to500", "gt500"].map((price) => (
@@ -96,7 +96,7 @@ const handleWishlistClick = (e) => {
                 </div>
 
                 {/* Discount Section */}
-                <div className="col-6 col-sm-4 col-md-3  mb-2">
+                <div className="col-md-3 col-sm-4 col-6 mb-2">
                     <h6 className="mb-2"><span>Discount</span></h6>
                     <div>
                         {["lt5", "5to15", "15to25", "gt25"].map((discount) => (
@@ -120,7 +120,7 @@ const handleWishlistClick = (e) => {
                     </div>
                 </div>
 
-                <div className="col-6 col-sm-4 col-md-3  mb-2 d-flex align-items-end justify-content-end">
+                <div className="col-md-3 col-sm-4 col-6 d-flex align-items-end justify-content-end">
                     <input type="submit" value="Apply" name="filter-submit" className="primary-btn js-filter-btn" />
                 </div>
             </div>
