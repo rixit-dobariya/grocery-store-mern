@@ -27,6 +27,5 @@ export const loadAdminAssets = () => {
   
     // Load JS files
     loadJS("https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js");
-    loadJS(`${publicPath}/admin/js/scripts.js`);
   };
   
