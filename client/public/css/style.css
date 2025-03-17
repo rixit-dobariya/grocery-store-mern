@@ -357,7 +357,9 @@ input[type="checkbox"]:checked {
 .cta-button:hover {
     background-color: #f03e3e;
 }
-
+.dropdown-item:focus{
+    background-color: white !important;
+}
 .image-container img {
     margin-right:-11.6px;
     max-width: 80%;

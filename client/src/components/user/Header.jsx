@@ -31,7 +31,7 @@ const Header = ({}) => {
 
 	const validateSearch = (event) => {
 		event.preventDefault();
-		console.log("Search Query:", query);
+		navigate("/shop");
 	};
 	const handleDoubleClick = () => {
 		setIsLoggedIn((prev) => !prev);

@@ -38,7 +38,7 @@ const AdminLayout = () => {
                 <Sidebar  isSidebarToggled={isSidebarToggled} />
                 <div id="layoutSidenav_content">
                     <main>
-                        <div className="container-fluid px-4">
+                        <div className="container-fluid px-sm-4">
                             <Outlet />
                         </div>
                     </main>

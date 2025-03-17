@@ -41,7 +41,7 @@ const UserRoutes = () => {
             <Route path="order-confirm" element={<OrderConfirmation />} />
             <Route path="order-history" element={<OrderHistory />} />
             <Route path="order" element={<OrderDetails />} />
-            <Route path="wishlist" element={<Wishlist />} />
+          -6+0  <Route path="wishlist" element={<Wishlist />} />
             <Route path="account" element={<MyAccount />} />
             <Route path="verify-email" element={<EmailVerification />}  />
 
