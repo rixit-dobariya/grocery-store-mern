@@ -328,7 +328,6 @@ input[type="checkbox"]:checked {
     flex-direction: column;
     z-index: 2;
     justify-content: center;
-
 }
 
 .hero-content span{

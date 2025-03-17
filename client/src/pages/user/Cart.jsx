@@ -4,9 +4,6 @@ import { Link } from "react-router-dom";
 
 const Cart = () => {
 	const shippingCharge = 50;
-	const subtotal = 500; // Static subtotal
-	const total = subtotal + shippingCharge; // Static total
-
 	const [cart, setCart] = useState([
 		{
 			id: 1,
@@ -17,7 +14,7 @@ const Cart = () => {
 		},
 		{
 			id: 2,
-			name: "Cookie Cake",
+			name: "Cookie Cake", 
 			price: 500,
 			image: "img/items/products/cookiecake.webp",
 			quantity: 1,
@@ -40,6 +37,9 @@ const Cart = () => {
 			)
 		);
 	};
+
+	const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+	const total = subtotal + shippingCharge;
 
 	return (
 		<>
@@ -98,7 +98,7 @@ const CartItem = ({ product, onQuantityChange }) => {
 				/>
 				<div className="d-inline-block">{product.name}</div>
 			</td>
-			<td>₹{product.price}</td>
+			<td className="text-center">₹{product.price}</td>
 			<td>
 				<div className="d-flex justify-content-center qty-mod">
 					<button
@@ -107,7 +107,13 @@ const CartItem = ({ product, onQuantityChange }) => {
 					>
 						-
 					</button>
-					<input type="number" value={product.quantity} readOnly />
+					<input 
+						type="text" 
+						value={product.quantity} 
+						readOnly 
+						className="text-center"
+						style={{width: "50px"}}
+					/>
 					<button
 						className="number-button qty-plus"
 						onClick={() => onQuantityChange(product.id, 1)}
@@ -116,8 +122,8 @@ const CartItem = ({ product, onQuantityChange }) => {
 					</button>
 				</div>
 			</td>
-			<td>₹{product.price * product.quantity}</td>
-			<td>
+			<td className="text-center">₹{product.price * product.quantity}</td>
+			<td className="text-center">
 				<button
 					className="primary-btn delete-btn"
 					onClick={handleDelete}
