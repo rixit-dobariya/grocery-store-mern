@@ -29,8 +29,8 @@ const MyAccount = () => {
             <div className="container">
                 <div className="row">
                     <div className="col-12 col-md-3 p-2 d-flex flex-row flex-sm-column ">
-                        <div className="shadow-sm p-4 d-flex heading text-nowrap">
-                            <ul className="d-flex flex-row flex-md-column gap-3 heading">
+                        <div className="shadow-sm p-4 d-flex heading text-nowrap flex-md-grow-0 flex-grow-1 justify-content-md-start justify-content-center">
+                            <ul className="d-flex flex-row flex-md-column gap-3 heading align-items-start p-0">
                                 <li className={`menu-item js-account mb-0 ${activeTab === 'my-profile' ? 'active' : ''}`} onClick={() => setActiveTab('my-profile')}>My Profile</li>
                                 <li className={`menu-item my-orders-main mb-0 ${activeTab === 'all-orders' ? 'active' : ''}`} onClick={() => setActiveTab('all-orders')}>My Orders</li>
                                 <li className={`menu-item mb-0 ${activeTab === 'my-wishlist' ? 'active' : ''}`} onClick={() => setActiveTab('my-wishlist')}>My Wishlist</li>
@@ -48,10 +48,14 @@ const MyAccount = () => {
                                 <UpdatePasswordForm />
                             </div>
                             <div id="all-orders" className={activeTab === 'all-orders' ? '' : 'd-none'}>
-                                <OrdersTable />
+                                <div className="table-responsive">
+                                    <OrdersTable />
+                                </div>
                             </div>
                             <div id="my-wishlist" className={activeTab === 'my-wishlist' ? '' : 'd-none'}>
-                                <WishlistTable />
+                                <div className="table-responsive">
+                                    <WishlistTable />
+                                </div>
                             </div>
                         </div>
                     </div>
