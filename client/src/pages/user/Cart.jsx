@@ -43,7 +43,7 @@ const Cart = () => {
 
 	return (
 		<>
-				<div className="container sitemap mt-5">
+			<div className="container sitemap mt-5">
 				<p>
 					<Link
 						to="/"
@@ -53,26 +53,28 @@ const Cart = () => {
 					</Link>{" "}
 					Cart
 				</p>
-				<table className="table cart-table text-nowrap mt-5">
-					<thead>
-						<tr className="heading ">
-							<th>Product</th>
-							<th className="text-center">Price</th>
-							<th>Quantity</th>
-							<th className="text-center">Subtotal</th>
-							<th className="text-center">Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						{cart.map((product) => (
-							<CartItem
-								key={product.id}
-								product={product}
-								onQuantityChange={handleQuantityChange}
-							/>
-						))}
-					</tbody>
-				</table>
+				<div className="table-responsive">
+					<table className="table cart-table text-nowrap mt-5">
+						<thead>
+							<tr className="heading text-center">
+								<th className="text-start">Product</th>
+								<th>Price</th>
+								<th>Quantity</th>
+								<th>Subtotal</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{cart.map((product) => (
+								<CartItem
+									key={product.id}
+									product={product}
+									onQuantityChange={handleQuantityChange}
+								/>
+							))}
+						</tbody>
+					</table>
+				</div>
 			</div>
 			<CartActions />
 			<CartSummary
@@ -102,23 +104,27 @@ const CartItem = ({ product, onQuantityChange }) => {
 			<td>
 				<div className="d-flex justify-content-center qty-mod">
 					<button
-						className="number-button qty-minus"
+						className="number-button qty-minus rounded-start"
 						onClick={() => onQuantityChange(product.id, -1)}
 					>
-						-
+						<i className="fas fa-minus"></i>
 					</button>
 					<input 
 						type="text" 
 						value={product.quantity} 
 						readOnly 
-						className="text-center"
-						style={{width: "50px"}}
+						className="text-center border-start-0 border-end-0"
+						style={{
+							width: "60px",
+							border: "1px solid #dee2e6",
+							outline: "none"
+						}}
 					/>
 					<button
-						className="number-button qty-plus"
+						className="number-button qty-plus rounded-end"
 						onClick={() => onQuantityChange(product.id, 1)}
 					>
-						+
+						<i className="fas fa-plus"></i>
 					</button>
 				</div>
 			</td>
