@@ -216,11 +216,15 @@ const Header = ({}) => {
 							</ul>
 
 							<div className="d-flex flex-lg-row flex-column align-items-center  w-100 mt-3 mt-lg-0">
-								<form className="d-flex mb-3 mb-lg-0 me-lg-3 justify-content-center">
+								<form className="d-flex mb-3 mb-lg-0 me-lg-3 justify-content-center" 
+									onSubmit={validateSearch}
+                                >
 									<input
 										className="search-input flex-sm-grow-0 flex-grow-1"
 										type="search"
 										placeholder="Search for items..."
+                                        value={query}
+										onChange={(e) => setQuery(e.target.value)}
 									/>
 									<button className="primary-btn search-button">
 										<i className="fa fa-search" aria-hidden="true"></i>

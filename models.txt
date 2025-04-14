@@ -1,0 +1,31 @@
+admin pending: 
+
+    orders
+    add-order
+    update-order
+
+    view-product
+
+    view-user
+    cart-user
+    add-to-cart
+    remove-from-cart
+
+    manage-my-profile
+    change email 
+    reset password
+
+users:
+
+    home
+    products
+    product details
+
+    login
+    register
+    forget password
+    verify account
+
+    manage-my-profile
+    change email
+    reset password

@@ -1,3 +1,4 @@
+
 export const loadAdminAssets = () => {
     const publicPath = window.location.origin; // Automatically detects the correct base URL
   

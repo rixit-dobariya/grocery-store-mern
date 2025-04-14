@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -56,7 +57,7 @@ const ForgotPassword = () => {
                                 <p className="error">{error}</p>
                                 <input type="submit" value="Send OTP" className="btn-msg w-100 mt-2" />
                                 <div className="mt-4 text-center">
-                                    <a href="login.php" className="dim link ms-2">Back to log in</a>
+                                    <Link to="/login" className="dim link ms-2">Back to log in</Link>
                                 </div>
                             </form>
                         </div>

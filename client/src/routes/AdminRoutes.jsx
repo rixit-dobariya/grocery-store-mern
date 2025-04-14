@@ -42,12 +42,12 @@ const AdminRoutes = () => {
 
         <Route path="banners" element={<Banners />} />
         <Route path="add-banner" element={<AddBanner />} />
-        <Route path="update-banner" element={<UpdateBanner />} />
+        <Route path="update-banner/:id" element={<UpdateBanner />} />
         
         <Route path="users" element={<Users />} />
         <Route path="add-user" element={<AddUser />} />
-        <Route path="update-user" element={<UpdateUser />} />
-        <Route path="user-details" element={<UserDetails />} />
+        <Route path="update-user/:id" element={<UpdateUser />} />
+        <Route path="user-details/:id" element={<UserDetails />} />
 
         <Route path="cart" element={<Cart />} />
         <Route path="add-to-cart" element={<AddToCart />} />
@@ -55,20 +55,20 @@ const AdminRoutes = () => {
 
         <Route path="reviews" element={<Reviews />} />
         <Route path="add-review" element={<AddReview />} />
-        <Route path="update-review" element={<UpdateReview />} />
+        <Route path="update-review/:id" element={<UpdateReview />} />
 
         <Route path="products" element={<Products />} />
         <Route path="add-product" element={<AddProduct />} />
-        <Route path="update-product" element={<UpdateProduct />} />
-        <Route path="view-product" element={<ViewProduct />} />
+        <Route path="update-product/:id" element={<UpdateProduct />} />
+        <Route path="view-product/:id" element={<ViewProduct />} />
 
         <Route path="categories" element={<Categories />} />
         <Route path="add-category" element={<AddCategory />} />
-        <Route path="update-category" element={<UpdateCategory />} />
+        <Route path="update-category/:id" element={<UpdateCategory />} />
 
         <Route path="offers" element={<Offers />} />
         <Route path="add-offer" element={<AddOffer />} />
-        <Route path="update-offer" element={<UpdateOffer />} />
+        <Route path="update-offer/:id" element={<UpdateOffer />} />
 
         <Route path="responses" element={<Responses />} />
 

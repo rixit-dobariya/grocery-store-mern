@@ -6,7 +6,7 @@ import Footer from "../components/admin/Footer";
 import { loadAdminAssets } from "../utils/loadAdminAssets";
 
 const AdminLayout = () => {
-    loadAdminAssets(); // ✅ Load admin assets on component mount
+    loadAdminAssets(); // Load admin assets on component mount
     // Manage sidebar toggle state
     const [isSidebarToggled, setIsSidebarToggled] = useState(
         localStorage.getItem("sb|sidebar-toggle") === "true"
