@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -17,7 +18,6 @@ const Register = () => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
 
-        // Validate and clear errors when corrected
         const error = validateField(name, value);
         setErrors(prevErrors => ({ ...prevErrors, [name]: error }));
     };
@@ -25,7 +25,7 @@ const Register = () => {
     const validateField = (name, value) => {
         let error = null;
         if (!value.trim()) {
-            error = `${name.charAt(0).toUpperCase() + name.slice(1).replace(/([a-z])([A-Z])/g, '$1 $2')} is required`;        
+            error = `${name.charAt(0).toUpperCase() + name.slice(1).replace(/([a-z])([A-Z])/g, '$1 $2')} is required`;
         } else if (name === "firstName" && (value.length < 3 || value.length > 50)) {
             error = "First Name must be between 3 and 50 characters";
         } else if (name === "lastName" && (value.length < 3 || value.length > 50)) {
@@ -42,9 +42,9 @@ const Register = () => {
         return error;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const formErrors = {};
         Object.keys(formData).forEach(field => {
             const error = validateField(field, formData[field]);
@@ -57,7 +57,24 @@ const Register = () => {
         }
 
         setErrors({});
-        toast.success("Account created successfully!");
+        
+        try {
+            const payload = {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                mobile: formData.phone,
+                password: formData.password,
+                authType: "Email"
+            };
+
+            const response = await axios.post("http://localhost:8000/users/register", payload);
+
+            toast.success(response.data.message || "Account created successfully!");
+        } catch (error) {
+            const errorMessage = error || "Registration failed. Please try again.";
+            toast.error(errorMessage);
+        }
     };
 
     return (
@@ -68,7 +85,7 @@ const Register = () => {
                         <div className="mb-3 w-75">
                             <h2 className="mb-3">Create an account</h2>
                             <div className="mb-4">Enter your details below</div>
-                            <form class="login-form" id="registrationForm" onSubmit={handleSubmit}>
+                            <form className="login-form" id="registrationForm" onSubmit={handleSubmit}>
                                 <div className="names d-flex gap-3">
                                     <input 
                                         type="text" 
@@ -88,10 +105,10 @@ const Register = () => {
                                     />
                                 </div>
                                 <div className="d-flex gap-3">
-                                <p className="error mb-3 w-50">{errors.firstName}</p>
-                                <p className="error mb-3 w-50">{errors.lastName}</p>
+                                    <p className="error mb-3 w-50">{errors.firstName}</p>
+                                    <p className="error mb-3 w-50">{errors.lastName}</p>
                                 </div>
-                                
+
                                 <input 
                                     type="text" 
                                     name="email" 
@@ -101,7 +118,7 @@ const Register = () => {
                                     onChange={handleChange} 
                                 />
                                 <p className="error mb-3">{errors.email}</p>
-                                
+
                                 <input 
                                     type="text" 
                                     name="phone" 
@@ -111,7 +128,7 @@ const Register = () => {
                                     onChange={handleChange} 
                                 />
                                 <p className="error mb-3">{errors.phone}</p>
-                                
+
                                 <input 
                                     type="password" 
                                     name="password" 
@@ -121,7 +138,7 @@ const Register = () => {
                                     onChange={handleChange} 
                                 />
                                 <p className="error mb-3">{errors.password}</p>
-                                
+
                                 <input 
                                     type="password" 
                                     name="confirmPassword" 
@@ -131,7 +148,7 @@ const Register = () => {
                                     onChange={handleChange} 
                                 />
                                 <p className="error mb-3">{errors.confirmPassword}</p>
-                                
+
                                 <input type="submit" value="Create an account" className="btn-msg w-100" />
                                 <div className="mt-4 text-center">
                                     Already have an account? <Link to="/login" className="dim link ms-2">Log in</Link>

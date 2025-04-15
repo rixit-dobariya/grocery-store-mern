@@ -9,9 +9,10 @@ router.post("/register", userController.register);
 router.post("/login", userController.login);
 
 // OTP & Password Reset
-router.post("/send-otp", userController.sendOTP);
-router.post("/verify-otp", userController.verifyOTP);
+router.post("/send-otp", userController.sendOtp);
+router.post("/verify-otp", userController.verifyOtp);
 router.post("/reset-password", userController.resetPassword);
+router.get("/verify-email", userController.verifyEmail);
 
 // User CRUD
 router.post("/", upload.single("profilePicture"), userController.createUser);

@@ -4,19 +4,33 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const {uploadImage, deleteImage} = require("../utils/cloudinary")
+const { uploadImage, deleteImage } = require("../utils/cloudinary");
 const JWT_SECRET = process.env.JWT_SECRET;
-let otpStore = {};
+const Otp = require("../models/Otp");
+// Email transporter for sending verification emails
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
-// Register a new user
+// Register a new user with email verification link
 const register = async (req, res) => {
   try {
     const { firstName, lastName, email, mobile, password, authType, firebaseUid } = req.body;
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
+    if (!firstName || !lastName || !email || !mobile || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
       firstName,
@@ -24,15 +38,30 @@ const register = async (req, res) => {
       email,
       mobile,
       password: hashedPassword,
-      authType,
+      authType: authType || "manual",
       firebaseUid,
-      status: "Active",
+      status: "Inactive",
     });
 
     await newUser.save();
-    res.status(201).json({ message: "User registered successfully" });
+
+    // Generate a verification token (JWT or UUID)
+    const verificationToken = jwt.sign({ email: newUser.email }, JWT_SECRET, { expiresIn: "1d" });
+
+    // Construct verification link
+    const verificationLink = `http://localhost:5173/verify-email/${verificationToken}`;
+
+    // Send verification email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: newUser.email,
+      subject: "Verify Your Email",
+      text: `Hi ${firstName},\n\nThank you for registering. Please verify your email by clicking the following link:\n${verificationLink}\n\nThis link will expire in 24 hours.`
+    });
+
+    res.status(201).json({ message: "User registered successfully. Verification email sent." });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: "Registration failed", error: err.message });
   }
 };
 
@@ -57,49 +86,46 @@ const login = async (req, res) => {
 };
 
 // Send OTP
-const sendOTP = async (req, res) => {
-  try {
+const sendOtp = async (req, res) => {
     const { email } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "User not found" });
 
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    otpStore[email] = otp;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ message: "Email not registered" });
 
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+        await Otp.deleteMany({ email });
 
-    await transporter.sendMail({
-      from: process.env.EMAIL,
-      to: email,
-      subject: "Password Reset OTP",
-      text: `Your OTP is ${otp}`,
-    });
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    res.json({ message: "OTP sent" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+        await Otp.create({ email, otp: otpCode });
+
+        await transporter.sendMail({
+            to: email,
+            subject: "Your OTP Code",
+            html: `<h3>Your OTP is: ${otpCode}</h3><p>This code will expire in 5 minutes.</p>`,
+        });
+
+        res.status(200).json({ message: "OTP sent successfully" });
+    } catch (error) {
+        console.error("OTP Send Error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 };
 
-// Verify OTP
-const verifyOTP = async (req, res) => {
-  try {
+const verifyOtp = async (req, res) => {
     const { email, otp } = req.body;
-    if (otpStore[email] && otpStore[email] === parseInt(otp)) {
-      delete otpStore[email];
-      res.json({ message: "OTP verified" });
-    } else {
-      res.status(400).json({ message: "Invalid OTP" });
+
+    try {
+        const validOtp = await Otp.findOne({ email, otp });
+        if (!validOtp) return res.status(400).json({ message: "Invalid or expired OTP" });
+
+        // You can now proceed to password reset
+        await Otp.deleteMany({ email }); // Remove all OTPs after verification
+        res.status(200).json({ message: "OTP verified" });
+    } catch (error) {
+        console.error("OTP Verify Error:", error);
+        res.status(500).json({ message: "Server error" });
     }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
 };
 
 // Reset Password
@@ -119,17 +145,15 @@ const createUser = async (req, res) => {
   try {
     const { firstName, lastName, email, mobile, password, authType, firebaseUid } = req.body;
 
-    // If a profile picture was uploaded, upload it to Cloudinary
     let profilePictureUrl = null;
     if (req.file) {
-      // Use the uploadImage utility to upload to Cloudinary
-      profilePictureUrl = await uploadImage(req.file.path, "profile_pictures"); // "profile_pictures" is the folder name
+      profilePictureUrl = await uploadImage(req.file.path, "profile_pictures");
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: "User already exists" });
 
-    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
       firstName,
@@ -140,11 +164,11 @@ const createUser = async (req, res) => {
       authType,
       firebaseUid,
       status: "Active",
-      profilePicture: profilePictureUrl, // Store the Cloudinary URL
+      profilePicture: profilePictureUrl,
     });
 
     await newUser.save();
-    res.status(201).json(newUser); // Return the created user with profile picture URL
+    res.status(201).json(newUser);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -153,7 +177,6 @@ const createUser = async (req, res) => {
 // Get All Users
 const getAllUsers = async (req, res) => {
   try {
-    // Find all users who are not marked as 'Deleted'
     const users = await User.find({ status: { $ne: "Deleted" } });
     res.json(users);
   } catch (err) {
@@ -177,35 +200,25 @@ const updateUser = async (req, res) => {
     const { firstName, lastName, mobile, status, password } = req.body;
     let { profilePicture } = req.body;
 
-    // If a new profile picture is uploaded, upload it to Cloudinary
     if (req.file) {
-      // If the user already has a profile picture, delete it from Cloudinary
       if (profilePicture) {
-        const publicId = profilePicture.split("/").pop().split(".")[0]; // Extract the publicId from the URL
-        await deleteImage(publicId); // Delete the old image from Cloudinary
+        const publicId = profilePicture.split("/").pop().split(".")[0];
+        await deleteImage(publicId);
       }
-
-      // Upload the new profile picture
-      profilePicture = await uploadImage(req.file.path, "profile_pictures"); // "profile_pictures" is the folder name
+      profilePicture = await uploadImage(req.file.path, "profile_pictures");
     }
 
-    // If a password is provided, hash it before updating the user
     if (password) {
-      const salt = await bcrypt.genSalt(10); // Generate salt for hashing
-      const hashedPassword = await bcrypt.hash(password, salt); // Hash the password
-
-      // Update the password along with other fields
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
       const updateFields = { firstName, lastName, mobile, profilePicture, status, password: hashedPassword };
       const user = await User.findByIdAndUpdate(req.params.id, updateFields, { new: true });
-
-      return res.json(user); // Return the updated user with new password and profile picture URL if uploaded
+      return res.json(user);
     }
 
-    // If no password is provided, update the user without changing the password
     const updateFieldsWithoutPassword = { firstName, lastName, mobile, profilePicture, status };
     const user = await User.findByIdAndUpdate(req.params.id, updateFieldsWithoutPassword, { new: true });
-
-    res.json(user); // Return the updated user without password change
+    res.json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -214,11 +227,10 @@ const updateUser = async (req, res) => {
 // Delete User
 const deleteUser = async (req, res) => {
   try {
-    // Find the user by ID and update the status to "Deleted"
     const user = await User.findByIdAndUpdate(
-      req.params.id, 
-      { status: "Deleted" },  // Mark the user as deleted
-      { new: true }           // To return the updated user
+      req.params.id,
+      { status: "Deleted" },
+      { new: true }
     );
 
     if (!user) {
@@ -230,17 +242,44 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+// Verify Email
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+    if (!token) {
+      return res.status(400).json({ message: "Verification token is required" });
+    }
 
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findOne({ email: decoded.email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.status === "Active") {
+      return res.status(400).json({ message: "Email already verified" });
+    }
+
+    user.status = "Active";
+    await user.save();
+
+    res.json({ message: "Email verified successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Invalid or expired token" });
+  }
+};
 
 module.exports = {
   register,
   login,
-  sendOTP,
-  verifyOTP,
+  sendOtp,
+  verifyOtp,
   resetPassword,
   createUser,
   getAllUsers,
   getUserById,
   updateUser,
-  deleteUser,
+  deleteUser, 
+  verifyEmail,
 };

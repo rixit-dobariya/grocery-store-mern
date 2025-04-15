@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
         const newEmail = e.target.value;
         setEmail(newEmail);
-    
+
         if (!newEmail.trim()) {
             setError('Email is required');
-            return;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
             setError('Enter a valid email address');
-            return;
+        } else {
+            setError('');
         }
-        setError('');
     };
-    
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!email.trim()) {
             setError('Email is required');
             return;
@@ -31,9 +31,24 @@ const ForgotPassword = () => {
             setError('Enter a valid email address');
             return;
         }
-        
+
         setError('');
-        navigate("/verify-otp");
+        setLoading(true);
+
+        try {
+            const response = await axios.post('http://localhost:8000/users/send-otp', { email });
+
+            if (response.data.message === "OTP sent successfully") {
+                // Store email temporarily (for OTP verify page)
+                localStorage.setItem("otpEmail", email);
+                navigate("/verify-otp");
+            }
+        } catch (err) {
+            const msg = err.response?.data?.message || "Something went wrong";
+            setError(msg);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -54,8 +69,13 @@ const ForgotPassword = () => {
                                     value={email} 
                                     onChange={handleChange}
                                 />
-                                <p className="error">{error}</p>
-                                <input type="submit" value="Send OTP" className="btn-msg w-100 mt-2" />
+                                {error && <p className="error">{error}</p>}
+                                <input 
+                                    type="submit" 
+                                    value={loading ? "Sending..." : "Send OTP"} 
+                                    className="btn-msg w-100 mt-2" 
+                                    disabled={loading}
+                                />
                                 <div className="mt-4 text-center">
                                     <Link to="/login" className="dim link ms-2">Back to log in</Link>
                                 </div>

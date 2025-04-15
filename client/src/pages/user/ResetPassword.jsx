@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const ResetPassword = () => {
     const [formData, setFormData] = useState({
@@ -8,6 +9,18 @@ const ResetPassword = () => {
         confirmPassword: ""
     });
     const [errors, setErrors] = useState({});
+    const [email, setEmail] = useState("");  // Store email here
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Retrieve email from localStorage or from URL query params if needed
+        const storedEmail = localStorage.getItem("otpEmail");
+        if (!storedEmail) {
+            toast.error("Email not found. Please request a password reset.");
+            navigate("/forgot-password");  // Redirect to forgot password page if email is not found
+        }
+        setEmail(storedEmail);  // Set email in the state
+    }, [navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,9 +43,9 @@ const ResetPassword = () => {
         return error;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const formErrors = {};
         Object.keys(formData).forEach(field => {
             const error = validateField(field, formData[field]);
@@ -45,7 +58,24 @@ const ResetPassword = () => {
         }
 
         setErrors({});
-        toast.success("Password reset successful!");
+
+        try {
+            // Send the password reset request to the backend
+            const response = await axios.post("http://localhost:8000/users/reset-password", {
+                email,
+                newPassword: formData.newPassword
+            });
+
+            if (response.data.message === "Password updated successfully") {
+                toast.success("Password reset successful!");
+                navigate("/login");  // Redirect to login page after successful password reset
+            } else {
+                toast.error("Failed to reset password. Please try again.");
+            }
+        } catch (err) {
+            const msg = err.response?.data?.message || "Something went wrong. Please try again.";
+            toast.error(msg);
+        }
     };
 
     return (

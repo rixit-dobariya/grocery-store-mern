@@ -1,19 +1,24 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../../contexts/AuthContext"; // Adjust path if needed
 
 const Login = () => {
+    const navigate = useNavigate();
+    const { login: loginUser } = useAuth(); // Destructure login method from useAuth
+
     const [formData, setFormData] = useState({
         email: "",
         password: ""
     });
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
 
-        // Validate and clear errors when corrected
         const error = validateField(name, value);
         setErrors(prevErrors => ({ ...prevErrors, [name]: error }));
     };
@@ -30,9 +35,9 @@ const Login = () => {
         return error;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const formErrors = {};
         Object.keys(formData).forEach(field => {
             const error = validateField(field, formData[field]);
@@ -44,8 +49,22 @@ const Login = () => {
             return;
         }
 
-        setErrors({});
-        toast.success("Login successful!");
+        try {
+            setLoading(true);
+            const res = await axios.post("http://localhost:8000/users/login", formData);
+
+            toast.success("Login successful!");
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("user", JSON.stringify(res.data.user));
+
+            loginUser(res.data.token, res.data.user); // ✅ Update context state
+            navigate("/");
+        } catch (error) {
+            const message = error.response?.data?.message || "Login failed";
+            toast.error(message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -57,32 +76,46 @@ const Login = () => {
                             <h2 className="mb-3">Log in to PureBite</h2>
                             <div className="mb-4 font-black">Enter your details below</div>
                             <form id="loginForm" onSubmit={handleSubmit}>
-                                <input 
-                                    type="text" 
-                                    id="email" 
-                                    name="email" 
-                                    className="w-100 p-2" 
-                                    placeholder="Email" 
-                                    value={formData.email} 
-                                    onChange={handleChange} 
+                                <input
+                                    type="text"
+                                    id="email"
+                                    name="email"
+                                    className="w-100 p-2"
+                                    placeholder="Email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    disabled={loading}
                                 />
-                                 <p className="error mb-4">{errors.email}</p>
-                                <input 
-                                    type="password" 
-                                    id="password" 
-                                    name="password" 
-                                    className="w-100 p-2" 
-                                    placeholder="Password" 
-                                    value={formData.password} 
-                                    onChange={handleChange} 
+                                <p className="error mb-4">{errors.email}</p>
+
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    className="w-100 p-2"
+                                    placeholder="Password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    disabled={loading}
                                 />
-                                 <p className="error mb-4">{errors.password}</p>
+                                <p className="error mb-4">{errors.password}</p>
+
                                 <div className="d-flex w-100 align-items-center">
-                                    <input type="submit" value="Log in" name="login" className="btn-msg" />
+                                    <button type="submit" className="btn-msg" disabled={loading}>
+                                        {loading ? "Logging in..." : "Log in"}
+                                    </button>
                                     <div className="highlight justify-self-end ms-auto">
-                                        <Link to="/forgot-password" className="text-decoration-none link highlight">Forgot password?</Link>
+                                        <Link to="/forgot-password" className="text-decoration-none link highlight">
+                                            Forgot password?
+                                        </Link>
                                     </div>
                                 </div>
+
+                                {loading && (
+                                    <div className="text-center mt-3">
+                                        <span className="spinner-border text-primary" role="status"></span>
+                                    </div>
+                                )}
                             </form>
                         </div>
                     </div>

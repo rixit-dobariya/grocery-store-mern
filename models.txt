@@ -20,12 +20,6 @@ users:
     home
     products
     product details
-
-    login
-    register
-    forget password
-    verify account
-
     manage-my-profile
     change email
     reset password

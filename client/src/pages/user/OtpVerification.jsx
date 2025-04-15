@@ -1,14 +1,20 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const OtpVerification = () => {
-    const email = "user@example.com"; // Static email for display
+    // Get the email from localStorage where it was stored
+    const email = localStorage.getItem("otpEmail");
+
+    // Get the remaining time from localStorage if available
+    const savedTimeLeft = localStorage.getItem("timeLeft") || 60;
     const [otp, setOtp] = useState("");
     const [errors, setErrors] = useState({});
-    const [timeLeft, setTimeLeft] = useState(60);
+    const [timeLeft, setTimeLeft] = useState(parseInt(savedTimeLeft));
     const [resendEnabled, setResendEnabled] = useState(false);
     const navigate = useNavigate();
+
     // Countdown Timer
     useEffect(() => {
         if (timeLeft <= 0) {
@@ -16,7 +22,11 @@ const OtpVerification = () => {
             return;
         }
         const countdown = setInterval(() => {
-            setTimeLeft((prevTime) => prevTime - 1);
+            setTimeLeft((prevTime) => {
+                const newTime = prevTime - 1;
+                localStorage.setItem("timeLeft", newTime);  // Save updated time to localStorage
+                return newTime;
+            });
         }, 1000);
 
         return () => clearInterval(countdown);
@@ -37,21 +47,49 @@ const OtpVerification = () => {
     };
 
     // Handle Form Submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const error = validateOtp(otp);
         if (error) {
             setErrors({ otp: error });
             return;
         }
-        navigate("/reset-password");
+
+        try {
+            const response = await axios.post("http://localhost:8000/users/verify-otp", {
+                email,
+                otp,
+            });
+            if (response.data.message === "OTP verified") {
+                navigate("/reset-password");
+            } else {
+                setErrors({ otp: "Invalid OTP, please try again." });
+            }
+        } catch (err) {
+            const msg = err.response?.data?.message || "Something went wrong. Please try again.";
+            setErrors({ otp: msg });
+        }
     };
 
     // Handle Resend OTP
-    const handleResendOtp = () => {
+    const handleResendOtp = async () => {
         setTimeLeft(60);
         setResendEnabled(false);
-        toast.info("OTP resent successfully!");
+        localStorage.setItem("timeLeft", 60);  // Reset timeLeft in localStorage
+
+        try {
+            // Send OTP resend request to backend
+            const response = await axios.post("http://localhost:8000/users/send-otp", {
+                email,
+            });
+
+            if (response.data.message === "OTP resent successfully") {
+                toast.info("OTP resent successfully!");
+            }
+        } catch (err) {
+            const msg = err.response?.data?.message || "Something went wrong while resending OTP.";
+            toast.error(msg);
+        }
     };
 
     return (
@@ -79,7 +117,7 @@ const OtpVerification = () => {
                                 {timeLeft > 0 ? (
                                     <div className="text-danger">Resend OTP in {timeLeft} seconds</div>
                                 ) : (
-                                    <button onClick={handleResendOtp} className="otp ms-2">
+                                    <button onClick={handleResendOtp} className="otp ms-2" disabled={!resendEnabled}>
                                         Resend OTP
                                     </button>
                                 )}
