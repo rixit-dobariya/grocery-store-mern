@@ -1,34 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
-import { useParams } from 'react-router-dom';
+import { useAuth } from '../../../contexts/AuthContext'; // Adjust path as needed
 
-const UpdateProfileForm = () => {
-    const { id } = useParams(); 
+const UpdateProfileForm = ({ userData, onUpdate }) => {
+    const { setUserData } = useAuth(); // Use context
+    const user = userData;
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
-        phone: '',
-        userImage: null,
+        mobile: '',
+        profilePicture: null,
     });
     const [errors, setErrors] = useState({});
     const [previewImage, setPreviewImage] = useState('/img/users/default-img.png');
+    const [loading, setLoading] = useState(false); // Loading state
 
-    // Fetch user data
-    const fetchUser = async () => {
-        try {
-            const res = await axios.get(`http://localhost:8000/users/${id}`);
-            const { firstName, lastName, phone, userImage } = res.data;
-            setFormData({ firstName, lastName, phone, userImage: null });
-            if (userImage) setPreviewImage(userImage);
-        } catch (err) {
-            toast.error("Failed to load user data");
-        }
-    };
-
+    // Set initial form data from props
     useEffect(() => {
-        fetchUser();
-    }, []);
+        if (user) {
+            const { firstName, lastName, mobile, profilePicture } = user;
+            setFormData({ firstName, lastName, mobile, profilePicture: null });
+            if (profilePicture) setPreviewImage(profilePicture);
+        }
+    }, [user]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -41,11 +36,11 @@ const UpdateProfileForm = () => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const error = validateField('userImage', file);
-            setErrors(prev => ({ ...prev, userImage: error }));
+            const error = validateField('profilePicture', file);
+            setErrors(prev => ({ ...prev, profilePicture: error }));
 
             if (!error) {
-                setFormData(prev => ({ ...prev, userImage: file }));
+                setFormData(prev => ({ ...prev, profilePicture: file }));
                 setPreviewImage(URL.createObjectURL(file));
             }
         }
@@ -54,7 +49,7 @@ const UpdateProfileForm = () => {
     const validateField = (name, value) => {
         let error = null;
         const nameRegex = /^[A-Za-z\s]+$/;
-        const phoneRegex = /^[0-9]{10}$/;
+        const mobileRegex = /^[0-9]{10}$/;
         const maxSize = 1 * 1024 * 1024;
 
         switch (name) {
@@ -64,11 +59,11 @@ const UpdateProfileForm = () => {
                 else if (!nameRegex.test(value)) error = "Only letters are allowed";
                 else if (value.length < 2 || value.length > 30) error = "Must be between 2 and 30 characters";
                 break;
-            case 'phone':
-                if (!value.trim()) error = "Phone number is required";
-                else if (!phoneRegex.test(value)) error = "Phone number must be exactly 10 digits";
+            case 'mobile':
+                if (!value.trim()) error = "mobile number is required";
+                else if (!mobileRegex.test(value)) error = "mobile number must be exactly 10 digits";
                 break;
-            case 'userImage':
+            case 'profilePicture':
                 if (value) {
                     if (!['image/jpeg', 'image/jpg', 'image/png'].includes(value.type))
                         error = "Only JPG, JPEG, and PNG files are allowed";
@@ -100,18 +95,22 @@ const UpdateProfileForm = () => {
         const submitData = new FormData();
         submitData.append('firstName', formData.firstName);
         submitData.append('lastName', formData.lastName);
-        submitData.append('phone', formData.phone);
-        if (formData.userImage) {
-            submitData.append('userImage', formData.userImage);
+        submitData.append('mobile', formData.mobile);
+        submitData.append('status', 'active');
+
+        if (formData.profilePicture) {
+            submitData.append('profilePicture', formData.profilePicture); // Correct field name
         }
 
+        setLoading(true); // Show loading spinner/button
+
         try {
-            await axios.put(`http://localhost:8000/api/users/${id}`, submitData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
-            });
-            toast.success("Profile updated successfully!");
+            const response = await axios.put(`http://localhost:8000/users/${user._id}`, submitData);
+            if (response.data) {
+                toast.success("Profile updated successfully!");
+                
+                onUpdate && onUpdate(); // Refresh data if callback exists
+            }
         } catch (err) {
             toast.error("Failed to update profile");
         }
@@ -148,16 +147,16 @@ const UpdateProfileForm = () => {
                     </div>
 
                     <div className="col-12 col-sm-6 mb-1">
-                        <label className="form-label">Phone</label>
+                        <label className="form-label">Mobile</label>
                         <input
                             type="number"
                             className="w-100"
-                            name="phone"
-                            placeholder="Your Phone*"
-                            value={formData.phone}
+                            name="mobile"
+                            placeholder="Your mobile*"
+                            value={formData.mobile}
                             onChange={handleChange}
                         />
-                        {errors.phone && <p className="error">{errors.phone}</p>}
+                        {errors.mobile && <p className="error">{errors.mobile}</p>}
                     </div>
 
                     <div className="col-md-6">
@@ -165,11 +164,11 @@ const UpdateProfileForm = () => {
                         <input
                             type="file"
                             className="form-control"
-                            name="userImage"
+                            name="profilePicture"
                             accept="image/*"
                             onChange={handleFileChange}
                         />
-                        {errors.userImage && <p className="error">{errors.userImage}</p>}
+                        {errors.profilePicture && <p className="error">{errors.profilePicture}</p>}
                     </div>
 
                     <div className="col-md-6 text-center">
@@ -178,7 +177,7 @@ const UpdateProfileForm = () => {
                 </div>
 
                 <div className="d-flex justify-content-end">
-                    <input type="submit" value="Update Profile" className="btn-msg mt-3" />
+                    <input type="submit" value={loading ? "Loading..." : "Update Profile"} className="btn-msg mt-3" disabled={loading} />
                 </div>
             </form>
 

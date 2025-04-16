@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 const UpdateEmailForm = () => {
     const navigate = useNavigate();
-    const [email, setEmail] = useState('john.doe@example.com');
+    const [email, setEmail] = useState('');
     const [error, setError] = useState(null);
 
     const validateEmail = (value) => {

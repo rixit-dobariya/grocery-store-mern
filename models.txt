@@ -18,8 +18,5 @@ admin pending:
 users:
 
     home
-    products
     product details
-    manage-my-profile
     change email
-    reset password

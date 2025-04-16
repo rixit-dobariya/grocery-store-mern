@@ -1,177 +1,160 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const ProductDetails = () => {
-    const product = {
-        id: 1,
-        name: "1 KG Fresh Apple",
-        image: "66ee9001ceeaeapple.webp",
-        description: "Fresh and juicy apples sourced from organic farms. Perfect for a healthy diet.",
-        salePrice: 500,
-        discount: 10, // 10% discount
-        rating: 4.5,
-        reviewCount: 8,
-    };
-    
-    const reviews = [
-        {
-            id: 1,
-            user: "John Doe",
-            rating: 5,
-            review: "Excellent quality apples! They were fresh and sweet. Will buy again.",
-            date: "March 10, 2025",
-            reply: "Thank you for your feedback, John! We’re glad you liked them.",
-            replier: "Seller",
-            replyDate: "March 10, 2025",
-        },
-        {
-            id: 2,
-            user: "Jane Doe",
-            rating: 4,
-            review: "Good quality but a little expensive.",
-            date: "March 11, 2025",
-            reply: "We appreciate your review, Jane! We ensure premium quality, and pricing reflects that.",
-            replier: "Seller",
-            replyDate: "March 11, 2025",
-        },
-        {
-            id: 3,
-            user: "Michael Smith",
-            rating: 5,
-            review: "Best apples I've had in a while. Crisp and delicious!",
-            date: "March 12, 2025",
-            reply: "Thank you, Michael! Hope to serve you again soon!",
-            replier: "Seller",
-            replyDate: "March 12, 2025",
-        },
-        {
-            id: 4,
-            user: "Emily Johnson",
-            rating: 3,
-            review: "Decent quality, but some apples were a bit bruised.",
-            date: "March 13, 2025",
-            reply: "Sorry for the inconvenience, Emily. We will improve our packaging.",
-            replier: "Seller",
-            replyDate: "March 13, 2025",
-        },
-        {
-            id: 5,
-            user: "David Brown",
-            rating: 4,
-            review: "Very tasty and fresh. Delivery was also quick!",
-            date: "March 14, 2025",
-            reply: "Thank you for your kind words, David!",
-            replier: "Seller",
-            replyDate: "March 14, 2025",
-        },
-    ];
-    
-    
-    const finalPrice = (450).toFixed(2);
+    const { id } = useParams();
+    const [product, setProduct] = useState(null);
+    const [reviews, setReviews] = useState([]);
     const [selectedQuantity, setSelectedQuantity] = useState(null);
     const [review, setReview] = useState({ rating: "", review: "" });
     const [errors, setErrors] = useState({});
-    
+    const [hasPurchased, setHasPurchased] = useState(false);
+    const [hasReviewed, setHasReviewed] = useState(false);
+
+
+    useEffect(() => {
+        fetchProduct();
+        fetchReviews();
+    }, [id]);
+
+    const fetchProduct = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8000/products/${id}`);
+            setProduct(res.data);
+        } catch (err) {
+            console.error("Failed to fetch product", err);
+        }
+    };
+
+    const fetchReviews = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8000/reviews?productId=${id}`);
+            setReviews(res.data);
+        } catch (err) {
+            console.error("Failed to fetch reviews", err);
+        }
+    };
+    useEffect(() => {
+    fetchProduct();
+    fetchReviews();
+    checkPurchaseAndReview();
+}, [id]);
+
+const checkPurchaseAndReview = async () => {
+    try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) return;
+
+        const res = await axios.get(`http://localhost:8000/orders/hasPurchased/${user._id}/${id}`);
+        setHasPurchased(res.data.hasPurchased);
+
+        // Check if user has already reviewed
+        const reviewRes = await axios.get(`http://localhost:8000/reviews?productId=${id}&userId=${user._id}`);
+        setHasReviewed(reviewRes.data.length > 0);
+    } catch (err) {
+        console.error("Error checking purchase/review", err);
+    }
+};
+
+    const finalPrice = product ? (product.salePrice - (product.salePrice * product.discount / 100)).toFixed(2) : "0.00";
+
     const handleQuantityChange = (quantity) => {
         setSelectedQuantity(quantity);
-        setErrors(prevErrors => ({ ...prevErrors, quantity: "" })); // Clear only quantity error
+        setErrors(prev => ({ ...prev, quantity: "" }));
     };
-    
+
     const handleReviewChange = (e) => {
         const { name, value } = e.target;
         setReview({ ...review, [name]: value });
-    
-        // Validate and update errors for the changed field
         const error = validateField(name, value);
-        setErrors(prevErrors => ({ ...prevErrors, [name]: error }));
+        setErrors(prev => ({ ...prev, [name]: error }));
     };
-    
+
     const validateField = (name, value) => {
-        let error = null;
-        
-        if (name === "rating") {
-            if (!value) error = "Rating is required";
-        } else if (name === "review") {
-            if (!value.trim()) error = "Review cannot be empty";
-        } else if (name === "quantity") {
-            if (!value) error = "Please select a quantity";
-        }
-    
-        return error;
+        if (name === "rating" && !value) return "Rating is required";
+        if (name === "review" && !value.trim()) return "Review cannot be empty";
+        if (name === "quantity" && !value) return "Please select a quantity";
+        return null;
     };
-    
+
     const validateReview = () => {
-        let errors = {};
-    
-        errors.rating = validateField("rating", review.rating);
-        errors.review = validateField("review", review.review);
-    
-        // Remove null errors
-        Object.keys(errors).forEach((key) => {
-            if (!errors[key]) delete errors[key];
-        });
-    
-        setErrors(errors);
-        return Object.keys(errors).length === 0;
+        const newErrors = {
+            rating: validateField("rating", review.rating),
+            review: validateField("review", review.review),
+        };
+        Object.keys(newErrors).forEach(key => !newErrors[key] && delete newErrors[key]);
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
-    
-    const submitReview = (e) => {
-        e.preventDefault();
-        if (validateReview()) {
-            toast.success("Review submitted successfully!");
-            setReview({ rating: "", review: "" });
-            setErrors({});
-        }
-    };
-    
+
     const validateQuantity = () => {
-        let errors = {};
-        if(!selectedQuantity) errors.quantity = "Please select a quantity";
-        setErrors(errors);
-        return Object.keys(errors).length === 0;
+        const newErrors = {};
+        if (!selectedQuantity) newErrors.quantity = "Please select a quantity";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
-    
-    const handleCartSubmit = ()=>{
+
+    const handleCartSubmit = () => {
         if (validateQuantity()) {
             toast.success("Product added to cart successfully!");
             setSelectedQuantity(null);
             setErrors({});
         }
+    };
+
+    const submitReview = async (e) => {
+    e.preventDefault();
+    if (!validateReview()) return;
+
+    try {
+        const user = JSON.parse(localStorage.getItem("user")); // adjust key as per your storage key
+        const userId = user?._id;
+
+        if (!userId) {
+            toast.error("You must be logged in to submit a review.");
+            return;
+        }
+
+        await axios.post("http://localhost:8000/reviews", {
+            productId: id,
+            userId,
+            rating: review.rating,
+            review: review.review,
+        });
+
+        toast.success("Review submitted!");
+        setReview({ rating: "", review: "" });
+        fetchReviews();
+    } catch (err) {
+        toast.error("Failed to submit review");
     }
+};
+
+    if (!product) return <div className="text-center py-5">Loading...</div>;
+
     return (
         <div className="container sitemap mt-5">
             <p>
-                <Link
-                    to="/"
-                    className="text-decoration-none dim link"
-                >
-                    Home /
-                </Link>{" "}
-                <Link
-                    to="/shop"
-                    className="text-decoration-none dim link"
-                >
-                    Shop /
-                </Link>{" "}
-                Apple 1KG
+                <Link to="/" className="text-decoration-none dim link">Home /</Link>{" "}
+                <Link to="/shop" className="text-decoration-none dim link">Shop /</Link>{" "}
+                {product.name}
             </p>
 
             <div className="row">
                 <div className="col-md-5">
-                    <img src={`/img/items/products/${product.image}`} alt="Product" className="img-thumbnail p-3 w-100" />
+                    <img src={product.productImage} alt="Product" className="img-thumbnail p-3 w-100" />
                 </div>
                 <div className="col-md-7 px-5 d-flex flex-column align-items-start">
-                    <h4 className="product-title">{product.name}</h4>
+                    <h4 className="product-title">{product.productName}</h4>
                     <div className="rating-section-description">
                         <div className="ratings">
                             {[...Array(5)].map((_, i) => (
-                                <span key={i} className={`fa fa-star ${product.rating > i ? "checked" : ""}`}></span>
-                            ))} 
+                                <span key={i} className={`fa fa-star ${product.averageRating > i ? "checked" : ""}`}></span>
+                            ))}
                         </div>
-                        <div className="review-count ps-1">
-                            ({product.reviewCount})
-                        </div>
+                        <div className="review-count ps-1">({product.totalReviews || 0})</div>
                     </div>
                     <p className="product-description mt-3">{product.description}</p>
                     <div className="row align-items-center mt-3 w-100">
@@ -182,10 +165,8 @@ const ProductDetails = () => {
                         <div className="col-3">Quantity</div>
                         <div className="col-9 d-flex flex-wrap">
                             {[1, 2, 3, 4, 5].map(q => (
-                                <div key={q}  onClick={() => handleQuantityChange(q)} className="quantity">
-                                    <div  className={selectedQuantity === q ? "selected" : ""}>
-                                        {q}
-                                    </div>
+                                <div key={q} onClick={() => handleQuantityChange(q)} className="quantity">
+                                    <div className={selectedQuantity === q ? "selected" : ""}>{q}</div>
                                 </div>
                             ))}
                         </div>
@@ -198,54 +179,68 @@ const ProductDetails = () => {
             <div className="container my-5">
                 <h4 className="mb-4 text-center fw-bold">Customer Reviews</h4>
                 <div className="row">
-                     <div className="col-6">
-                        <form onSubmit={submitReview} className="mb-4">
-                            <div className="mb-3">
-                                <label className="d-block">Rating</label>
-                                <select name="rating" className="form w-100 p-2 rounded" onChange={handleReviewChange} value={review.rating}>
-                                    <option value="">Select rating</option>
-                                    {[1, 2, 3, 4, 5].map(r => (
-                                        <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>
-                                    ))}
-                                </select>
-                                {errors.rating && <p className="text-danger">{errors.rating}</p>}
-                            </div>
-                            <div className="mb-3">
-                                <label className="d-block">Review</label>
-                                <textarea name="review" className="w-100" rows="3" placeholder="Please add your review" onChange={handleReviewChange} value={review.review}></textarea>
-                                {errors.review && <p className="text-danger">{errors.review}</p>}
-                            </div>
-                            <button type="submit" className="primary-btn">Submit Review</button>
-                        </form>
-                    </div>    
+                    <div className="col-6">
+                    {hasPurchased ? (
+    hasReviewed ? (
+        <div className="alert alert-info">You have already reviewed this product.</div>
+    ) : (
+        <form onSubmit={submitReview} className="mb-4">
+            {/* Rating and Review inputs go here (unchanged) */}
+            <div className="mb-3">
+                <label className="d-block">Rating</label>
+                <select name="rating" className="form w-100 p-2 rounded" onChange={handleReviewChange} value={review.rating}>
+                    <option value="">Select rating</option>
+                    {[1, 2, 3, 4, 5].map(r => (
+                        <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>
+                    ))}
+                </select>
+                {errors.rating && <p className="text-danger">{errors.rating}</p>}
+            </div>
+            <div className="mb-3">
+                <label className="d-block">Review</label>
+                <textarea name="review" className="w-100" rows="3" placeholder="Please add your review" onChange={handleReviewChange} value={review.review}></textarea>
+                {errors.review && <p className="text-danger">{errors.review}</p>}
+            </div>
+            <button type="submit" className="primary-btn">Submit Review</button>
+        </form>
+    )
+) : (
+    <div className="alert alert-warning">Only customers who purchased this product can write a review.</div>
+)}
+                    </div>
                     <div className="col-6">
                         <div className="row align-items-stretch">
-                            {reviews.map(r => (
-                                <div key={r.id} className="col-md-6 mb-4">
-                                    <div className="review-card  card h-100">
+                            {reviews && reviews.map(r => (
+                                <div key={r._id} className="col-md-6 mb-4">
+                                    <div className="review-card card h-100">
                                         <div className="card-body">
-                                            <h5 className="card-title">{r.user}</h5>
+                                            <h5 className="card-title">
+                                                {r.userId?.firstName} {r.userId?.lastName}
+                                            </h5>
                                             <h6 className="card-subtitle mb-2 text-warning">
-                                            {[...Array(5)].map((_, i) => (
-                                                <span key={i} className={`fa fa-star ${r.rating > i ? "checked" : ""}`}></span>
-                                            ))}
+                                                {[...Array(5)].map((_, i) => (
+                                                    <span key={i} className={`fa fa-star ${r.rating > i ? "checked" : ""}`}></span>
+                                                ))}
                                             </h6>
                                             <p className="card-text">{r.review}</p>
-                                            <small className="text-muted mb-0">{r.date}</small>
+                                            <small className="text-muted mb-0">
+                                                {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ""}
+                                            </small>
                                         </div>
-                                        {
-                                            r.reply && 
-                                            <div className="card-body ms-5 ">
-                                                <h5 className="card-title">{r.replier}</h5>
+                                        {r.reply && (
+                                            <div className="card-body ms-5">
+                                                <h5 className="card-title">{r.replier || "Seller"}</h5>
                                                 <p className="card-text">{r.reply}</p>
-                                                <small className="text-muted mb-0">{r.replyDate}</small>
+                                                <small className="text-muted mb-0">
+                                                    {r.replyDate ? new Date(r.replyDate).toLocaleDateString() : ""}
+                                                </small>
                                             </div>
-                                        }
+                                        )}
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    </div>   
+                    </div>
                 </div>
             </div>
         </div>
