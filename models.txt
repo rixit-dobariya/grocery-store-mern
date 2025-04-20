@@ -1,5 +1,7 @@
 admin pending: 
 
+    Category Update 
+
     orders
     add-order
     update-order
@@ -14,6 +16,9 @@ admin pending:
     manage-my-profile
     change email 
     reset password
+    
+    reply ma response nthi jato
+
 
 users:
 
