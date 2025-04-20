@@ -139,6 +139,34 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+// Verify Email
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+    if (!token) {
+      return res.status(400).json({ message: "Verification token is required" });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findOne({ email: decoded.email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.status === "Active") {
+      return res.status(400).json({ message: "Email already verified" });
+    }
+
+    user.status = "Active";
+    await user.save();
+
+    res.json({ message: "Email verified successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Invalid or expired token" });
+  }
+};
+
 //update password
 // Reset Password
 const updatePassword = async (req, res) => {
@@ -260,33 +288,6 @@ const deleteUser = async (req, res) => {
     res.json({ message: "User marked as deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-};
-// Verify Email
-const verifyEmail = async (req, res) => {
-  try {
-    const { token } = req.query;
-    if (!token) {
-      return res.status(400).json({ message: "Verification token is required" });
-    }
-
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findOne({ email: decoded.email });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.status === "Active") {
-      return res.status(400).json({ message: "Email already verified" });
-    }
-
-    user.status = "Active";
-    await user.save();
-
-    res.json({ message: "Email verified successfully" });
-  } catch (err) {
-    res.status(500).json({ error: "Invalid or expired token" });
   }
 };
 

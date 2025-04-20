@@ -17,6 +17,7 @@ const offerRoutes = require("./routes/offer.js");
 const productRoutes = require("./routes/product.js");
 const reviewRoutes = require("./routes/review.js");
 const orderRoutes = require("./routes/order.js");
+const wishlistRoutes = require("./routes/wishlist.js");
 
 const app = express()
 
@@ -39,6 +40,7 @@ app.use("/offers",offerRoutes);
 app.use("/products",productRoutes);
 app.use("/reviews",reviewRoutes);
 app.use("/orders",orderRoutes);
+app.use("/wishlist",wishlistRoutes);
 
 
 app.use((_, res) => {

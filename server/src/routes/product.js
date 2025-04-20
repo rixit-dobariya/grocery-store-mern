@@ -6,6 +6,8 @@ const upload = require("../middlewares/multer.middleware");
 router.post("/", upload.single("productImage"), productController.createProduct);
 
 router.get("/", productController.getAllProducts);
+router.get("/trending", productController.getTrendingProducts);
+router.get("/latest", productController.getLatestProducts);
 
 router.get("/:id", productController.getProductById);
 
