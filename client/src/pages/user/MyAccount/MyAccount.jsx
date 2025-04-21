@@ -7,23 +7,20 @@ import OrdersTable from '../../../components/user/OrdersTable';
 import UpdateEmailForm from './UpdateEmailForm';
 import { useLocation } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { useAuth } from '../../../contexts/AuthContext';
+
 
 const MyAccount = () => {
     const [activeTab, setActiveTab] = useState('my-profile');
     const [userData, setUserData] = useState(null);
     const location = useLocation();
     const message = location.state?.message;
+    const { user } = useAuth();
+
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const user = JSON.parse(localStorage.getItem('user'));
-                const token = localStorage.getItem('token');
-                if (!user || !user._id) {
-                    toast.error("User not found in local storage");
-                    return;
-                }
-
                 const response = await axios.get(`http://localhost:8000/users/${user._id}`);
                 setUserData(response.data);
             } catch (error) {
@@ -44,7 +41,7 @@ const MyAccount = () => {
             <div className="container ">
                 <div className="d-flex justify-content-between sitemap mt-5">
                     <p><a href="#" className="text-decoration-none dim link">Home /</a> Account</p>
-                    <p>Welcome! <span className="highlight">{userData?.firstName || 'User'}</span></p>
+                    <p>Welcome! <span className="highlight">{user?.firstName || 'User'}</span></p>
                 </div>
             </div>
             <div className="container">

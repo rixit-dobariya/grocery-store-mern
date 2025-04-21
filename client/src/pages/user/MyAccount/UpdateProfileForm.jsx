@@ -80,41 +80,49 @@ const UpdateProfileForm = ({ userData, onUpdate }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const formErrors = {};
         Object.keys(formData).forEach(field => {
             const error = validateField(field, formData[field]);
             if (error) formErrors[field] = error;
         });
-
+    
         if (Object.values(formErrors).some(err => err)) {
             setErrors(formErrors);
             return;
         }
-
+    
         const submitData = new FormData();
         submitData.append('firstName', formData.firstName);
         submitData.append('lastName', formData.lastName);
         submitData.append('mobile', formData.mobile);
         submitData.append('status', 'active');
-
+    
         if (formData.profilePicture) {
-            submitData.append('profilePicture', formData.profilePicture); // Correct field name
+            submitData.append('profilePicture', formData.profilePicture);
         }
-
-        setLoading(true); // Show loading spinner/button
-
+    
+        setLoading(true);
+    
         try {
             const response = await axios.put(`http://localhost:8000/users/${user._id}`, submitData);
             if (response.data) {
                 toast.success("Profile updated successfully!");
-                
-                onUpdate && onUpdate(); // Refresh data if callback exists
+    
+                // ✅ Update context
+                setUserData(response.data);
+    
+                // ✅ Optional callback to refresh parent data
+                onUpdate && onUpdate();
             }
         } catch (err) {
+            console.error(err);
             toast.error("Failed to update profile");
+        } finally {
+            setLoading(false);
         }
     };
+    
 
     return (
         <div>

@@ -58,7 +58,11 @@ const Login = () => {
             localStorage.setItem("user", JSON.stringify(res.data.user));
 
             loginUser(res.data.token, res.data.user); // ✅ Update context state
-            navigate("/");
+            if (res.data.user.role === "admin") {
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
         } catch (error) {
             const message = error.response?.data?.message || "Login failed";
             toast.error(message);

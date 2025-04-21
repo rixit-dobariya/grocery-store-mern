@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext"; // ✅ Import context
 
 const Header = () => {
-	const { isLoggedIn, logout, user } = useAuth(); // ✅ Grab user from context
+	const { isLoggedIn, logout, user, cartCount, wishlistCount, updateCartCount, updateWishlistCount } = useAuth(); // ✅ Grab new state and methods from context
 	const [query, setQuery] = useState("");
 	const [isNavCollapsed, setIsNavCollapsed] = useState(true);
 	const navigate = useNavigate();
@@ -103,7 +103,7 @@ const Header = () => {
 										aria-expanded="false"
 									>
 										<img
-											src="img/users/default-img.png"
+											src={user?.profilePicture || "img/users/default-img.png"} // Dynamically show profile picture
 											alt="User"
 											style={{
 												width: "35px",
@@ -112,7 +112,7 @@ const Header = () => {
 												marginRight: "8px",
 											}}
 										/>
-										{user?.firstName || "User"} {/* ✅ Show dynamic user name */}
+										{user?.firstName || "User"} {/* Dynamically show user's name */}
 									</a>
 									<ul className="dropdown-menu dropdown-menu-end">
 										<li>
@@ -131,13 +131,13 @@ const Header = () => {
 									<Link to="/wishlist" className="icon-link me-2">
 										<div className="icon position-relative">
 											<i className="fa-regular fa-heart"></i>
-											<span className="badge-class">2</span>
+											<span className="badge-class">{wishlistCount}</span> {/* Dynamically show wishlist count from context */}
 										</div>
 									</Link>
 									<Link to="/cart" className="icon-link">
 										<div className="icon position-relative">
 											<i className="fa-solid fa-cart-shopping"></i>
-											<span className="badge-class">3</span>
+											<span className="badge-class">{cartCount}</span> {/* Dynamically show cart count from context */}
 										</div>
 									</Link>
 								</div>

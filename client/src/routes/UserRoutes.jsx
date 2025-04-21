@@ -20,11 +20,12 @@ import Wishlist from "../pages/user/Wishlist";
 import OrderHistory from "../pages/user/OrderHistory";
 import EmailVerification from "../pages/user/EmailVerification";
 import VerifyEmail from "../pages/user/VerifyEmail";
+import ProtectedRoute from "../components/user/ProtectedRoute";
+import RoleGuard from "../components/user/RoleGuard";
 const UserRoutes = () => {
-  return (
-    
+  return ( 
     <Routes>
-        <Route path="/" element={<UserLayout />}>
+        <Route path="/" element={<RoleGuard><UserLayout /></RoleGuard>}>
             <Route index element={<Home />} />
             <Route path="/verify-email/:token" element={<VerifyEmail />} />
             <Route path="shop" element={<Shop />} />
@@ -37,15 +38,15 @@ const UserRoutes = () => {
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="verify-otp" element={<OtpVerification />} />
             <Route path="reset-password" element={<ResetPassword />} />
-
-            <Route path="cart" element={<Cart />}  />
-            <Route path="checkout" element={<Checkout />} />
-            <Route path="order-confirm" element={<OrderConfirmation />} />
-            <Route path="order-history" element={<OrderHistory />} />
-            <Route path="order" element={<OrderDetails />} />
-          -6+0  <Route path="wishlist" element={<Wishlist />} />
-            <Route path="account" element={<MyAccount />} />
             <Route path="verify-email" element={<EmailVerification />}  />
+
+            <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+            <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+            <Route path="order-confirm" element={<ProtectedRoute><OrderConfirmation /></ProtectedRoute>} />
+            <Route path="order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+            <Route path="order" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>} />
+            <Route path="wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+            <Route path="account" element={<ProtectedRoute><MyAccount /></ProtectedRoute>} />
 
         </Route>
   </Routes>

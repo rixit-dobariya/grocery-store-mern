@@ -58,24 +58,43 @@ const Home = () => {
         <ProductList products={tredingProducts} />
 
         <div className="row my-5 gap-md-0 gap-3">
-          {promoBanners.map((b) => (
-            <div className="col-md-6 col-12" key={b._id}>
-              <div className="border position-relative banner">
-                <img src={b.bannerImage} alt="" className="img-fluid" />
-                <div className="banner-content">
-                  <p className="label">Promo</p>
-                  <h5 className="heading my-2">Special Deal</h5>
-                  <p className="content p-0 align-self-start">
-                    Grab this limited time offer
-                  </p>
-                  <Link className="primary-btn order-link" to="/shop">
-                    Shop Now <i className="fas fa-arrow-right ms-2"></i>
-                  </Link>
+            {promoBanners[0] && (
+                <div className="col-md-6 col-12">
+                <div className="border position-relative banner">
+                    <img src={promoBanners[0].bannerImage} alt="" className="img-fluid" />
+                    <div className="banner-content">
+                    <p className="label">Free Shipping</p>
+                    <h5 className="heading my-2">Special Deal</h5>
+                    <p className="content p-0 align-self-start">
+                        Shipping is free on your first order
+                    </p>
+                    <Link className="primary-btn order-link" to="/shop">
+                        Shop Now <i className="fas fa-arrow-right ms-2"></i>
+                    </Link>
+                    </div>
                 </div>
-              </div>
-            </div>
-          ))}
+                </div>
+            )}
+
+            {promoBanners[1] && (
+                <div className="col-md-6 col-12">
+                <div className="border position-relative banner">
+                    <img src={promoBanners[1].bannerImage} alt="" className="img-fluid" />
+                    <div className="banner-content">
+                    <p className="label">Exclusive Offer</p>
+                    <h5 className="heading my-2">Buy One Get One</h5>
+                    <p className="content p-0 align-self-start">
+                        Get an extra item absolutely free on selected products
+                    </p>
+                    <Link className="primary-btn order-link" to="/shop">
+                        Grab Offer <i className="fas fa-arrow-right ms-2"></i>
+                    </Link>
+                    </div>
+                </div>
+                </div>
+            )}
         </div>
+
 
         <div className="d-flex justify-content-between featured-products">
           <h4>Latest products</h4>
