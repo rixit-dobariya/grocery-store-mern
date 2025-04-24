@@ -42,16 +42,19 @@ exports.addOrder = async (req, res) => {
 
     // Save the order
     const savedOrder = await newOrder.save();
-
+    console.log(products);
     // Create order items for each product
-    const orderItems = products.map(product => {
-      return {
+    const orderItems = await Promise.all(
+    products.map(async (product) => {
+        const foundProduct = await Product.findById(product.productId);
+        return {
         orderId: savedOrder._id,
         productId: product.productId,
         quantity: product.quantity,
-        price: product.price,
-      };
-    });
+        price: foundProduct.salePrice,
+        };
+    })
+    );
 
     // Save order items
     await OrderItem.insertMany(orderItems);

@@ -7,7 +7,6 @@ import { loadAdminAssets } from "../utils/loadAdminAssets";
 import { useAuth } from "../contexts/AuthContext"; // 👈 assuming you have this
 
 const AdminLayout = () => {
-    loadAdminAssets();
 
     // Get auth info
     const { isLoggedIn, user } = useAuth();
@@ -21,6 +20,7 @@ const AdminLayout = () => {
     if (user?.role !== "Admin") {
         return <Navigate to="/" replace />;
     }
+    loadAdminAssets();
 
     const [isSidebarToggled, setIsSidebarToggled] = useState(
         localStorage.getItem("sb|sidebar-toggle") === "true"

@@ -60,8 +60,8 @@ const MyAccount = () => {
                             <div id="my-profile" className={activeTab === 'my-profile' ? '' : 'd-none'}>
                                 <p className="highlight title">Edit Your Profile</p>
                                 {userData && <UpdateProfileForm userData={userData} />}
-                                <p className="highlight title">Change Email</p>
-                                {userData && <UpdateEmailForm email={userData.email} />}
+                                {/* <p className="highlight title">Change Email</p>
+                                {userData && <UpdateEmailForm email={userData.email} />} */}
                                 <p className="highlight title">Change Password</p>
                                 {userData && <UpdatePasswordForm  email={userData.email} />}
                             </div>

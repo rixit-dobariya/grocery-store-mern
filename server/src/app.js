@@ -18,6 +18,7 @@ const productRoutes = require("./routes/product.js");
 const reviewRoutes = require("./routes/review.js");
 const orderRoutes = require("./routes/order.js");
 const wishlistRoutes = require("./routes/wishlist.js");
+const dashboardRoutes = require("./routes/dashboard.js");
 
 const app = express()
 
@@ -41,7 +42,7 @@ app.use("/products",productRoutes);
 app.use("/reviews",reviewRoutes);
 app.use("/orders",orderRoutes);
 app.use("/wishlist",wishlistRoutes);
-
+app.use('/dashboard',dashboardRoutes);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });

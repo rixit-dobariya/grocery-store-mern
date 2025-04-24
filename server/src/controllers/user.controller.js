@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
 // Register a new user with email verification link
 const register = async (req, res) => {
   try {
-    const { firstName, lastName, email, mobile, password, authType, firebaseUid } = req.body;
+    const { firstName, lastName, email, mobile, password, authType } = req.body;
 
     if (!firstName || !lastName || !email || !mobile || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -39,7 +39,6 @@ const register = async (req, res) => {
       mobile,
       password: hashedPassword,
       authType: authType || "manual",
-      firebaseUid,
       status: "Inactive",
     });
 
@@ -172,7 +171,7 @@ const verifyEmail = async (req, res) => {
 const updatePassword = async (req, res) => {
     try {
       const { email, currentPassword, newPassword } = req.body;
-  
+
       const user = await User.findOne({ email });
       if (!user) return res.status(404).json({ message: "User not found" });
   
@@ -181,7 +180,6 @@ const updatePassword = async (req, res) => {
   
       const hashed = await bcrypt.hash(newPassword, 10);
       await User.findOneAndUpdate({ email }, { password: hashed });
-  
       res.json({ message: "Password updated successfully" });
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -225,7 +223,7 @@ const createUser = async (req, res) => {
 // Get All Users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({ status: { $ne: "Deleted" } });
+    const users = await User.find({ status: { $ne: "Deleted" } , role:"User"});
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });

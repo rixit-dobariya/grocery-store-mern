@@ -111,7 +111,13 @@ const Cart = () => {
 };
 
 const CartItem = ({ product, onQuantityChange, onDelete }) => {
-    let discountedPrice = product.salePrice - product.salePrice*product.discount/100;
+    // Ensure salePrice and discount are valid numbers
+    const salePrice = parseFloat(product.productId.salePrice) || 0;  // Default to 0 if invalid
+    const discount = parseFloat(product.productId.discount) || 0;  // Default to 0 if invalid
+
+    // Calculate the discounted price, ensuring we avoid NaN
+    let discountedPrice = salePrice - (salePrice * discount / 100);
+
     return (
         <tr>
             <td className="text-start">
@@ -122,7 +128,7 @@ const CartItem = ({ product, onQuantityChange, onDelete }) => {
                 />
                 <div className="d-inline-block">{product.productId.productName}</div>
             </td>
-            <td className="text-center">₹{discountedPrice}</td>
+            <td className="text-center">₹{discountedPrice.toFixed(2)}</td> {/* Round to 2 decimal places */}
             <td>
                 <div className="d-flex justify-content-center qty-mod">
                     <button
@@ -150,7 +156,7 @@ const CartItem = ({ product, onQuantityChange, onDelete }) => {
                     </button>
                 </div>
             </td>
-            <td className="text-center">₹{discountedPrice * product.quantity}</td>
+            <td className="text-center">₹{(discountedPrice * product.quantity).toFixed(2)}</td> {/* Round to 2 decimal places */}
             <td className="text-center">
                 <button className="primary-btn delete-btn" onClick={() => onDelete(product.productId._id)}>
                     Remove

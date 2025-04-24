@@ -9,9 +9,8 @@ const ProductList = ({ products }) => {
 
   const [wishlist, setWishlist] = useState([]);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [addingToCartId, setAddingToCartId] = useState(null);
 
-  // Fetch wishlist on mount
   useEffect(() => {
     const fetchWishlist = async () => {
       if (!user) return;
@@ -21,7 +20,7 @@ const ProductList = ({ products }) => {
         const productIds = response.data.wishlist?.productIds.map(p => p._id);
         setWishlist(productIds || []);
       } catch (error) {
-        toast.error("Failed to fetch wishlist.");
+        // toast.error("Failed to fetch wishlist.");
       } finally {
         setLoadingWishlist(false);
       }
@@ -64,7 +63,7 @@ const ProductList = ({ products }) => {
       return;
     }
 
-    setIsAddingToCart(true);
+    setAddingToCartId(productId);
     try {
       const response = await axios.post(`http://localhost:8000/cart`, {
         userId: user._id,
@@ -79,7 +78,7 @@ const ProductList = ({ products }) => {
     } catch (error) {
       toast.error("Failed to add product to cart.");
     } finally {
-      setIsAddingToCart(false);
+      setAddingToCartId(null);
     }
   };
 
@@ -100,7 +99,7 @@ const ProductList = ({ products }) => {
                   <Link to={`/product/${product._id}`}>
                     <img
                       className="img-thumbnail img-fluid p-4"
-                      style={{ maxHeight: "225px" }}
+                      style={{ height: "225px" }}
                       src={product.productImage}
                       alt={product.productName}
                     />
@@ -108,14 +107,14 @@ const ProductList = ({ products }) => {
                   <p
                     className="like text-decoration-none position-absolute top-0 end-0 m-2 px-2 py-1 rounded-pill"
                     style={{
-                        cursor: "pointer",
-                        backgroundColor: isInWishlist ? "var(--dark-primary)" : "var(--primary)",
-                        color: "#fff",
+                      cursor: "pointer",
+                      backgroundColor: isInWishlist ? "var(--dark-primary)" : "var(--primary)",
+                      color: "#fff",
                     }}
                     onClick={() => toggleWishlist(product._id)}
-                    >
+                  >
                     <i className={`fa${isInWishlist ? "s" : "r"} fa-heart`}></i>
-                    </p>
+                  </p>
 
                   <div className="label">
                     {isOutOfStock ? "Out Of Stock" : `Save ${product.discount}%`}
@@ -140,9 +139,7 @@ const ProductList = ({ products }) => {
                         {[...Array(5)].map((_, i) => (
                           <span
                             key={i}
-                            className={`fa fa-star ${
-                              product.averageRating > i ? "checked" : ""
-                            }`}
+                            className={`fa fa-star ${product.averageRating > i ? "checked" : ""}`}
                           ></span>
                         ))}
                       </div>
@@ -164,10 +161,10 @@ const ProductList = ({ products }) => {
                       <button
                         className="primary-btn order-link mt-sm-1"
                         onClick={() => handleAddToCartClick(product._id)}
-                        disabled={isAddingToCart}
+                        disabled={addingToCartId === product._id}
                       >
                         <i className="fa-solid fa-cart-shopping pe-2"></i>
-                        {isAddingToCart ? "Adding..." : "Add"}
+                        {addingToCartId === product._id ? "Adding..." : "Add"}
                       </button>
                     )}
                   </div>
