@@ -38,7 +38,7 @@ const register = async (req, res) => {
       email,
       mobile,
       password: hashedPassword,
-      authType: authType || "manual",
+      authType: authType || "Email",
       status: "Inactive",
     });
 
