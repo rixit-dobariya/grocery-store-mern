@@ -297,3 +297,53 @@ exports.deleteProduct = async (req, res) => {
     res.status(400).json({ error: "Failed to delete product" });
   }
 };
+exports.getProductsByCategoryId = async (req, res) => {
+    try {
+      const { categoryId } = req.params;
+  
+      // Step 1: Get all active products for the given category
+      const products = await Product.find({ categoryId, isActive: true });
+  
+      if (products.length === 0) {
+        return res.status(404).json({ error: "No products found in this category" });
+      }
+  
+      const productIds = products.map(p => p._id);
+  
+      // Step 2: Get aggregated review data
+      const reviewStats = await Review.aggregate([
+        { $match: { productId: { $in: productIds } } },
+        {
+          $group: {
+            _id: "$productId",
+            avgRating: { $avg: "$rating" },
+            totalReviews: { $sum: 1 },
+          },
+        },
+      ]);
+  
+      const reviewMap = {};
+      reviewStats.forEach(stat => {
+        reviewMap[stat._id.toString()] = {
+          avgRating: stat.avgRating.toFixed(1),
+          totalReviews: stat.totalReviews,
+        };
+      });
+  
+      // Step 3: Enrich and respond
+      const enriched = products.map(product => {
+        const stats = reviewMap[product._id.toString()] || { avgRating: "0.0", totalReviews: 0 };
+        return {
+          ...product.toObject(),
+          averageRating: stats.avgRating,
+          totalReviews: stats.totalReviews,
+        };
+      });
+  
+      res.status(200).json(enriched);
+    } catch (err) {
+      console.error("Fetch products by category error:", err);
+      res.status(500).json({ error: "Failed to fetch products by category" });
+    }
+  };
+  

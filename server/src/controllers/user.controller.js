@@ -48,7 +48,7 @@ const register = async (req, res) => {
     const verificationToken = jwt.sign({ email: newUser.email }, JWT_SECRET, { expiresIn: "1d" });
 
     // Construct verification link
-    const verificationLink = `http://localhost:5173/verify-email/${verificationToken}`;
+    const verificationLink = `https://grocery-store-mern.onrender.com/verify-email/${verificationToken}`;
 
     // Send verification email
     await transporter.sendMail({
