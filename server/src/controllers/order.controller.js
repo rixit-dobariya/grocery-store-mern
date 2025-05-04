@@ -63,6 +63,9 @@ exports.checkout = async (req, res) => {
       total: totalAmount,
       paymentMode: "Online",
       paymentStatus: "Completed",
+      razorpayOrderId:razorpayOrderId,
+      razorpayPaymentId:razorpayPaymentId,
+      razorpaySignature:razorpaySignature
     });
 
     const savedOrder = await newOrder.save();
