@@ -12,7 +12,7 @@ const isActive = (start, end) => {
   return new Date(start) <= now && now <= new Date(end);
 };
 exports.checkout = async (req, res) => {
-  const { userId, addressId, promoCodeId,razorpayOrderId ,razorpayPaymentId,razorpaySignature} = req.body;
+  const { userId, addressId, promoCodeId,razorpayOrderId ,razorpayPaymentId} = req.body;
 
   try {
     // 1. Get cart by userId
@@ -43,7 +43,7 @@ exports.checkout = async (req, res) => {
         // Distribute discount proportionally
         let totalBase = subtotal;
         cart.items.forEach(item => {
-          const productTotal = item.productId.salePrice * item.quantity;
+          const productTotal = (item.productId.salePrice - item.productId.salePrice * item.productId.discount / 100) * item.quantity;
           const productDiscount = (productTotal / totalBase) * discountAmount;
           discountPerProduct[item.productId._id.toString()] = productDiscount;
         });
@@ -65,7 +65,6 @@ exports.checkout = async (req, res) => {
       paymentStatus: "Completed",
       razorpayOrderId:razorpayOrderId,
       razorpayPaymentId:razorpayPaymentId,
-      razorpaySignature:razorpaySignature
     });
 
     const savedOrder = await newOrder.save();

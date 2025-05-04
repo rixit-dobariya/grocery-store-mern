@@ -18,7 +18,6 @@ const OrderSchema = new mongoose.Schema({
   offerId: { type: mongoose.Schema.Types.ObjectId, ref: "Offer", default: null }, 
   razorpayOrderId: { type: String, default: "" },
   razorpayPaymentId: { type: String, default: "" },
-  razorpaySignature: { type: String, default: "" }, 
 }, { timestamps: true });
 
 module.exports = mongoose.model("Order", OrderSchema);
