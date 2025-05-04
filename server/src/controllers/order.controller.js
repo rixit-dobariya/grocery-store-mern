@@ -4,7 +4,103 @@ const Product = require("../models/Product"); // Assuming path to Product model
 const Address = require("../models/Address"); // Assuming path to Address model
 const User = require("../models/User"); // Assuming path to User model
 const mongoose = require("mongoose");
+const Cart = require('../models/Cart');
+const Offer = require('../models/Offer');
 
+const isActive = (start, end) => {
+  const now = new Date();
+  return new Date(start) <= now && now <= new Date(end);
+};
+exports.checkout = async (req, res) => {
+  const { userId, addressId, promoCodeId,razorpayOrderId ,razorpayPaymentId,razorpaySignature} = req.body;
+
+  try {
+    // 1. Get cart by userId
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
+    if (!cart || cart.items.length === 0) {
+      return res.status(400).json({ message: "Cart is empty or not found." });
+    }
+
+    // 2. Calculate subtotal
+    let subtotal = 0;
+    cart.items.forEach(item => {
+      subtotal += (item.productId.salePrice-item.productId.salePrice*item.productId.discount/100) * item.quantity;
+    });
+
+    // 3. Get offer and apply discount if applicable
+    let discountAmount = 0;
+    let discountPerProduct = {};
+    if (promoCodeId) {
+      const offer = await Offer.findById(promoCodeId);
+      if (!offer || !isActive(offer.startDate, offer.endDate)) {
+        return res.status(400).json({ message: "Invalid or inactive promo code." });
+      }
+
+      if (subtotal >= offer.minimumOrder) {
+        const rawDiscount = subtotal * (offer.discount / 100);
+        discountAmount = Math.min(rawDiscount, offer.maxDiscount);
+
+        // Distribute discount proportionally
+        let totalBase = subtotal;
+        cart.items.forEach(item => {
+          const productTotal = item.productId.salePrice * item.quantity;
+          const productDiscount = (productTotal / totalBase) * discountAmount;
+          discountPerProduct[item.productId._id.toString()] = productDiscount;
+        });
+      }
+    }
+
+    // 4. Create order
+    const shippingCharge = 50;
+    const totalAmount = subtotal - discountAmount + shippingCharge;
+
+    const newOrder = new Order({
+      userId,
+      delAddressId: addressId,
+      orderDate: new Date(),
+      orderStatus: "Pending",
+      shippingCharge,
+      total: totalAmount,
+      paymentMode: "Online",
+      paymentStatus: "Completed",
+    });
+
+    const savedOrder = await newOrder.save();
+
+    // 5. Create OrderItems
+    const orderItems = cart.items.map(item => {
+      const productId = item.productId._id;
+      const quantity = item.quantity;
+      const price = (item.productId.salePrice-item.productId.salePrice*item.productId.discount/100);
+      const discount = discountPerProduct[productId.toString()] || 0;
+
+      return {
+        orderId: savedOrder._id,
+        productId,
+        quantity,
+        price,
+        discount,
+      };
+    });
+
+    await OrderItem.insertMany(orderItems);
+
+    // Optional: Clear cart after checkout
+    cart.items = [];
+    await cart.save();
+
+    res.status(201).json({
+      message: "Checkout completed successfully.",
+      order: savedOrder,
+    });
+
+  } catch (error) {
+    console.error("Checkout error:", error);
+    res.status(500).json({ message: "Server error during checkout." });
+  }
+};
+
+// userid, addressId, promocodeId
 // Add a new order with multiple products
 exports.addOrder = async (req, res) => {
   const { userId, orderDate, orderStatus, delAddressId, shippingCharge, products, paymentMode } = req.body;

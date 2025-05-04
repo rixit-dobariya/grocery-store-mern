@@ -167,7 +167,6 @@ const verifyEmail = async (req, res) => {
 };
 
 //update password
-// Reset Password
 const updatePassword = async (req, res) => {
     try {
       const { email, currentPassword, newPassword } = req.body;
