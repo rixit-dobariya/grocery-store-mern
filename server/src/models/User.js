@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
+  firstName: { type: String, required: false },
+  lastName: { type: String, required: false },
   email: { type: String, required: true, unique: true },
-  mobile: { type: String, required: true }, 
+  mobile: { type: String, required: false }, 
   password: { type: String, required: function() { return this.authType === "Email"; } },
   profilePicture: { type: String, default: null },
   role: { type: String, enum: ["User", "Admin"], default: "User" },
