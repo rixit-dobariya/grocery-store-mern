@@ -313,18 +313,15 @@ const googleLogin = async (req, res) => {
           email: user.email,
           isNewUser: true,
         });
-      }
-      if(user.authType==="Email"){
-
-      }
+        }
       else{
- // Existing user → login
- return res.status(200).json({
-    message: "Login successful",
-    userId: user._id,
-    email: user.email,
-    isNewUser: false,
-  });
+        // Existing user → login
+        return res.status(200).json({
+            message: "Login successful",
+            userId: user._id,
+            email: user.email,
+            isNewUser: false,
+        });
       }
      
   
