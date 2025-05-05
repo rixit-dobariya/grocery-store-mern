@@ -231,31 +231,43 @@ exports.getActiveOrders = async (req, res) => {
 
 // Fetch a single order by ID (include products and address)
 exports.getOrderById = async (req, res) => {
-  const { orderId } = req.params;
-
-  try {
-    const order = await Order.findById(orderId)
-      .populate("userId", "name email")
-      .populate("delAddressId", "street city state zipCode")
-      .populate({
-        path: "products",
-        populate: {
-          path: "productId",
-          select: "name price",
-        },
-      })
-      .exec();
-
-    if (!order) {
-      return res.status(404).json({ message: "Order not found." });
+    const { orderId } = req.params;
+  
+    try {
+      // Fetch the order and populate necessary fields
+      const order = await Order.findById(orderId)
+        .populate("userId")  // Populate user details (including name, email, etc.)
+        .populate("delAddressId")  // Populate delivery address (including street, city, state, etc.)
+        .populate("offerId", "discount minimumOrder maxDiscount startDate endDate")  // Offer applied to the order
+        .exec();
+  
+      // If the order is not found, return 404
+      if (!order) {
+        return res.status(404).json({ message: "Order not found." });
+      }
+  
+      // Fetch all OrderItems related to this order and populate productId for each item
+      const orderItems = await OrderItem.find({ orderId: orderId })
+        .populate("productId","productName productImage") 
+        .select("-orderId -_id") // Populate product details (including name, price, salePrice, etc.)
+        .exec();
+  
+      // Check if no order items are found
+      if (!orderItems || orderItems.length === 0) {
+        return res.status(404).json({ message: "No order items found." });
+      }
+  
+  
+      // Return the populated order with all related data
+      res.status(200).json({ order,orderItems });
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
     }
-
-    res.status(200).json({ order });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+  };
+  
+  
 exports.hasUserPurchasedProduct = async (req, res) => {
     const { userId, productId } = req.params;
   
