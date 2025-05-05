@@ -7,6 +7,7 @@ const upload = require("../middlewares/multer.middleware");
 // Registration & Login
 router.post("/register", userController.register);
 router.post("/login", userController.login);
+router.post("/google-login", userController.googleLogin);
 
 // OTP & Password Reset
 router.post("/send-otp", userController.sendOtp);

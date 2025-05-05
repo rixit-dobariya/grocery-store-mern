@@ -288,6 +288,47 @@ const deleteUser = async (req, res) => {
   }
 };
 
+// POST /api/auth/google-login
+const googleLogin = async (req, res) => {
+    try {
+      const { email, authType } = req.body;
+  
+      if (!email || !authType) {
+        return res.status(400).json({ message: "Email and authType are required" });
+      }
+  
+      // Check if user already exists
+      let user = await User.findOne({ email });
+  
+      if (!user) {
+        // New user → register
+        user = await User.create({
+          email,
+          authType, // Should be 'google'
+        });
+  
+        return res.status(201).json({
+          message: "User registered successfully",
+          userId: user._id,
+          email: user.email,
+          isNewUser: true,
+        });
+      }
+  
+      // Existing user → login
+      return res.status(200).json({
+        message: "Login successful",
+        userId: user._id,
+        email: user.email,
+        isNewUser: false,
+      });
+  
+    } catch (error) {
+      console.error("Google login error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
+  
 module.exports = {
   register,
   login,
@@ -300,5 +341,6 @@ module.exports = {
   updateUser,
   deleteUser, 
   verifyEmail,
-  updatePassword
+  updatePassword,
+  googleLogin
 };

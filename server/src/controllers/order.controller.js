@@ -238,7 +238,7 @@ exports.getOrderById = async (req, res) => {
       const order = await Order.findById(orderId)
         .populate("userId")  // Populate user details (including name, email, etc.)
         .populate("delAddressId")  // Populate delivery address (including street, city, state, etc.)
-        .populate("offerId", "discount minimumOrder maxDiscount startDate endDate")  // Offer applied to the order
+        .populate("offerId")  // Offer applied to the order
         .exec();
   
       // If the order is not found, return 404
@@ -256,7 +256,6 @@ exports.getOrderById = async (req, res) => {
       if (!orderItems || orderItems.length === 0) {
         return res.status(404).json({ message: "No order items found." });
       }
-  
   
       // Return the populated order with all related data
       res.status(200).json({ order,orderItems });
