@@ -65,6 +65,7 @@ exports.checkout = async (req, res) => {
       paymentStatus: "Completed",
       razorpayOrderId:razorpayOrderId,
       razorpayPaymentId:razorpayPaymentId,
+      offerId: promoCodeId,
     });
 
     const savedOrder = await newOrder.save();
