@@ -314,21 +314,45 @@ const googleLogin = async (req, res) => {
           isNewUser: true,
         });
       }
-  
-      // Existing user → login
-      return res.status(200).json({
-        message: "Login successful",
-        userId: user._id,
-        email: user.email,
-        isNewUser: false,
-      });
+      if(user.authType==="Email"){
+
+      }
+      else{
+ // Existing user → login
+ return res.status(200).json({
+    message: "Login successful",
+    userId: user._id,
+    email: user.email,
+    isNewUser: false,
+  });
+      }
+     
   
     } catch (error) {
       console.error("Google login error:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   };
+  const checkEmail = async (req, res) => {
+    try {
+      const { email } = req.body;
   
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+  
+      const user = await User.findOne({ email });
+  
+      if (user) {
+        return res.status(200).json({ exists: true });
+      } else {
+        return res.status(200).json({ exists: false });
+      }
+    } catch (err) {
+      console.error("Check email error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
 module.exports = {
   register,
   login,
@@ -342,5 +366,6 @@ module.exports = {
   deleteUser, 
   verifyEmail,
   updatePassword,
-  googleLogin
+  googleLogin,
+  checkEmail
 };
