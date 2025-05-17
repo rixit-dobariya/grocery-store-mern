@@ -81,6 +81,15 @@ const Checkout = () => {
 		}
 
 		try {
+            const stockCheckRes = await axios.get(
+			`http://localhost:8000/orders/check-stock/${userId}`
+		);
+		if (stockCheckRes.status=== 400 || stockCheckRes.status=== 500) {
+			toast.error(stockCheckRes.data.message);
+            
+			return;
+		}
+
 			// Create Razorpay order via backend
 			const { data } = await axios.post(
 				"http://localhost:8000/payment/create-order",

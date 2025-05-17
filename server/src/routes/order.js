@@ -20,5 +20,6 @@ router.get('/:orderId', orderController.getOrderById);
 router.get("/has-purchased/:userId/:productId", orderController.hasUserPurchasedProduct);
 
 router.get("/user/:userId", orderController.getOrdersByUserId);
+router.get("/check-stock/:userId", orderController.checkStockAvailability);
 
 module.exports = router;

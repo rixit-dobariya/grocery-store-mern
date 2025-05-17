@@ -6,6 +6,33 @@ const User = require("../models/User"); // Assuming path to User model
 const mongoose = require("mongoose");
 const Cart = require('../models/Cart');
 const Offer = require('../models/Offer');
+// Check stock availability based on userId
+exports.checkStockAvailability = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
+
+    if (!cart || cart.items.length === 0) {
+      return res.status(400).json({ message: "Cart is empty or not found." });
+    }
+
+    for (const item of cart.items) {
+      const product = item.productId;
+      if (!product || (product.stock || 0) < item.quantity) {
+        return res.status(400).json({
+          message: `${product.productName}'s ${item.quantity} quantity is not available in stock.`,
+        });
+      }
+    }
+
+    res.status(200).json({ message: "All products are available in sufficient quantity." });
+
+  } catch (error) {
+    console.error("Stock check error:", error);
+    res.status(500).json({ message: "Server error while checking stock." });
+  }
+};
 
 const isActive = (start, end) => {
   const now = new Date();
@@ -87,7 +114,11 @@ exports.checkout = async (req, res) => {
     });
 
     await OrderItem.insertMany(orderItems);
-
+for (const item of cart.items) {
+      const product = item.productId;
+      product.stock = Math.max(0, (product.stock || 0) - item.quantity);
+      await product.save();
+    }
     // Optional: Clear cart after checkout
     cart.items = [];
     await cart.save();

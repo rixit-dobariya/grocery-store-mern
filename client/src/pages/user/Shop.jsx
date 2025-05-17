@@ -107,7 +107,23 @@ export default function Shop() {
               ))}
             </div>
 
-           
+        {/* Clear Filters Button */}
+        <div className="col-md-3 col-sm-4 col-6 mb-2 d-flex align-items-end">
+            <button
+                type="button"
+                className="btn btn-secondary w-100"
+                onClick={() =>
+                    setFilters({
+                        ratings: "",
+                        priceRange: "",
+                        discount: "",
+                        // add other filter fields here if needed
+                    })
+                }
+            >
+                Clear Filters
+            </button>
+        </div>
           </div>
         </form>
       )}
