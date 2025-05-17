@@ -13,7 +13,6 @@ const Checkout = () => {
 	const [userId, setUserId] = useState(null); // e.g. from localStorage or context
 	const [appliedOffer, setAppliedOffer] = useState(null);
 	const [discountAmount, setDiscountAmount] = useState(0);
-
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -179,7 +178,7 @@ const Checkout = () => {
 			<div className="container">
 				<div className="row g-5">
 					<div className="col-md-6">
-						{showBillingForm && <BillingAddressForm />}
+						{showBillingForm && <BillingAddressForm  userId={userId} fetchAddresses={fetchAddresses} /> }
 						<div
 							className="card border-0"
 							style={{ marginTop: "20px" }}
