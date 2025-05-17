@@ -1,4 +1,4 @@
-checkout - validation on change
-fix contact form
-make order details responsive
-product details
+add address
+pagination
+search
+filter

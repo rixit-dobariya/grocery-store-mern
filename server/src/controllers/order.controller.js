@@ -293,8 +293,9 @@ exports.hasUserPurchasedProduct = async (req, res) => {
       console.error("Error checking product purchase:", error);
       res.status(500).json({ message: "Server error" });
     }
-  };
-  exports.getOrdersByUserId = async (req, res) => {
+};
+
+exports.getOrdersByUserId = async (req, res) => {
     const { userId } = req.params;
   
     try {

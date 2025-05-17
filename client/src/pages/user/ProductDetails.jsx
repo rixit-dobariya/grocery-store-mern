@@ -47,12 +47,14 @@ const checkPurchaseAndReview = async () => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (!user) return;
 
-        const res = await axios.get(`http://localhost:8000/orders/hasPurchased/${user._id}/${id}`);
-        setHasPurchased(res.data.hasPurchased);
+        const res = await axios.get(`http://localhost:8000/orders/has-purchased/${user._id}/${id}`);
+        setHasPurchased(res.data.purchased);
 
         // Check if user has already reviewed
         const reviewRes = await axios.get(`http://localhost:8000/reviews?productId=${id}&userId=${user._id}`);
         setHasReviewed(reviewRes.data.length > 0);
+        console.log(res);
+        console.log(reviewRes);
     } catch (err) {
         console.error("Error checking purchase/review", err);
     }
@@ -125,6 +127,7 @@ const checkPurchaseAndReview = async () => {
         });
 
         toast.success("Review submitted!");
+        setHasReviewed(true);
         setReview({ rating: "", review: "" });
         fetchReviews();
     } catch (err) {
