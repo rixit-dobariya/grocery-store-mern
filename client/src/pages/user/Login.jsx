@@ -6,7 +6,7 @@ import { useAuth } from "../../contexts/AuthContext"; // Adjust path if needed
 
 const Login = () => {
     const navigate = useNavigate();
-    const { login: loginUser } = useAuth(); // Destructure login method from useAuth
+    const { login } = useAuth(); // Destructure login method from useAuth
 
     const [formData, setFormData] = useState({
         email: "",
@@ -49,26 +49,34 @@ const Login = () => {
             return;
         }
 
-        try {
-            setLoading(true);
-            const res = await axios.post("http://localhost:8000/users/login", formData);
+try {
+    setLoading(true);
+    const res = await axios.post("http://localhost:8000/users/login", formData);
 
-            toast.success("Login successful!");
-            localStorage.setItem("token", res.data.token);
-            localStorage.setItem("user", JSON.stringify(res.data.user));
+    toast.success("Login successful!");
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+    console.log(res.data.user);
 
-            loginUser(res.data.token, res.data.user); // ✅ Update context state
-            if (res.data.user.role === "admin") {
-                navigate("/admin");
-            } else {
-                navigate("/");
-            }
-        } catch (error) {
-            const message = error.response?.data?.message || "Login failed";
-            toast.error(message);
-        } finally {
-            setLoading(false);
-        }
+    login(res.data.token, res.data.user); // ✅ Update context state
+
+    if (res.data.user.role === "admin") {
+        navigate("/admin");
+    } else {
+        navigate("/");
+    }
+} catch (error) {
+    // 🛑 Extract meaningful error message from response
+    const backendMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Login failed. Please try again.";
+
+    toast.error(backendMessage);
+} finally {
+    setLoading(false);
+}
+
     };
 
     return (

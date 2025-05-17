@@ -70,8 +70,13 @@ const Cart = () => {
             });
     };
 
-    const subtotal = cart.reduce((total, item) => total + (item.productId.price * item.quantity), 0);
-    const total = subtotal + shippingCharge;
+ const subtotal = cart.reduce((total, item) => {
+    const salePrice = parseFloat(item.productId.salePrice) || 0;
+    const discount = parseFloat(item.productId.discount) || 0;
+    const discountedPrice = salePrice - (salePrice * discount / 100);
+    return total + (discountedPrice * item.quantity);
+}, 0);
+const total = subtotal + shippingCharge;
 
     return (
         <div className="container sitemap mt-5">
