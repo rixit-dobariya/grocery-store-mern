@@ -12,7 +12,15 @@ const ProductDetails = () => {
     const [errors, setErrors] = useState({});
     const [hasPurchased, setHasPurchased] = useState(false);
     const [hasReviewed, setHasReviewed] = useState(false);
+  const [addingToCart, setAddingToCart] = useState(false);
+const [userId, setUserId] = useState(null);
 
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser && storedUser._id) {
+      setUserId(storedUser._id);
+    } 
+  }, []);
 
     useEffect(() => {
         fetchProduct();
@@ -98,11 +106,34 @@ const checkPurchaseAndReview = async () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleCartSubmit = () => {
+    const handleCartSubmit = async(productId) => {
         if (validateQuantity()) {
-            toast.success("Product added to cart successfully!");
-            setSelectedQuantity(null);
+            if (!userId) {
+      toast.error("Please log in to add to cart.");
+      return;
+    }
+
+    setAddingToCart(true);
+    try {
+      const response = await axios.post(`http://localhost:8000/cart`, {
+        userId,
+        productId,
+        quantity: selectedQuantity,
+      });
+
+      toast.success("Product added to cart successfully!");
+       setSelectedQuantity(null);
             setErrors({});
+      if (response.data?.items?.length) {
+        updateCartCount(response.data.items.length);
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add to cart.");
+    } finally {
+      setAddingToCart(false);
+    }
+           
         }
     };
 
@@ -175,7 +206,15 @@ const checkPurchaseAndReview = async () => {
                         </div>
                         {errors.quantity && <p className="text-danger">{errors.quantity}</p>}
                     </div>
-                    <button onClick={handleCartSubmit} className="add-to-cart-btn primary-btn w-100 mt-4">Add to Cart</button>
+                   <button 
+  onClick={()=>handleCartSubmit(product._id)} 
+  className="add-to-cart-btn primary-btn w-100 mt-4"
+  disabled={addingToCart}
+>
+  {addingToCart ? "Adding..." : "Add to Cart"}
+</button>
+
+                    
                 </div>
             </div>
 

@@ -151,7 +151,12 @@ const checkOffer = (offer) => {
 				</Link>{" "}
 				Cart
 			</p>
-			<div className="table-responsive">
+			{cart.length === 0 ? (
+							<div className="alert alert-info text-center">
+								Your cart is empty.{" "}
+								<Link to="/shop">Continue Shopping</Link>
+							</div>
+						) : (<div className="table-responsive">
 				<table className="table cart-table text-nowrap mt-5">
 					<thead>
 						<tr className="heading text-center">
@@ -163,12 +168,7 @@ const checkOffer = (offer) => {
 						</tr>
 					</thead>
 					<tbody>
-						{cart.length === 0 ? (
-							<div className="alert alert-info text-center">
-								Your cart is empty.{" "}
-								<Link to="/">Continue Shopping</Link>
-							</div>
-						) : (
+						{
 							cart.map((product) => (
 								<CartItem
 									key={product.productId._id}
@@ -177,10 +177,10 @@ const checkOffer = (offer) => {
 									onDelete={handleDelete}
 								/>
 							))
-						)}
+						}
 					</tbody>
 				</table>
-			</div>
+			</div>)}
 			<CartActions offers={offers} onApply={applyOffer} />
 			<CartSummary
 				subtotal={subtotal}

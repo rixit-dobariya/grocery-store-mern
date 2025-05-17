@@ -3,76 +3,17 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import ProductList from "../../components/user/ProductList";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function Shop() {
   const [filterVisible, setFilterVisible] = useState(false);
-  const [filters, setFilters] = useState({
-    ratings: "",
-    priceRange: "",
-    discount: ""
-  });
-  const [allProducts, setAllProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const { data } = await axios.get("http://localhost:8000/products/");
-        
-        setAllProducts(data);
-        setFilteredProducts(data); // default view
-        console.log(data);
-      } catch (error) {
-        toast.error("Failed to load products");
-        console.error(error);
-      }
-    };
-    fetchProducts();
-  }, []);
+  const {filters, setFilters, filteredProducts } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    let result = [...allProducts];
-
-    if (filters.ratings) {
-      result = result.filter(p => p.rating >= parseInt(filters.ratings));
-    }
-
-    if (filters.priceRange) {
-      result = result.filter(p => {
-        const price = p.costPrice;
-        switch (filters.priceRange) {
-          case "lt50": return price < 50;
-          case "51to100": return price >= 51 && price <= 100;
-          case "101to200": return price >= 101 && price <= 200;
-          case "201to500": return price >= 201 && price <= 500;
-          case "gt500": return price > 500;
-          default: return true;
-        }
-      });
-    }
-
-    if (filters.discount) {
-      result = result.filter(p => {
-        const discount = p.discount;
-        switch (filters.discount) {
-          case "lt5": return discount < 5;
-          case "5to15": return discount >= 5 && discount <= 15;
-          case "15to25": return discount >= 15 && discount <= 25;
-          case "gt25": return discount > 25;
-          default: return true;
-        }
-      });
-    }
-
-    setFilteredProducts(result);
-  };
 
   return (
     <div className="container">
@@ -92,7 +33,7 @@ export default function Shop() {
 
       {/* Filters */}
       {filterVisible && (
-        <form onSubmit={handleSubmit} method="post">
+        <form onSubmit={handleChange} method="post">
           <div className="border p-3 row" id="filter-section">
             {/* Ratings */}
             <div className="col-md-3 col-sm-4 col-6 mb-2">
@@ -166,9 +107,7 @@ export default function Shop() {
               ))}
             </div>
 
-            <div className="col-md-3 d-flex align-items-end justify-content-end">
-              <input type="submit" value="Apply" className="primary-btn js-filter-btn" />
-            </div>
+           
           </div>
         </form>
       )}

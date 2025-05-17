@@ -10,6 +10,16 @@ const ProductList = ({ products }) => {
   const [wishlist, setWishlist] = useState([]);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const [addingToCartId, setAddingToCartId] = useState(null);
+const [currentPage, setCurrentPage] = useState(1);
+const productsPerPage = 8;
+
+const indexOfLastProduct = currentPage * productsPerPage;
+const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+const totalPages = Math.ceil(products.length / productsPerPage);
+
+const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -84,10 +94,10 @@ const ProductList = ({ products }) => {
 
   return (
     <div className="row justify-content-start align-items-stretch">
-      {!products || products.length === 0 ? (
+      {!currentProducts || currentProducts.length === 0 ? (
         <p className="text-center">No products found</p>
       ) : (
-        products.map((product) => {
+        currentProducts.map((product) => {
           const isOutOfStock = product.stock <= 0;
           const discountedPrice = (product.salePrice - (product.salePrice * product.discount) / 100).toFixed(2);
           const isInWishlist = wishlist.includes(product._id);
@@ -174,6 +184,25 @@ const ProductList = ({ products }) => {
           );
         })
       )}
+      {totalPages > 1 && (
+  <nav className="mt-4 d-flex justify-content-center">
+    <ul className="pagination">
+      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+        <button className="page-link" onClick={() => paginate(currentPage - 1)}>Previous</button>
+      </li>
+
+      {[...Array(totalPages)].map((_, i) => (
+        <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+          <button className="page-link" onClick={() => paginate(i + 1)}>{i + 1}</button>
+        </li>
+      ))}
+
+      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+        <button className="page-link" onClick={() => paginate(currentPage + 1)}>Next</button>
+      </li>
+    </ul>
+  </nav>
+)}
     </div>
   );
 };

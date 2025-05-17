@@ -37,6 +37,7 @@ const fetchWishlist = async () => {
       });
       toast.success("Product removed from wishlist!");
       setWishlist(prev => prev.filter(item => item._id !== productId));
+      updateWishlistCount(wishlist.length);
     } catch (error) {
       console.error("Error removing product from wishlist:", error);
       toast.error("Failed to remove product.");

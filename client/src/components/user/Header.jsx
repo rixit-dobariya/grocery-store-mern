@@ -8,7 +8,7 @@ const Header = () => {
 	const [query, setQuery] = useState("");
 	const [isNavCollapsed, setIsNavCollapsed] = useState(true);
 	const navigate = useNavigate();
-
+  const { searchQuery, setSearchQuery } = useAuth();
 	useEffect(() => {
 		const navbarToggler = document.querySelector(".navbar-toggler");
 		const navbarCollapse = document.querySelector(".navbar-collapse");
@@ -46,6 +46,7 @@ const Header = () => {
 		toast.success("You have been logged out successfully!");
 		navigate("/");
 	};
+    
 
 	return (
 		<nav id="navibar" className="navbar navbar-expand-lg navbar-light sticky-top container-fluid">
@@ -84,8 +85,8 @@ const Header = () => {
 								className="search-input flex-sm-grow-0 flex-grow-1"
 								type="search"
 								placeholder="Search for items..."
-								value={query}
-								onChange={(e) => setQuery(e.target.value)}
+								value={searchQuery}
+								 onChange={(e) => {setSearchQuery(e.target.value);}}
 							/>
 							<button className="primary-btn search-button">
 								<i className="fa fa-search" aria-hidden="true"></i>
