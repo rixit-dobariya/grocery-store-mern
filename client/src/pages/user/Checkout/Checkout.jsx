@@ -1,53 +1,163 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BillingAddressForm from "./BillingAddressForm";
 import { Link, useNavigate } from "react-router-dom";
-
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Checkout = () => {
 	const [showBillingForm, setShowBillingForm] = useState(false);
 	const [selectedAddress, setSelectedAddress] = useState(null);
-	const [selectedPayment, setSelectedPayment] = useState(null);
-    const [errors, setErrors] = useState({});
-    const navigate = useNavigate();
+	const [errors, setErrors] = useState({});
+	const [addresses, setAddresses] = useState([]);
+	const [cartItems, setCartItems] = useState([]);
+	const [userId, setUserId] = useState(null); // e.g. from localStorage or context
+	const [appliedOffer, setAppliedOffer] = useState(null);
+	const [discountAmount, setDiscountAmount] = useState(0);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        let validationErrors = {};
-        if (!selectedAddress) validationErrors.address = "Please select an address.";
-        if (!selectedPayment) validationErrors.payment = "Please select a payment method.";
-        
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
-        }
+	const navigate = useNavigate();
 
-        setErrors({});
-        // toast.success("Order placed successfully!", "Success");
+	useEffect(() => {
+		const user = JSON.parse(localStorage.getItem("user"));
+		if (user) {
+			setUserId(user._id);
+			fetchAddresses(user._id);
+			fetchCart(user._id);
+		}
+	}, []);
+	useEffect(() => {
+		const offerData = sessionStorage.getItem("appliedOffer");
+		if (offerData && cartItems.length > 0) {
+			const parsedOffer = JSON.parse(offerData);
+			checkOffer(parsedOffer);
+		}
+	}, [cartItems]);
+	const checkOffer = (offer) => {
+		const subtotal = cartItems.reduce((total, item) => {
+			const salePrice = parseFloat(item.productId.salePrice) || 0;
+			const discount = parseFloat(item.productId.discount) || 0;
+			const discountedPrice = salePrice - (salePrice * discount) / 100;
+			return total + discountedPrice * item.quantity;
+		}, 0);
 
-        navigate(`/order-confirm`);
-    };
+		if (subtotal >= offer.minimumOrder) {
+			setAppliedOffer(offer);
+			const offerDiscount = subtotal * (offer.discount / 100);
+			setDiscountAmount(offerDiscount);
+			sessionStorage.setItem("appliedOffer", JSON.stringify(offer));
+		} else {
+			setAppliedOffer(null);
+		}
+	};
+	const fetchAddresses = async (userId) => {
+		try {
+			const res = await axios.get(
+				`http://localhost:8000/addresses/user/${userId}`
+			);
+			console.log(res);
+			setAddresses(res.data || []);
+		} catch (err) {
+			console.error("Failed to fetch addresses", err);
+		}
+	};
 
-	const addresses = [
-		{
-			id: 1,
-			fullName: "John Doe",
-			phone: "1234567890",
-			address: "123 Main Street",
-			city: "New York",
-			state: "NY",
-			pincode: "10001",
-		},
-		{
-			id: 2,
-			fullName: "Jane Doe",
-			phone: "9876543210",
-			address: "456 Elm Street",
-			city: "Los Angeles",
-			state: "CA",
-			pincode: "90001",
-		},
-	];
+	const fetchCart = async (userId) => {
+		try {
+			const res = await axios.get(`http://localhost:8000/cart/${userId}`);
+			setCartItems(res.data.items || []);
+		} catch (err) {
+			console.error("Failed to fetch cart items", err);
+		}
+	};
 
+	const handleSubmit = async (e, totalPrice) => {
+		e.preventDefault();
+
+		let validationErrors = {};
+		if (!selectedAddress)
+			validationErrors.address = "Please select an address.";
+
+		if (Object.keys(validationErrors).length > 0) {
+			setErrors(validationErrors);
+			return;
+		}
+
+		try {
+			// Create Razorpay order via backend
+			const { data } = await axios.post(
+				"http://localhost:8000/payment/create-order",
+				{
+					amount: totalPrice, // amount in paise
+				}
+			);
+
+			if (!data.success) {
+				toast.error("Failed to create Razorpay order");
+				return;
+			}
+
+			const order = data.order;
+
+			const options = {
+				key: "rzp_test_mEljxG2Cvuw6qT",
+				amount: order.amount,
+				currency: order.currency,
+				name: "Purebite",
+				description: "Order Payment",
+				order_id: order.id,
+				prefill: {
+					name: `${selectedAddress.firstName || ""} ${
+						selectedAddress.lastName || ""
+					}`,
+					email: selectedAddress.email || "",
+					contact: selectedAddress.phone || "",
+				},
+				theme: {
+					color: "#53B175",
+				},
+				handler: async function (response) {
+					try {
+						const confirmRes = await axios.post(
+							"http://localhost:8000/orders/checkout",
+							{
+								userId,
+								addressId: selectedAddress,
+								promoCodeId: appliedOffer?._id || null,
+								razorpayOrderId: response.razorpay_order_id,
+								razorpayPaymentId: response.razorpay_payment_id,
+								razorpaySignature: response.razorpay_signature,
+							}
+						);
+						if (confirmRes.status === 201) {
+							toast.success("Order placed successfully!");
+							
+							navigate("/order-history");
+						} else {
+							toast.error(
+								"Payment succeeded but order confirmation failed."
+							);
+						}
+					} catch (err) {
+						console.clear();
+						console.error(err);
+						toast.error("Failed to confirm payment.");
+					}
+				},
+				modal: {
+					ondismiss: function () {
+						toast.info("Payment cancelled");
+					},
+				},
+			};
+
+			const rzp = new window.Razorpay(options);
+			rzp.open();
+		} catch (error) {
+			console.error(error);
+			toast.error(
+				error.response?.data?.message || "Something went wrong!"
+			);
+		}
+	};
 
 	const toggleBillingForm = () => {
 		setShowBillingForm(!showBillingForm);
@@ -56,16 +166,16 @@ const Checkout = () => {
 	return (
 		<>
 			<div className="container sitemap">
-                <p className="mt-5">
-                    <Link to="/" className="text-decoration-none dim link">
-                        Home /
-                    </Link>
-                    <Link to="/cart" className="text-decoration-none dim link">
-                        Cart /
-                    </Link>
-                    Checkout
-                </p>
-            </div>
+				<p className="mt-5">
+					<Link to="/" className="text-decoration-none dim link">
+						Home /
+					</Link>
+					<Link to="/cart" className="text-decoration-none dim link">
+						Cart /
+					</Link>
+					Checkout
+				</p>
+			</div>
 			<div className="container">
 				<div className="row g-5">
 					<div className="col-md-6">
@@ -74,59 +184,63 @@ const Checkout = () => {
 							className="card border-0"
 							style={{ marginTop: "20px" }}
 						>
-							<div className="row">
-								<form action="" method="post" className="form">
-									<div className="d-flex justify-content-between align-content-center mb-3">
-										<h5 className="mt-2">
-											Select Shipping Address
-										</h5>
-										<div className="d-flex justify-content-end">
-											<button
-												type="button"
-												id="add-new-address"
-												onClick={toggleBillingForm}
-												className="primary-btn js-filter-btn mt-2"
-											>
-												Add New Address
-											</button>
-										</div>
+							<form className="form">
+								<div className="d-flex justify-content-between align-content-center mb-3">
+									<h5 className="mt-2">
+										Select Shipping Address
+									</h5>
+									<div className="d-flex justify-content-end">
+										<button
+											type="button"
+											onClick={toggleBillingForm}
+											className="primary-btn js-filter-btn mt-2"
+										>
+											Add New Address
+										</button>
 									</div>
-									<AddressList 
-                                        addresses={addresses} 
-                                        setSelectedAddress={setSelectedAddress} 
-                                        selectedAddress={selectedAddress} 
-                                        errors={errors}
-                                        setErrors={setErrors}
-                                    />
-                                    {errors.address && <p className="text-danger">{errors.address}</p>}
-                                </form>
-							</div>
+								</div>
+								<AddressList
+									addresses={addresses}
+									setSelectedAddress={setSelectedAddress}
+									selectedAddress={selectedAddress}
+									errors={errors}
+									setErrors={setErrors}
+								/>
+								{errors.address && (
+									<p className="text-danger">
+										{errors.address}
+									</p>
+								)}
+							</form>
 						</div>
 					</div>
-					<CheckoutSummary 
-                        setSelectedPayment = {setSelectedPayment} 
-                        selectedPayment={selectedPayment}
-                        handleSubmit={handleSubmit}
-                        errors={errors}
-                        setErrors={setErrors}
-                     />
+					<CheckoutSummary
+						handleSubmit={handleSubmit}
+						errors={errors}
+						setErrors={setErrors}
+						cartItems={cartItems}
+						discountAmount={discountAmount}
+					/>
 				</div>
 			</div>
 		</>
 	);
 };
-
-const AddressList = ({ addresses,setSelectedAddress,selectedAddress, errors, setErrors }) => {
-
+const AddressList = ({
+	addresses,
+	setSelectedAddress,
+	selectedAddress,
+	errors,
+	setErrors,
+}) => {
 	const handleAddressChange = (event) => {
-        const selectedAddressId = Number(event.target.value);
+		const selectedAddressId = event.target.value;
 		setSelectedAddress(selectedAddressId); // Convert to number if needed
-        if(selectedAddressId < 0){
-            setErrors({...errors, address:"Please select an address"});
-        }
-        else{
-            setErrors({...errors, address:""});
-        }
+		if (selectedAddressId == null) {
+			setErrors({ ...errors, address: "Please select an address" });
+		} else {
+			setErrors({ ...errors, address: "" });
+		}
 	};
 
 	return (
@@ -135,10 +249,12 @@ const AddressList = ({ addresses,setSelectedAddress,selectedAddress, errors, set
 				const fullAddress = `${address.fullName},\n${address.phone},\n${address.address},\n${address.city},\n${address.state} - ${address.pincode}`;
 
 				return (
-					<div className="col-md-6 mb-4" key={address.id}>
+					<div className="col-md-6 mb-4" key={address._id}>
 						<div
 							className={`border p-3 h-100 d-flex flex-column justify-content-between address-box ${
-								selectedAddress === address.id ? "selected" : ""
+								selectedAddress === address._id
+									? "selected"
+									: ""
 							}`}
 						>
 							<label
@@ -148,9 +264,9 @@ const AddressList = ({ addresses,setSelectedAddress,selectedAddress, errors, set
 								<input
 									type="radio"
 									name="add"
-									value={address.id}
+									value={address._id}
 									className="d-none address-radio"
-									checked={selectedAddress === address.id}
+									checked={selectedAddress === address._id}
 									onChange={handleAddressChange}
 								/>
 								<span style={{ whiteSpace: "pre-line" }}>
@@ -165,66 +281,48 @@ const AddressList = ({ addresses,setSelectedAddress,selectedAddress, errors, set
 	);
 };
 
-const CheckoutSummary = ({setSelectedPayment, selectedPayment, handleSubmit, errors, setErrors}) => {
-
-	// Static product data
-	const products = [
-		{
-			id: 1,
-			productName: "1 KG Apple",
-			price: 500,
-			productImage: "img/items/products/66ee9001ceeaeapple.webp",
-			quantity: 1,
-		},
-		{
-			id: 2,
-			productName: "Cookie Cake",
-			price: 500,
-			productImage: "img/items/products/cookiecake.webp",
-			quantity: 1,
-		},
-		{
-			id: 3,
-			productName: "Oreo",
-			price: 500,
-			productImage: "img/items/products/oreo.webp",
-			quantity: 1,
-		},
-	];
-
-	// Static pricing details
-	const subtotal = 1299.48;
-	const shippingCharge = 50.0;
-	const discountAmount = 100.0;
+const CheckoutSummary = ({
+	handleSubmit,
+	errors,
+	setErrors,
+	cartItems,
+	discountAmount,
+}) => {
+	const subtotal = cartItems.reduce(
+		(sum, item) =>
+			sum +
+			item.productId.salePrice *
+				(1 - item.productId.discount / 100) *
+				item.quantity,
+		0
+	);
+	const shippingCharge = 50;
 	const total = subtotal + shippingCharge - discountAmount;
-
-	const handlePaymentChange = (event) => {
-		setSelectedPayment(event.target.value);
-        if(event.target.value ===""){
-            setErrors({...errors, payment:"Please select a payment method"});
-        }
-        else{
-            setErrors({...errors, payment:""});
-        }
-	};
 
 	return (
 		<div className="col-md-6 font-black checkout">
 			<div className="mb-2">
-				{products.map((product) => (
+				{cartItems.map((item) => (
 					<div
 						className="d-flex align-items-center p-2"
-						key={product.id}
+						key={item._id}
 					>
 						<img
-							src={product.productImage}
+							src={item.productId.productImage}
 							className="checkout-image h-100"
-							alt={product.productName}
+							alt={item.productId.productName}
 						/>
 						<div className="item-name ms-2">
-							{product.productName} x {product.quantity}
+							{item.productId.productName} x {item.quantity}
 						</div>
-						<div className="price">₹{product.price.toFixed(2)}</div>
+						<div className="price">
+							₹
+							{(
+								item.productId.salePrice *
+								(1 - item.productId.discount / 100) *
+								item.quantity
+							).toFixed(2)}
+						</div>
 					</div>
 				))}
 			</div>
@@ -235,7 +333,6 @@ const CheckoutSummary = ({setSelectedPayment, selectedPayment, handleSubmit, err
 			</div>
 
 			<div className="my-2 line"></div>
-
 			<div className="d-flex align-items-center p-2">
 				<div>Shipping:</div>
 				<div className="price">₹{shippingCharge.toFixed(2)}</div>
@@ -244,7 +341,7 @@ const CheckoutSummary = ({setSelectedPayment, selectedPayment, handleSubmit, err
 			{discountAmount > 0 && (
 				<>
 					<div className="my-2 line"></div>
-					<div className="d-flex align-items-center p-2">
+					<div className="d-flex align-items-center p-2 text-danger">
 						<div>Discount:</div>
 						<div className="price">
 							-₹{discountAmount.toFixed(2)}
@@ -254,50 +351,16 @@ const CheckoutSummary = ({setSelectedPayment, selectedPayment, handleSubmit, err
 			)}
 
 			<div className="my-2 line"></div>
-
 			<div className="d-flex align-items-center p-2">
 				<div>Total:</div>
 				<div className="price">₹{total.toFixed(2)}</div>
 			</div>
 
-			<div className="my-2 line"></div>
-
-			<div className="p-2">
-				<div className="mb-1">Payment Mode:</div>
-				<div className="mb-1">
-					<label>
-						<input
-							type="radio"
-							name="pay-mode"
-							value="COD"
-							checked={selectedPayment === "COD"}
-							onChange={handlePaymentChange}
-							className="me-1"
-						/>
-						Cash On Delivery
-					</label>
-				</div>
-				<div>
-					<label>
-						<input
-							type="radio"
-							name="pay-mode"
-							value="Online"
-							checked={selectedPayment === "Online"}
-							onChange={handlePaymentChange}
-							className="me-1"
-						/>
-						Online
-					</label>
-				</div>
-			</div>
-            {errors.payment && <p className="text-danger">{errors.payment}</p>}
-			<div id="payModeError" className="error"></div>
-
+			{errors.payment && <p className="text-danger">{errors.payment}</p>}
 			<div className="d-flex justify-content-end">
 				<button
 					className="btn-msg mt-2"
-					onClick={handleSubmit}
+					onClick={(e) => handleSubmit(e, total)}
 				>
 					Place Order
 				</button>
@@ -305,4 +368,5 @@ const CheckoutSummary = ({setSelectedPayment, selectedPayment, handleSubmit, err
 		</div>
 	);
 };
+
 export default Checkout;

@@ -1,114 +1,126 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 import { toast } from "react-toastify";
 
-const OrderDetails = ({ order = {
-    orderId: "123456",
-    status: "Pending",
-    placedOn: "01/03/2025",
-    total: 1500,
-    shippingCharge: 50,
-    firstName: "John",
-    lastName: "Doe",
-    mobileNo: "9876543210",
-    email: "johndoe@example.com",
-    paymentMode: "Credit Card"
-}, billingAddress={
-    fullName: "John Doe",
-    address: "123 Baker Street",
-    city: "New York",
-    state: "NY",
-    pincode: "10001",
-    phone: "9876543210"
-}, products=[
-    {
-        productId: 1,
-        productName: "Apple 1 KG",
-        productImage: "img/items/products/66ee9001ceeaeapple.webp",
-        quantity: 2,
-        price: 500
-    },
-    {
-        productId: 2,
-        productName: "Cookie Cake",
-        productImage: "img/items/products/cookiecake.webp",
-        quantity: 1,
-        price: 500
-    }
-] }) => {
+const OrderDetails = () => {
+    const { orderId } = useParams();
+    const [order, setOrder] = useState(null);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchOrderDetails = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8000/orders/${orderId}`);
+            const data = res.data;
+
+            const {
+                order,
+                orderItems: orderedProducts // assumes API sends this
+            } = data;
+
+            setOrder(order);
+            setProducts(orderedProducts || []);
+        } catch (error) {
+            console.error("Failed to fetch order:", error);
+            toast.error("Failed to load order details.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchOrderDetails();
+        
+    }, [orderId]);
+
     const handleReorder = () => {
         toast.success("Re-order placed successfully!");
     };
+
+    if (loading) return <div className="text-center my-5">Loading...</div>;
+    if (!order) return <div className="text-center my-5">Order not found.</div>;
+
+    const customer = order.userId;
+    const address = order.delAddressId;
+const subtotalFromProducts = products.reduce((acc, product) => {
+    const price = parseFloat(product.price["$numberDecimal"]);
+    return acc + price * product.quantity;
+}, 0);
+
+const orderTotal = parseFloat(order.total["$numberDecimal"]);
+const shippingCharge = parseFloat(order.shippingCharge["$numberDecimal"]);
+const actualSubtotal = orderTotal - shippingCharge;
+
+const discount = subtotalFromProducts - actualSubtotal;
+
     return (
         <div className="container sitemap">
             <p className="my-5">
                 <Link to="/" className="text-decoration-none dim link">Home /</Link>
                 <Link to="/order-history" className="text-decoration-none dim link">Orders /</Link>
-                Order# {order.orderId}
+                Order# {order._id}
             </p>
+
             <div className="row order-border p-3 mb-4 m-1">
                 <div className="col-6">
-                    <h4 className="mb-2">Order# {order.orderId}</h4>
-                    <div className="order-status mb-3">{order.status}</div>
-                    <div className="order-date">Placed on: {order.placedOn}</div>
+                    <h4 className="mb-2">Order# {order._id}</h4>
+                    <div className="order-status mb-3">{order.orderStatus}</div>
+                    <div className="order-date">Placed on: {new Date(order.orderDate).toLocaleDateString()}</div>
                 </div>
-                <div className="col-6 d-flex justify-content-end align-items-start">
-                    <button className="primary-btn" onClick={handleReorder}>Re-order</button>
-                </div>
+              
             </div>
+
             <div className="row align-items-stretch mb-4 gap-md-0 m-1">
-                <div className="col-md-4 col-sm-6 col-12 ps-md-0 mb-2">
+                <div className=" col-sm-6 col-12 ps-md-0 mb-2">
                     <div className="order-border p-3 h-100">
                         <h5 className="mb-3">Customer & Order</h5>
                         <div className="row customer-details">
                             <div className="col-4">
-                                <p>Name</p>
-                                <p>Phone</p>
-                                <p>Email</p>
-                                <p>Payment Terms</p>
+                                <p>Name</p><p>Phone</p><p>Email</p><p>Payment Terms</p>
                             </div>
                             <div className="col-1">
-                                <p>:</p>
-                                <p>:</p>
-                                <p>:</p>
-                                <p>:</p>
+                                <p>:</p><p>:</p><p>:</p><p>:</p>
                             </div>
                             <div className="col-7">
-                                <p>{order.firstName} {order.lastName}</p>
-                                <p>+91 {order.mobileNo}</p>
-                                <p className="text-break">{order.email}</p>
+                                <p>{customer.firstName} {customer.lastName}</p>
+                                <p>+91 {customer.mobile}</p>
+                                <p className="text-break">{customer.email}</p>
                                 <p>{order.paymentMode}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="col-md-4 col-sm-6 col-12 mb-2">
+
+                <div className=" col-sm-6 col-12 mb-2">
                     <div className="order-border p-3">
                         <h5 className="mb-3">Shipping Address</h5>
                         <address className="address-book">
-                            <p>{billingAddress.fullName}</p>
-                            <p>Street: {billingAddress.address}</p>
-                            <p>City: {billingAddress.city}</p>
-                            <p>State: {billingAddress.state}</p>
-                            <p>Pin code: {billingAddress.pincode}</p>
-                            <p>Phone Number: +91 {billingAddress.phone}</p>
+                            <p>{address.fullName}</p>
+                            <p>Street: {address.address}</p>
+                            <p>City: {address.city}</p>
+                            <p>State: {address.state}</p>
+                            <p>Pin code: {address.pincode}</p>
+                            <p>Phone Number: +91 {address.phone}</p>
                         </address>
                     </div>
                 </div>
-                <div className="col-md-4 col-sm-6 col-12 mb-2">
+
+                {/* <div className="col-md-4 col-sm-6 col-12 mb-2">
                     <div className="order-border p-3">
                         <h5 className="mb-3">Billing Address</h5>
                         <address className="address-book">
-                            <p>{billingAddress.fullName}</p>
-                            <p>Street: {billingAddress.address}</p>
-                            <p>City: {billingAddress.city}</p>
-                            <p>State: {billingAddress.state}</p>
-                            <p>Pin code: {billingAddress.pincode}</p>
-                            <p>Phone Number: +91 {billingAddress.phone}</p>
+                            <p>{address.fullName}</p>
+                            <p>Street: {address.address}</p>
+                            <p>City: {address.city}</p>
+                            <p>State: {address.state}</p>
+                            <p>Pin code: {address.pincode}</p>
+                            <p>Phone Number: +91 {address.phone}</p>
                         </address>
                     </div>
-                </div>
+                </div> */}
             </div>
+
             <div className="row order-border py-4 mb-4 order-item-list m-1 m-md-0 cart-table">
                 <h5 className="mb-3">Items ordered</h5>
                 <div className="row py-3 order-item-list-header mx-0 my-2 text-nowrap">
@@ -121,33 +133,43 @@ const OrderDetails = ({ order = {
                 {products.map((product, index) => (
                     <div className="row m-0 border-bottom" key={index}>
                         <div className="col-2 p-0">
-                            <img src={product.productImage} alt={product.productName} className="image-item d-inline-block" />
+                            <img src={product.productId.productImage} alt={product.productId.productName} className="image-item d-inline-block" />
                         </div>
                         <div className="col-2 p-0">
-                            <div className="d-inline-block">{product.productName}</div>
+                            <div className="d-inline-block">{product.productId.productName}</div>
                         </div>
                         <div className="col-2 text-center">{product.quantity}</div>
-                        <div className="col-4">₹{product.price.toFixed(2)}</div>
-                        <div className="col-2 text-center">₹{(product.price * product.quantity).toFixed(2)}</div>
+                        <div className="col-4">₹{parseFloat(product.price["$numberDecimal"]).toFixed(2)}</div>
+                        <div className="col-2 text-center">₹{(parseFloat(product.price["$numberDecimal"]) * product.quantity).toFixed(2)}</div>
                     </div>
                 ))}
-                <div className="row m-0 border-bottom py-3">
-                    <div className="col-4 p-0"></div>
-                    <div className="col-2 text-center"></div>
-                    <div className="col-4 grey">Subtotal</div>
-                    <div className="col-2 text-center">₹{(order.total - order.shippingCharge).toFixed(2)}</div>
-                </div>
+            <div className="row m-0 border-bottom py-3">
+    <div className="col-4 p-0"></div>
+    <div className="col-2 text-center"></div>
+    <div className="col-4 grey">Subtotal</div>
+    <div className="col-2 text-center">₹{subtotalFromProducts.toFixed(2)}</div>
+</div>
+
                 <div className="row m-0 border-bottom py-3">
                     <div className="col-4 p-0"></div>
                     <div className="col-2 text-center"></div>
                     <div className="col-4 grey">Shipping Charge</div>
-                    <div className="col-2 text-center">₹{order.shippingCharge.toFixed(2)}</div>
+                    <div className="col-2 text-center">₹{parseFloat(order.shippingCharge["$numberDecimal"]).toFixed(2)}</div>
                 </div>
+                {discount > 0 && (
+    <div className="row m-0 border-bottom py-3">
+        <div className="col-4 p-0"></div>
+        <div className="col-2 text-center"></div>
+        <div className="col-4 grey">Discount</div>
+        <div className="col-2 text-center text-danger">-₹{discount.toFixed(2)}</div>
+    </div>
+)}
+
                 <div className="row m-0 border-bottom py-3">
                     <div className="col-4 p-0"></div>
                     <div className="col-2 text-center"></div>
                     <div className="col-4 grey bold">Total</div>
-                    <div className="col-2 text-center bold">₹{order.total.toFixed(2)}</div>
+                    <div className="col-2 text-center bold">₹{parseFloat(order.total["$numberDecimal"]).toFixed(2)}</div>
                 </div>
             </div>
         </div>
