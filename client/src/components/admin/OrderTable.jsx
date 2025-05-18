@@ -53,12 +53,11 @@ const OrderTable = () => {
       name: "Customer Name",
       selector: row => row.userId?.firstName + " " + row.userId?.lastName,
       cell: row => (
-        <Link to={`/admin/user-details`}>
-          {row.userId?.firstName + " " + row.userId?.lastName}
-        </Link>
+          <div>{row.userId?.firstName + " " + row.userId?.lastName}</div>
       ),
       sortable: true,
     },
+    
     {
       name: "Order Date",
       selector: row => new Date(row.orderDate).toLocaleDateString(),
@@ -104,24 +103,7 @@ const OrderTable = () => {
       .includes(filterText.toLowerCase())
   );
 
-  const customStyles = {
-    rows: {
-      style: {
-        fontSize: '16px',
-      },
-    },
-    headCells: {
-      style: {
-        fontSize: '18px',
-        fontWeight: 'bold',
-      },
-    },
-    cells: {
-      style: {
-        fontSize: '16px',
-      },
-    },
-  };
+  
 
   return (
     <div>
@@ -146,7 +128,6 @@ const OrderTable = () => {
         responsive
         persistTableHead
         noDataComponent="No orders found."
-        customStyles={customStyles}
       />
     </div>
   );
