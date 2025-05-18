@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from "axios";
 const AddOrder = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         userId: "",
         orderDate: "",
@@ -194,10 +195,11 @@ const AddOrder = () => {
                     };
                     console.log(orderData);
                     // Step 5: Add the order using the addressId
-                    const orderResponse = await axios.post('http://localhost:8000/orders/orders', orderData);
+                    const orderResponse = await axios.post('http://localhost:8000/orders', orderData);
     
-                    if (orderResponse.data._id) {
+                    if (orderResponse.status === 201) {
                         toast.success("Order added successfully!");
+                        navigate("/admin/orders");
                     } else {
                         toast.error("Failed to add order.");
                     }

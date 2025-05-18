@@ -155,7 +155,7 @@ exports.addOrder = async (req, res) => {
         return res.status(400).json({ message: `Product with id ${productId} not found.` });
       }
 
-      totalAmount += foundProduct.price * quantity;
+      totalAmount += (foundProduct.salePrice - (foundProduct.salePrice * foundProduct.discount/100))  * quantity;
     }
 
     // Create the order
@@ -195,6 +195,74 @@ exports.addOrder = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+exports.updateOrder = async (req, res) => {
+  const { userId, orderDate, orderStatus, delAddressId, shippingCharge, products, paymentMode } = req.body;
+  const { orderId } = req.params;
+
+  try {
+    // Validate order existence
+    const existingOrder = await Order.findById(orderId);
+    if (!existingOrder) {
+      return res.status(404).json({ message: "Order not found." });
+    }
+
+    // Validate products
+    if (!products || products.length === 0) {
+      return res.status(400).json({ message: "At least one product is required." });
+    }
+
+    // Calculate new total amount
+    let totalAmount = 0;
+    for (let product of products) {
+      const { productId, quantity } = product;
+      const foundProduct = await Product.findById(productId);
+      if (!foundProduct) {
+        return res.status(400).json({ message: `Product with id ${productId} not found.` });
+      }
+
+      totalAmount += (foundProduct.salePrice - (foundProduct.salePrice * foundProduct.discount / 100)) * quantity;
+    }
+
+    // Update order details
+    existingOrder.userId = userId;
+    existingOrder.orderDate = orderDate;
+    existingOrder.orderStatus = orderStatus || existingOrder.orderStatus;
+    existingOrder.delAddressId = delAddressId;
+    existingOrder.shippingCharge = shippingCharge;
+    existingOrder.total = totalAmount + parseFloat(shippingCharge);
+    existingOrder.paymentMode = paymentMode || existingOrder.paymentMode;
+
+    const updatedOrder = await existingOrder.save();
+
+    // Delete old order items
+    await OrderItem.deleteMany({ orderId });
+
+    // Create new order items
+    const orderItems = await Promise.all(
+      products.map(async (product) => {
+        const foundProduct = await Product.findById(product.productId);
+        return {
+          orderId: updatedOrder._id,
+          productId: product.productId,
+          quantity: product.quantity,
+          price: foundProduct.salePrice,
+          discount: foundProduct.discount || 0,
+        };
+      })
+    );
+
+    await OrderItem.insertMany(orderItems);
+
+    res.status(200).json({
+      message: "Order updated successfully.",
+      order: updatedOrder,
+    });
+
+  } catch (error) {
+    console.error("Update Order Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

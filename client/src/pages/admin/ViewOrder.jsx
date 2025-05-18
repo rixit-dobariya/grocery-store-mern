@@ -32,7 +32,8 @@ const ViewOrder = () => {
     // Safely parse decimal values
     const shippingCharge = parseFloat(order.shippingCharge?.$numberDecimal || 0);
     const total = parseFloat(order.total?.$numberDecimal || 0);
-    const subtotal = total - shippingCharge;
+    let subtotal = total - shippingCharge;
+    let actualTotal = 0;
 
     return (
         <div>
@@ -101,6 +102,7 @@ const ViewOrder = () => {
                             {products.map((item) => {
                                 const price = parseFloat(item.price?.$numberDecimal || 0);
                                 const totalItem = price * item.quantity;
+                                actualTotal += totalItem;
                                 return (
                                     <tr key={item.productId._id}>
                                         <td>
@@ -121,8 +123,14 @@ const ViewOrder = () => {
                         <tfoot>
                             <tr>
                                 <th colSpan="4" className="text-end">Subtotal:</th>
-                                <td>₹{subtotal.toFixed(2)}</td>
+                                <td>₹{(actualTotal).toFixed(2)}</td>
                             </tr>
+                            {actualTotal+shippingCharge-total  > 0 && (
+                                <tr className="discount-summary text-danger">
+                                    <th colSpan="4" className="text-end">Total Discount:</th>
+                                    <td>-₹{(actualTotal+shippingCharge-total).toFixed(2)}</td>
+                                </tr>
+                            )}
                             <tr>
                                 <th colSpan="4" className="text-end">Shipping Charge:</th>
                                 <td>₹{shippingCharge.toFixed(2)}</td>

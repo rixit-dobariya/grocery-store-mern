@@ -4,6 +4,7 @@ const orderController = require('../controllers/order.controller.js');
 
 // Add an order
 router.post('/', orderController.addOrder);
+router.put('/:orderId', orderController.updateOrder);
 router.post('/checkout', orderController.checkout);
 
 // Get multiple orders (with optional deleted status filter)

@@ -133,7 +133,6 @@ export const AuthProvider = ({ children }) => {
       );
 
   } catch (error) {
-      // Resource not found — initialize as empty
       updateCartCount(0);
       updateWishlistCount(0);
   }

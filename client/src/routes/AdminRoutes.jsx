@@ -49,9 +49,9 @@ const AdminRoutes = () => {
         <Route path="update-user/:id" element={<UpdateUser />} />
         <Route path="user-details/:id" element={<UserDetails />} />
 
-        <Route path="cart" element={<Cart />} />
-        <Route path="add-to-cart" element={<AddToCart />} />
-        <Route path="update-cart" element={<UpdateCart />} />
+        <Route path="cart/:userId" element={<Cart />} />
+        <Route path="add-to-cart/:userId" element={<AddToCart />} />
+        <Route path=":userId/update-cart/:productId" element={<UpdateCart />} />
 
         <Route path="reviews" element={<Reviews />} />
         <Route path="add-review" element={<AddReview />} />
@@ -79,7 +79,7 @@ const AdminRoutes = () => {
 
         <Route path="orders" element={<Orders />} />
         <Route path="add-order" element={<AddOrder />} />
-        <Route path="update-order" element={<UpdateOrder />} />
+        <Route path="update-order/:orderId" element={<UpdateOrder />} />
         <Route path="view-order/:orderId" element={<ViewOrder />} />
 
       </Route>
