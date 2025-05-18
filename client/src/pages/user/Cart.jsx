@@ -31,7 +31,12 @@ const checkOffer = (offer) => {
 		if (subtotal >= offer.minimumOrder) {
 			setAppliedOffer(offer);
 			const offerDiscount = subtotal * (offer.discount / 100);
-			setDiscountAmount(offerDiscount);
+			 if(discountAmount > offer.maxDiscount){
+setDiscountAmount(offer.maxDiscount);
+            }
+            else{
+                setDiscountAmount(offerDiscount);
+            }
 			sessionStorage.setItem("appliedOffer", JSON.stringify(offer));
 		} 
         else{
@@ -49,7 +54,13 @@ const checkOffer = (offer) => {
 		if (subtotal >= offer.minimumOrder) {
 			setAppliedOffer(offer);
 			const offerDiscount = subtotal * (offer.discount / 100);
-			setDiscountAmount(offerDiscount);
+            if(discountAmount > offer.maxDiscount){
+setDiscountAmount(offer.maxDiscount);
+            }
+            else{
+                setDiscountAmount(offerDiscount);
+            }
+			
 			sessionStorage.setItem("appliedOffer", JSON.stringify(offer));
 			toast.success("Offer applied successfully!");
 		} else {

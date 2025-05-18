@@ -249,7 +249,7 @@ exports.markOrderAsDeleted = async (req, res) => {
 exports.getActiveOrders = async (req, res) => {
   try {
     const activeOrders = await Order.find({ isDeleted: false })
-      .populate("userId", "name email")
+      .populate("userId")
       .populate("delAddressId", "street city state zipCode")
       .exec();
 

@@ -41,7 +41,12 @@ const Checkout = () => {
 		if (subtotal >= offer.minimumOrder) {
 			setAppliedOffer(offer);
 			const offerDiscount = subtotal * (offer.discount / 100);
-			setDiscountAmount(offerDiscount);
+			 if(discountAmount > offer.maxDiscount){
+setDiscountAmount(offer.maxDiscount);
+            }
+            else{
+                setDiscountAmount(offerDiscount);
+            }
 			sessionStorage.setItem("appliedOffer", JSON.stringify(offer));
 		} else {
 			setAppliedOffer(null);

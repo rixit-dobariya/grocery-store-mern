@@ -80,7 +80,7 @@ const AdminRoutes = () => {
         <Route path="orders" element={<Orders />} />
         <Route path="add-order" element={<AddOrder />} />
         <Route path="update-order" element={<UpdateOrder />} />
-        <Route path="view-order" element={<ViewOrder />} />
+        <Route path="view-order/:orderId" element={<ViewOrder />} />
 
       </Route>
     </Routes>

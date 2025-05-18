@@ -119,24 +119,26 @@ export const AuthProvider = ({ children }) => {
 	};
 	// ✅ Fetch cart and wishlist counts
 	const fetchInitialCounts = async (userId) => {
-		try {
-			// Fetch Cart
-			const cartRes = await axios.get(
-				`http://localhost:8000/cart/${userId}`
-			);
+  try {
+    // Fetch Cart
+    const cartRes = await axios.get(`http://localhost:8000/cart/${userId}`);
+    if (cartRes?.data?.items?.length)
+      updateCartCount(cartRes.data.items.length);
 
-			updateCartCount(cartRes.data.items.length);
-			// Fetch Wishlist
-			const wishlistRes = await axios.get(
-				`http://localhost:8000/wishlist/${userId}`
-			);
-			updateWishlistCount(
-				wishlistRes.data?.wishlist?.productIds?.length || 0
-			);
-		} catch (error) {
-			console.error("Error loading initial cart/wishlist counts:", error);
-		}
-	};
+    // Fetch Wishlist
+    const wishlistRes = await axios.get(`http://localhost:8000/wishlist/${userId}`);
+    if (wishlistRes?.data?.wishlist?.productIds?.length)
+      updateWishlistCount(
+        wishlistRes.data?.wishlist?.productIds?.length || 0
+      );
+
+  } catch (error) {
+      // Resource not found — initialize as empty
+      updateCartCount(0);
+      updateWishlistCount(0);
+  }
+};
+
 	useEffect(() => {
 		if (user?._id) {
 			fetchInitialCounts(user._id);

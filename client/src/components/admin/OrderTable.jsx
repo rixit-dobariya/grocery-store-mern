@@ -49,7 +49,7 @@ const OrderTable = () => {
             <th>Order ID</th>
             <th>Customer Name</th>
             <th>Order Date</th>
-            <th>Quantity</th>
+            <th>Shipping charge</th>
             <th>Total Price</th>
             <th>Order Status</th>
             <th>Actions</th>
@@ -59,13 +59,13 @@ const OrderTable = () => {
           {orders.length > 0 ? (
             orders.map((order) => (
               <tr key={order._id}>
-                <td>{order._id.slice(-6).toUpperCase()}</td>
+                <td>{order._id}</td>
                 <td>
-                  <Link to={`/admin/user-details`}>{order.userId?.name}</Link>
+                  <Link to={`/admin/user-details`}>{order.userId.firstName + " " + order.userId.lastName}</Link>
                 </td>
                 <td>{new Date(order.orderDate).toLocaleDateString()}</td>
-                <td>--</td> {/* You can populate quantity from OrderItems if needed */}
-                <td>₹{parseFloat(order.total).toFixed(2)}</td>
+                <td>₹{parseFloat(order.shippingCharge["$numberDecimal"]).toFixed(2)}</td>
+                <td>₹{parseFloat(order.total["$numberDecimal"]).toFixed(2)}</td>
                 <td>{order.orderStatus}</td>
                 <td>
                   <div className="d-flex flex-nowrap">
