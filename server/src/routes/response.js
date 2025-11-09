@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const responseController = require("../controllers/response.controller");
+const asyncHandler = require("../utils/asyncHandler");
 
-router.post("/", responseController.createResponse);
-router.get("/", responseController.getAllResponses);
-router.get("/:id", responseController.getResponseById);
-router.put("/:id/reply", responseController.updateReply);
-router.delete("/:id", responseController.deleteResponse);
+router.post("/", asyncHandler(responseController.createResponse));
+router.get("/", asyncHandler(responseController.getAllResponses));
+router.get("/:id", asyncHandler(responseController.getResponseById));
+router.put("/:id/reply", asyncHandler(responseController.updateReply));
+router.delete("/:id", asyncHandler(responseController.deleteResponse));
 
 module.exports = router;
