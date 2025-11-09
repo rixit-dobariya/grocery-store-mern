@@ -1,51 +1,50 @@
-const Address = require('../models/Address');
+const asyncHandler = require("../utils/asyncHandler");
+const {
+  addAddressService,
+  getAddressByIdService,
+  getAddressesByUserIdService,
+  updateAddressService,
+} = require("../services/address.service");
 
-const addAddress = async (req, res) => {
-  try {
-    const address = new Address(req.body);
-    const savedAddress = await address.save();
-    res.status(201).json(savedAddress);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to add address', error });
-  }
-};
+const addAddress = asyncHandler(async (req, res) => {
+  const savedAddress = await addAddressService(req.body);
+  res.status(201).json({
+    success: true,
+    message: "Address added successfully",
+    data: savedAddress,
+  });
+});
 
-const getAddressById = async (req, res) => {
-  try {
-    const address = await Address.findById(req.params.addressId);
-    if (!address) return res.status(404).json({ message: 'Address not found' });
-    res.status(200).json(address);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch address', error });
-  }
-};
+const getAddressById = asyncHandler(async (req, res) => {
+  const address = await getAddressByIdService(req.params.addressId);
+  res.status(200).json({
+    success: true,
+    message: "Address retrieved successfully",
+    data: address,
+  });
+});
 
-const getAddressesByUserId = async (req, res) => {
-  try {
-    const addresses = await Address.find({ userId: req.params.userId });
-    res.status(200).json(addresses);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch addresses', error });
-  }
-};
+const getAddressesByUserId = asyncHandler(async (req, res) => {
+  const addresses = await getAddressesByUserIdService(req.params.userId);
+  res.status(200).json({
+    success: true,
+    message: "Addresses retrieved successfully",
+    data: addresses,
+  });
+});
 
-const updateAddress = async (req, res) => {
-  try {
-    const updatedAddress = await Address.findByIdAndUpdate(
-      req.params.addressId,
-      { $set: req.body },
-      { new: true }
-    );
-    if (!updatedAddress) return res.status(404).json({ message: 'Address not found' });
-    res.status(200).json(updatedAddress);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to update address', error });
-  }
-};
+const updateAddress = asyncHandler(async (req, res) => {
+  const updatedAddress = await updateAddressService(req.params.addressId, req.body);
+  res.status(200).json({
+    success: true,
+    message: "Address updated successfully",
+    data: updatedAddress,
+  });
+});
 
 module.exports = {
   addAddress,
   getAddressById,
   getAddressesByUserId,
-  updateAddress
+  updateAddress,
 };

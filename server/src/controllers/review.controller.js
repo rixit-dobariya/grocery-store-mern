@@ -1,103 +1,77 @@
-const Review = require("../models/Review");
+const asyncHandler = require("../utils/asyncHandler");
+const {
+  createReviewService,
+  getReviewsService,
+  getReviewByIdService,
+  updateReviewService,
+  deleteReviewService,
+  replyToReviewService,
+} = require("../services/review.service");
 
-// CREATE a new review
-exports.createReview = async (req, res) => {
-  try {
-    const newReview = new Review(req.body);
-    const savedReview = await newReview.save();
-    res.status(201).json(savedReview);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+// Create review
+const createReview = asyncHandler(async (req, res) => {
+  const review = await createReviewService(req.body);
+  res.status(201).json({
+    success: true,
+    message: "Review created successfully.",
+    data: review,
+  });
+});
 
-// READ all reviews or by filters (optional: productId/userId)
-exports.getReviews = async (req, res) => {
-  try {
-    const { productId, userId } = req.query;
-    const filter = {};
-    if (productId) filter.productId = productId;
-    if (userId) filter.userId = userId;
+// Get reviews (with optional filters)
+const getReviews = asyncHandler(async (req, res) => {
+  const reviews = await getReviewsService(req.query);
+  res.status(200).json({
+    success: true,
+    message: "Reviews fetched successfully.",
+    data: reviews,
+  });
+});
 
-    const reviews = await Review.find(filter)
-        .populate("productId", "productName productImage")
-      .populate("userId", "firstName lastName email profilePicture");
+// Get single review
+const getReviewById = asyncHandler(async (req, res) => {
+  const review = await getReviewByIdService(req.params.id);
+  res.status(200).json({
+    success: true,
+    message: "Review fetched successfully.",
+    data: review,
+  });
+});
 
-    res.status(200).json(reviews);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+// Update review
+const updateReview = asyncHandler(async (req, res) => {
+  const review = await updateReviewService(req.params.id, req.body);
+  res.status(200).json({
+    success: true,
+    message: "Review updated successfully.",
+    data: review,
+  });
+});
 
-// READ a single review by ID
-exports.getReviewById = async (req, res) => {
-  try {
-    const review = await Review.findById(req.params.id)
-      .populate("productId", "productName productImage")
-      .populate("userId", "firstName lastName email");
+// Delete review
+const deleteReview = asyncHandler(async (req, res) => {
+  const result = await deleteReviewService(req.params.id);
+  res.status(200).json({
+    success: true,
+    message: result.message,
+  });
+});
 
-    if (!review) return res.status(404).json({ error: "Review not found" });
+// Reply to review (admin)
+const replyToReview = asyncHandler(async (req, res) => {
+  const review = await replyToReviewService(req.params.id, req.body.reply);
+  res.status(200).json({
+    success: true,
+    message: "Reply added successfully.",
+    data: review,
+  });
+});
 
-    res.status(200).json(review);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// UPDATE a review (admin can reply or update fields)
-exports.updateReview = async (req, res) => {
-  try {
-    const updatedReview = await Review.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body,
-        ...(req.body.reply && { replyDate: new Date() })
-      },
-      { new: true }
-    );
-
-    if (!updatedReview) return res.status(404).json({ error: "Review not found" });
-
-    res.status(200).json(updatedReview);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
-
-// DELETE a review
-exports.deleteReview = async (req, res) => {
-  try {
-    const deleted = await Review.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: "Review not found" });
-
-    res.status(200).json({ message: "Review deleted successfully" });
-  } catch (err) {a
-    res.status(500).json({ error: err.message });
-  }
-};
-// REPLY to a review (Admin only)
-exports.replyToReview = async (req, res) => {
-  try {
-    const { reply } = req.body;
-
-    if (!reply || reply.trim() === "") {
-      return res.status(400).json({ error: "Reply cannot be empty" });
-    }
-
-    const updatedReview = await Review.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: { reply, replyDate: new Date() },
-      },
-      { new: true }
-    );
-
-    if (!updatedReview) {
-      return res.status(404).json({ error: "Review not found" });
-    }
-
-    res.status(200).json(updatedReview);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+module.exports = {
+  createReview,
+  getReviews,
+  getReviewById,
+  updateReview,
+  deleteReview,
+  replyToReview,
 };

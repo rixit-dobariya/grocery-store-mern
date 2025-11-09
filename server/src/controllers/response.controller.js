@@ -1,77 +1,65 @@
-const Response = require("../models/Response");
-const nodemailer = require("nodemailer");
-const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+const asyncHandler = require("../utils/asyncHandler");
+const {
+  createResponseService,
+  getAllResponsesService,
+  getResponseByIdService,
+  updateReplyService,
+  deleteResponseService,
+} = require("../services/response.service");
+
+// Create response
+const createResponse = asyncHandler(async (req, res) => {
+  const response = await createResponseService(req.body);
+  res.status(201).json({
+    success: true,
+    message: "Response created successfully.",
+    data: response,
+  });
 });
-exports.createResponse = async (req, res) => {
-  try {
-    const { name, email, phone, message } = req.body;
-    const newResponse = new Response({ name, email, phone, message });
-    await newResponse.save();
-    res.status(201).json(newResponse);
-  } catch (error) {
-    res.status(500).json({ message: "Error creating response", error: error.message });
-  }
-};
 
-exports.getAllResponses = async (req, res) => {
-  try {
-    const responses = await Response.find().sort({ createdAt: -1 });
-    res.status(200).json(responses);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching responses", error: error.message });
-  }
-};
+// Get all responses
+const getAllResponses = asyncHandler(async (req, res) => {
+  const responses = await getAllResponsesService();
+  res.status(200).json({
+    success: true,
+    message: "Responses fetched successfully.",
+    data: responses,
+  });
+});
 
-exports.getResponseById = async (req, res) => {
-  try {
-    const response = await Response.findById(req.params.id);
-    if (!response) {
-      return res.status(404).json({ message: "Response not found" });
-    }
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching response", error: error.message });
-  }
-};
+// Get response by ID
+const getResponseById = asyncHandler(async (req, res) => {
+  const response = await getResponseByIdService(req.params.id);
+  res.status(200).json({
+    success: true,
+    message: "Response retrieved successfully.",
+    data: response,
+  });
+});
 
-exports.updateReply = async (req, res) => {
-  try {
-    const { reply } = req.body;
-    const response = await Response.findByIdAndUpdate(
-      req.params.id,
-      { reply },
-      { new: true, runValidators: true }
-    );
-    if (!response) {
-      return res.status(404).json({ message: "Response not found" });
-    }
-    
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: response.email,
-      subject: "Response to your query",
-      text: `Hi ${response.name},\n\nYour Query: ${response.message}\nReply: ${reply}`
-    });
+// Update reply and send email
+const updateReply = asyncHandler(async (req, res) => {
+  const response = await updateReplyService(req.params.id, req.body.reply);
+  res.status(200).json({
+    success: true,
+    message: "Reply updated and email sent successfully.",
+    data: response,
+  });
+});
 
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({ message: "Error updating reply", error: error.message });
-  }
-};
+// Delete response
+const deleteResponse = asyncHandler(async (req, res) => {
+  const result = await deleteResponseService(req.params.id);
+  res.status(200).json({
+    success: true,
+    message: result.message,
+  });
+});
 
-exports.deleteResponse = async (req, res) => {
-  try {
-    const response = await Response.findByIdAndDelete(req.params.id);
-    if (!response) {
-      return res.status(404).json({ message: "Response not found" });
-    }
-    res.status(200).json({ message: "Response deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Error deleting response", error: error.message });
-  }
+module.exports = {
+  createResponse,
+  getAllResponses,
+  getResponseById,
+  updateReply,
+  deleteResponse,
 };
