@@ -12,9 +12,8 @@ const addToWishlist = asyncHandler(async (req, res) => {
 
     const result = await addToWishlistService(userId, productId);
     res.status(200).json({
-        success: true,
         message: result.message,
-        data: result.wishlist,
+        wishlist: result.wishlist,
     });
 });
 
@@ -25,9 +24,8 @@ const removeFromWishlist = asyncHandler(async (req, res) => {
 
     const result = await removeFromWishlistService(userId, productId);
     res.status(200).json({
-        success: true,
         message: result.message,
-        data: result.wishlist,
+        wishlist: result.wishlist,
     });
 });
 
@@ -37,9 +35,7 @@ const getWishlist = asyncHandler(async (req, res) => {
     const wishlist = await getWishlistService(userId);
 
     res.status(200).json({
-        success: true,
-        message: "Wishlist retrieved successfully",
-        data: wishlist,
+        wishlist,
     });
 });
 

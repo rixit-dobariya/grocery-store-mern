@@ -10,41 +10,25 @@ const {
 // Create offer
 const createOffer = asyncHandler(async (req, res) => {
     const offer = await createOfferService(req.body);
-    res.status(201).json({
-        success: true,
-        message: "Offer created successfully",
-        data: offer,
-    });
+    res.status(201).json(offer);
 });
 
 // Get all offers
 const getAllOffers = asyncHandler(async (req, res) => {
     const offers = await getAllOffersService();
-    res.status(200).json({
-        success: true,
-        message: "Offers retrieved successfully",
-        data: offers,
-    });
+    res.status(200).json(offers);
 });
 
 // Get offer by ID
 const getOfferById = asyncHandler(async (req, res) => {
     const offer = await getOfferByIdService(req.params.id);
-    res.status(200).json({
-        success: true,
-        message: "Offer retrieved successfully",
-        data: offer,
-    });
+    res.status(200).json(offer);
 });
 
 // Update offer
 const updateOffer = asyncHandler(async (req, res) => {
     const updatedOffer = await updateOfferService(req.params.id, req.body);
-    res.status(200).json({
-        success: true,
-        message: "Offer updated successfully",
-        data: updatedOffer,
-    });
+    res.status(200).json(updatedOffer);
 });
 
 // Delete offer

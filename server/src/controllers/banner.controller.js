@@ -10,38 +10,22 @@ const {
 
 const addBanner = asyncHandler(async (req, res) => {
     const savedBanner = await addBannerService(req.file, req.body);
-    res.status(201).json({
-        success: true,
-        message: "Banner added successfully",
-        data: savedBanner,
-    });
+    res.status(201).json(savedBanner);
 });
 
 const getAllBanners = asyncHandler(async (req, res) => {
     const banners = await getAllBannersService();
-    res.status(200).json({
-        success: true,
-        message: "Banners retrieved successfully",
-        data: banners,
-    });
+    res.status(200).json(banners);
 });
 
 const getBannerById = asyncHandler(async (req, res) => {
     const banner = await getBannerByIdService(req.params.bannerId);
-    res.status(200).json({
-        success: true,
-        message: "Banner retrieved successfully",
-        data: banner,
-    });
+    res.status(200).json(banner);
 });
 
 const updateBanner = asyncHandler(async (req, res) => {
     const updatedBanner = await updateBannerService(req.params.bannerId, req.file, req.body);
-    res.status(200).json({
-        success: true,
-        message: "Banner updated successfully",
-        data: updatedBanner,
-    });
+    res.status(200).json(updatedBanner);
 });
 
 const deleteBanner = asyncHandler(async (req, res) => {

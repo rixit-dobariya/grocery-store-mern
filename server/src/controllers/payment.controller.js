@@ -9,8 +9,7 @@ const createOrder = asyncHandler(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: "Payment order created successfully.",
-        data: order,
+        order,
     });
 });
 

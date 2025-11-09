@@ -3,11 +3,7 @@ const { getDashboardStatsService } = require("../services/dashboard.service.js")
 
 const getDashboardStats = asyncHandler(async (req, res) => {
     const stats = await getDashboardStatsService();
-    res.status(200).json({
-        success: true,
-        message: "Dashboard stats retrieved successfully",
-        data: stats,
-    });
+    res.status(200).json(stats);
 });
 
 module.exports = {

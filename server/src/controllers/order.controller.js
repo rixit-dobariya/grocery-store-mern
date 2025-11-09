@@ -55,20 +55,14 @@ const updateOrder = asyncHandler(async (req, res) => {
 // Get all orders (with deleted filter)
 const getOrders = asyncHandler(async (req, res) => {
     const orders = await getOrdersService(req.query.includeDeleted);
-    res.status(200).json({
-        success: true,
-        message: "Orders fetched successfully.",
-        data: orders,
-    });
+    res.status(200).json({ orders });
 });
 
 // Mark order as deleted (soft delete)
 const markOrderAsDeleted = asyncHandler(async (req, res) => {
     const order = await markOrderAsDeletedService(req.params.orderId);
     res.status(200).json({
-        success: true,
         message: "Order marked as deleted successfully.",
-        data: order,
     });
 });
 
@@ -76,20 +70,14 @@ const markOrderAsDeleted = asyncHandler(async (req, res) => {
 const getActiveOrders = asyncHandler(async (req, res) => {
     const activeOrders = await getActiveOrdersService();
     res.status(200).json({
-        success: true,
-        message: "Active orders retrieved successfully.",
-        data: activeOrders,
+        orders: activeOrders,
     });
 });
 
 // Get a single order by ID (with items and relations)
 const getOrderById = asyncHandler(async (req, res) => {
     const result = await getOrderByIdService(req.params.orderId);
-    res.status(200).json({
-        success: true,
-        message: "Order retrieved successfully.",
-        data: result,
-    });
+    res.status(200).json(result);
 });
 
 // Check if a user has purchased a specific product
@@ -97,22 +85,14 @@ const hasUserPurchasedProduct = asyncHandler(async (req, res) => {
     const { userId, productId } = req.params;
     const purchased = await hasUserPurchasedProductService(userId, productId);
     res.status(200).json({
-        success: true,
-        message: purchased
-            ? "User has purchased this product."
-            : "User has not purchased this product.",
-        data: { purchased },
+        purchased,
     });
 });
 
 // Get orders by userId
 const getOrdersByUserId = asyncHandler(async (req, res) => {
     const orders = await getOrdersByUserIdService(req.params.userId);
-    res.status(200).json({
-        success: true,
-        message: "User orders retrieved successfully.",
-        data: orders,
-    });
+    res.status(200).json({ orders });
 });
 
 module.exports = {
