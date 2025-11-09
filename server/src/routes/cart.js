@@ -1,12 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const cartController = require("../controllers/cart.controller");
-const asyncHandler = require("../utils/asyncHandler");
 
-router.post("/", asyncHandler(cartController.addToCart));
-router.get("/:userId", asyncHandler(cartController.getCartByUserId));
-router.put("/:userId", asyncHandler(cartController.updateCartItem));
-router.delete("/:userId", asyncHandler(cartController.removeCartItem));
-router.delete("/clear/:userId", asyncHandler(cartController.clearCart));
-
+router.post("/", cartController.addToCart);
+router.get("/:userId", cartController.getCartByUserId);
+router.put("/:userId", cartController.updateCartItem);
+router.delete("/:userId", cartController.removeCartItem);
+router.delete("/clear/:userId", cartController.clearCart);
 module.exports = router;

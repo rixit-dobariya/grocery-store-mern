@@ -50,7 +50,7 @@ app.use("/payment", paymentRoutes);
 
 // 404 handler
 app.all("*", (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
 // Global error handler

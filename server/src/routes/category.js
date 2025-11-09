@@ -2,13 +2,11 @@ const express = require("express");
 const router = express.Router();
 const categoryController = require("../controllers/category.controller");
 
-const upload = require("../middlewares/multer.middleware"); 
-const asyncHandler = require("../utils/asyncHandler");
+const upload = require("../middlewares/multer.middleware");
 
-router.post("/", upload.single("image"), asyncHandler(categoryController.createCategory));
-router.get("/", asyncHandler(categoryController.getAllCategories));
-router.get("/:id", asyncHandler(categoryController.getCategoryById));
-router.put("/:id", upload.single("image"), asyncHandler(categoryController.updateCategory));
-router.delete("/:id", asyncHandler(categoryController.softDeleteCategory));
-
+router.post("/", upload.single("image"), categoryController.createCategory);
+router.get("/", categoryController.getAllCategories);
+router.get("/:id", categoryController.getCategoryById);
+router.put("/:id", upload.single("image"), categoryController.updateCategory);
+router.delete("/:id", categoryController.softDeleteCategory);
 module.exports = router;
