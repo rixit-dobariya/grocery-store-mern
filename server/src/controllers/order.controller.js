@@ -1,13 +1,14 @@
-const Order = require("../models/Order"); // Assuming path to Order model
-const OrderItem = require("../models/OrderItem"); // Assuming path to OrderItem model
-const Product = require("../models/Product"); // Assuming path to Product model
-const Address = require("../models/Address"); // Assuming path to Address model
-const User = require("../models/User"); // Assuming path to User model
-const mongoose = require("mongoose");
-const Cart = require('../models/Cart');
-const Offer = require('../models/Offer');
+import Order from "../models/Order.js"; // Assuming path to Order model
+import OrderItem from "../models/OrderItem.js"; // Assuming path to OrderItem model
+import Product from "../models/Product.js"; // Assuming path to Product model
+import Address from "../models/Address.js"; // Assuming path to Address model
+import User from "../models/User.js"; // Assuming path to User model
+import mongoose from "mongoose";
+import Cart from "../models/Cart.js";
+import Offer from "../models/Offer.js";
+
 // Check stock availability based on userId
-exports.checkStockAvailability = async (req, res) => {
+export const checkStockAvailability = async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -38,8 +39,8 @@ const isActive = (start, end) => {
   const now = new Date();
   return new Date(start) <= now && now <= new Date(end);
 };
-exports.checkout = async (req, res) => {
-  const { userId, addressId, promoCodeId,razorpayOrderId ,razorpayPaymentId} = req.body;
+export const checkout = async (req, res) => {
+  const { userId, addressId, promoCodeId, razorpayOrderId, razorpayPaymentId } = req.body;
 
   try {
     // 1. Get cart by userId
@@ -51,7 +52,7 @@ exports.checkout = async (req, res) => {
     // 2. Calculate subtotal
     let subtotal = 0;
     cart.items.forEach(item => {
-      subtotal += (item.productId.salePrice-item.productId.salePrice*item.productId.discount/100) * item.quantity;
+      subtotal += (item.productId.salePrice - item.productId.salePrice * item.productId.discount / 100) * item.quantity;
     });
 
     // 3. Get offer and apply discount if applicable
@@ -90,8 +91,8 @@ exports.checkout = async (req, res) => {
       total: totalAmount,
       paymentMode: "Online",
       paymentStatus: "Completed",
-      razorpayOrderId:razorpayOrderId,
-      razorpayPaymentId:razorpayPaymentId,
+      razorpayOrderId: razorpayOrderId,
+      razorpayPaymentId: razorpayPaymentId,
       offerId: promoCodeId,
     });
 
@@ -101,7 +102,7 @@ exports.checkout = async (req, res) => {
     const orderItems = cart.items.map(item => {
       const productId = item.productId._id;
       const quantity = item.quantity;
-      const price = (item.productId.salePrice-item.productId.salePrice*item.productId.discount/100);
+      const price = (item.productId.salePrice - item.productId.salePrice * item.productId.discount / 100);
       const discount = discountPerProduct[productId.toString()] || 0;
 
       return {
@@ -114,7 +115,7 @@ exports.checkout = async (req, res) => {
     });
 
     await OrderItem.insertMany(orderItems);
-for (const item of cart.items) {
+    for (const item of cart.items) {
       const product = item.productId;
       product.stock = Math.max(0, (product.stock || 0) - item.quantity);
       await product.save();
@@ -136,7 +137,7 @@ for (const item of cart.items) {
 
 // userid, addressId, promocodeId
 // Add a new order with multiple products
-exports.addOrder = async (req, res) => {
+export const addOrder = async (req, res) => {
   const { userId, orderDate, orderStatus, delAddressId, shippingCharge, products, paymentMode } = req.body;
 
   try {
@@ -155,7 +156,7 @@ exports.addOrder = async (req, res) => {
         return res.status(400).json({ message: `Product with id ${productId} not found.` });
       }
 
-      totalAmount += (foundProduct.salePrice - (foundProduct.salePrice * foundProduct.discount/100))  * quantity;
+      totalAmount += (foundProduct.salePrice - (foundProduct.salePrice * foundProduct.discount / 100)) * quantity;
     }
 
     // Create the order
@@ -175,15 +176,15 @@ exports.addOrder = async (req, res) => {
     console.log(products);
     // Create order items for each product
     const orderItems = await Promise.all(
-    products.map(async (product) => {
+      products.map(async (product) => {
         const foundProduct = await Product.findById(product.productId);
         return {
-        orderId: savedOrder._id,
-        productId: product.productId,
-        quantity: product.quantity,
-        price: foundProduct.salePrice,
+          orderId: savedOrder._id,
+          productId: product.productId,
+          quantity: product.quantity,
+          price: foundProduct.salePrice,
         };
-    })
+      })
     );
 
     // Save order items
@@ -198,7 +199,7 @@ exports.addOrder = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-exports.updateOrder = async (req, res) => {
+export const updateOrder = async (req, res) => {
   const { userId, orderDate, orderStatus, delAddressId, shippingCharge, products, paymentMode } = req.body;
   const { orderId } = req.params;
 
@@ -268,7 +269,7 @@ exports.updateOrder = async (req, res) => {
 };
 
 // Fetch multiple orders (supporting filtering by deleted status)
-exports.getOrders = async (req, res) => {
+export const getOrders = async (req, res) => {
   const { includeDeleted = "false" } = req.query; // Exclude deleted orders by default
   const deletedFilter = includeDeleted === "true" ? {} : { isDeleted: false };
 
@@ -293,7 +294,7 @@ exports.getOrders = async (req, res) => {
 };
 
 // Mark an order as deleted (soft delete)
-exports.markOrderAsDeleted = async (req, res) => {
+export const markOrderAsDeleted = async (req, res) => {
   const { orderId } = req.params;
 
   try {
@@ -314,7 +315,7 @@ exports.markOrderAsDeleted = async (req, res) => {
 };
 
 // Fetch only non-deleted orders
-exports.getActiveOrders = async (req, res) => {
+export const getActiveOrders = async (req, res) => {
   try {
     const activeOrders = await Order.find({ isDeleted: false })
       .populate("userId")
@@ -329,83 +330,82 @@ exports.getActiveOrders = async (req, res) => {
 };
 
 // Fetch a single order by ID (include products and address)
-exports.getOrderById = async (req, res) => {
-    const { orderId } = req.params;
-  
-    try {
-      // Fetch the order and populate necessary fields
-      const order = await Order.findById(orderId)
-        .populate("userId")  // Populate user details (including name, email, etc.)
-        .populate("delAddressId")  // Populate delivery address (including street, city, state, etc.)
-        .populate("offerId")  // Offer applied to the order
-        .exec();
-  
-      // If the order is not found, return 404
-      if (!order) {
-        return res.status(404).json({ message: "Order not found." });
-      }
-  
-      // Fetch all OrderItems related to this order and populate productId for each item
-      const orderItems = await OrderItem.find({ orderId: orderId })
-        .populate("productId","productName productImage") 
-        .select("-orderId -_id") // Populate product details (including name, price, salePrice, etc.)
-        .exec();
-  
-      // Check if no order items are found
-      if (!orderItems || orderItems.length === 0) {
-        return res.status(404).json({ message: "No order items found." });
-      }
-  
-      // Return the populated order with all related data
-      res.status(200).json({ order,orderItems });
-  
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server error" });
+export const getOrderById = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    // Fetch the order and populate necessary fields
+    const order = await Order.findById(orderId)
+      .populate("userId")  // Populate user details (including name, email, etc.)
+      .populate("delAddressId")  // Populate delivery address (including street, city, state, etc.)
+      .populate("offerId")  // Offer applied to the order
+      .exec();
+
+    // If the order is not found, return 404
+    if (!order) {
+      return res.status(404).json({ message: "Order not found." });
     }
-  };
-  
-  
-exports.hasUserPurchasedProduct = async (req, res) => {
-    const { userId, productId } = req.params;
-  
-    try {
-      // Step 1: Find all non-deleted orders by the user
-      const userOrders = await Order.find({ userId, isDeleted: false }).select("_id");
-  
-      const orderIds = userOrders.map(order => order._id);
-  
-      if (orderIds.length === 0) {
-        return res.status(200).json({ purchased: false });
-      }
-  
-      // Step 2: Check if any order items match the productId and belong to those orders
-      const orderItem = await OrderItem.findOne({
-        orderId: { $in: orderIds },
-        productId: productId,
-      });
-  
-      const hasPurchased = !!orderItem;
-  
-      res.status(200).json({ purchased: hasPurchased });
-    } catch (error) {
-      console.error("Error checking product purchase:", error);
-      res.status(500).json({ message: "Server error" });
+
+    // Fetch all OrderItems related to this order and populate productId for each item
+    const orderItems = await OrderItem.find({ orderId: orderId })
+      .populate("productId", "productName productImage")
+      .select("-orderId -_id") // Populate product details (including name, price, salePrice, etc.)
+      .exec();
+
+    // Check if no order items are found
+    if (!orderItems || orderItems.length === 0) {
+      return res.status(404).json({ message: "No order items found." });
     }
+
+    // Return the populated order with all related data
+    res.status(200).json({ order, orderItems });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
-exports.getOrdersByUserId = async (req, res) => {
-    const { userId } = req.params;
-  
-    try {
-      const orders = await Order.find({ userId, isDeleted: false })
-        .populate("delAddressId")
-        .sort({ orderDate: -1 });
-  
-      res.status(200).json({ orders });
-    } catch (error) {
-      console.error("Error fetching user orders:", error);
-      res.status(500).json({ message: "Server error" });
+
+export const hasUserPurchasedProduct = async (req, res) => {
+  const { userId, productId } = req.params;
+
+  try {
+    // Step 1: Find all non-deleted orders by the user
+    const userOrders = await Order.find({ userId, isDeleted: false }).select("_id");
+
+    const orderIds = userOrders.map(order => order._id);
+
+    if (orderIds.length === 0) {
+      return res.status(200).json({ purchased: false });
     }
-  };
-  
+
+    // Step 2: Check if any order items match the productId and belong to those orders
+    const orderItem = await OrderItem.findOne({
+      orderId: { $in: orderIds },
+      productId: productId,
+    });
+
+    const hasPurchased = !!orderItem;
+
+    res.status(200).json({ purchased: hasPurchased });
+  } catch (error) {
+    console.error("Error checking product purchase:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getOrdersByUserId = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const orders = await Order.find({ userId, isDeleted: false })
+      .populate("delAddressId")
+      .sort({ orderDate: -1 });
+
+    res.status(200).json({ orders });
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

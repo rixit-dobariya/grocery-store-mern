@@ -1,11 +1,17 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const responseController = require("../controllers/response.controller");
+import {
+    createResponse,
+    getAllResponses,
+    getResponseById,
+    updateReply,
+    deleteResponse
+} from "../controllers/response.controller.js";
 
-router.post("/", responseController.createResponse);
-router.get("/", responseController.getAllResponses);
-router.get("/:id", responseController.getResponseById);
-router.put("/:id/reply", responseController.updateReply);
-router.delete("/:id", responseController.deleteResponse);
+router.post("/", createResponse);
+router.get("/", getAllResponses);
+router.get("/:id", getResponseById);
+router.put("/:id/reply", updateReply);
+router.delete("/:id", deleteResponse);
 
-module.exports = router;
+export default router;

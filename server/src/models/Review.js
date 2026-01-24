@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const ReviewSchema = new mongoose.Schema({
   productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
@@ -10,4 +10,4 @@ const ReviewSchema = new mongoose.Schema({
   replyDate: { type: Date, default: null } // Date when the reply was made
 }, { timestamps: true });
 
-module.exports = mongoose.model("Review", ReviewSchema);
+export default mongoose.model("Review", ReviewSchema);

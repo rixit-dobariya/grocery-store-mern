@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const UserWishlistSchema = new mongoose.Schema(
   {
@@ -19,4 +19,4 @@ const UserWishlistSchema = new mongoose.Schema(
   { timestamps: true } // Automatically add createdAt and updatedAt
 );
 
-module.exports = mongoose.model("UserWishlist", UserWishlistSchema);
+export default mongoose.model("UserWishlist", UserWishlistSchema);

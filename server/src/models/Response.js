@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const ResponseSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -8,4 +8,4 @@ const ResponseSchema = new mongoose.Schema({
   reply: { type: String, required: false } // Optional, may or may not have a reply
 });
 
-module.exports = mongoose.model("Response", ResponseSchema);
+export default mongoose.model("Response", ResponseSchema);

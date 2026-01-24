@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { addToWishlist, removeFromWishlist, getWishlist } = require('../controllers/wishlist.controller');
+import { addToWishlist, removeFromWishlist, getWishlist } from '../controllers/wishlist.controller.js';
 
 // Route to add a product to the wishlist
 router.post('/:userId/add', addToWishlist);
@@ -11,4 +11,4 @@ router.delete('/:userId/remove', removeFromWishlist);
 // Route to get the user's wishlist
 router.get('/:userId', getWishlist);
 
-module.exports = router;
+export default router;

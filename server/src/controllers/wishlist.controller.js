@@ -1,8 +1,8 @@
-const UserWishlist = require('../models/Wishlist');
-const Product = require('../models/Product');
+import UserWishlist from "../models/Wishlist.js";
+import Product from "../models/Product.js";
 
 // Add product to the user's wishlist
-exports.addToWishlist = async (req, res) => {
+export const addToWishlist = async (req, res) => {
   const { productId } = req.body; // Expecting the productId in the request body
   const { userId } = req.params; // Assuming userId is passed as a URL parameter
 
@@ -41,7 +41,7 @@ exports.addToWishlist = async (req, res) => {
 };
 
 // Remove product from the user's wishlist
-exports.removeFromWishlist = async (req, res) => {
+export const removeFromWishlist = async (req, res) => {
   const { productId } = req.body; // Expecting the productId in the request body
   const { userId } = req.params; // Assuming userId is passed as a URL parameter
 
@@ -69,7 +69,7 @@ exports.removeFromWishlist = async (req, res) => {
 };
 
 // Get the user's wishlist
-exports.getWishlist = async (req, res) => {
+export const getWishlist = async (req, res) => {
   const { userId } = req.params;
 
   try {

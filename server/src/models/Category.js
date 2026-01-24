@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const CategorySchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -7,4 +7,4 @@ const CategorySchema = new mongoose.Schema({
   isDeleted: { type: Boolean, default: false } // status field for soft deletion
 });
 
-module.exports = mongoose.model("Category", CategorySchema);
+export default mongoose.model("Category", CategorySchema);

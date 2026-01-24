@@ -1,14 +1,20 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const categoryController = require("../controllers/category.controller");
+import {
+    createCategory,
+    getAllCategories,
+    getCategoryById,
+    updateCategory,
+    softDeleteCategory,
+} from "../controllers/category.controller.js";
 
 // Import configured multer
-const upload = require("../middlewares/multer.middleware"); // adjust the path if needed
+import upload from "../middlewares/multer.middleware.js"; // adjust the path if needed
 
-router.post("/", upload.single("image"), categoryController.createCategory);
-router.get("/", categoryController.getAllCategories);
-router.get("/:id", categoryController.getCategoryById);
-router.put("/:id", upload.single("image"), categoryController.updateCategory);
-router.delete("/:id", categoryController.softDeleteCategory);
+router.post("/", upload.single("image"), createCategory);
+router.get("/", getAllCategories);
+router.get("/:id", getCategoryById);
+router.put("/:id", upload.single("image"), updateCategory);
+router.delete("/:id", softDeleteCategory);
 
-module.exports = router;
+export default router;

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 // Orders Schema
 const OrderSchema = new mongoose.Schema({
@@ -15,9 +15,9 @@ const OrderSchema = new mongoose.Schema({
   paymentMode: { type: String, default: "Cash on Delivery" },
   paymentStatus: { type: String, enum: ["Pending", "Completed", "Failed"], default: "Pending" },
   isDeleted: { type: Boolean, default: false },
-  offerId: { type: mongoose.Schema.Types.ObjectId, ref: "Offer", default: null }, 
+  offerId: { type: mongoose.Schema.Types.ObjectId, ref: "Offer", default: null },
   razorpayOrderId: { type: String, default: "" },
   razorpayPaymentId: { type: String, default: "" },
 }, { timestamps: true });
 
-module.exports = mongoose.model("Order", OrderSchema);
+export default mongoose.model("Order", OrderSchema);

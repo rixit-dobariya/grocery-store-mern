@@ -1,10 +1,15 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const addressController = require("../controllers/address.controller");
+import {
+    addAddress,
+    getAddressById,
+    getAddressesByUserId,
+    updateAddress
+} from "../controllers/address.controller.js";
 
-router.post("/", addressController.addAddress);
-router.get("/:addressId", addressController.getAddressById);
-router.get("/user/:userId", addressController.getAddressesByUserId);
-router.put("/:addressId", addressController.updateAddress);
+router.post("/", addAddress);
+router.get("/:addressId", getAddressById);
+router.get("/user/:userId", getAddressesByUserId);
+router.put("/:addressId", updateAddress);
 
-module.exports = router;
+export default router;

@@ -1,8 +1,8 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const aboutPageController = require("../controllers/about-page.controller");
+import { getAboutPage, updateAboutPage } from "../controllers/about-page.controller.js";
 
-router.get("/", aboutPageController.getAboutPage);
-router.put("/", aboutPageController.updateAboutPage);
+router.get("/", getAboutPage);
+router.put("/", updateAboutPage);
 
-module.exports = router;
+export default router;

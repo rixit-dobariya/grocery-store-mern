@@ -1,23 +1,25 @@
 // controllers/user.controller.js
 
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-const { uploadImage, deleteImage } = require("../utils/cloudinary");
-const JWT_SECRET = process.env.JWT_SECRET;
-const Otp = require("../models/Otp");
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
+import { uploadImage, deleteImage } from "../utils/cloudinary.js";
+import Otp from "../models/Otp.js";
+import config from "../config/index.js";
+
+const JWT_SECRET = config.jwtSecret;
 // Email transporter for sending verification emails
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: config.emailUser,
+    pass: config.emailPass,
   },
 });
 
 // Register a new user with email verification link
-const register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { firstName, lastName, email, mobile, password, authType } = req.body;
 
@@ -52,7 +54,7 @@ const register = async (req, res) => {
 
     // Send verification email
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: config.emailUser,
       to: newUser.email,
       subject: "Verify Your Email",
       text: `Hi ${firstName},\n\nThank you for registering. Please verify your email by clicking the following link:\n${verificationLink}\n\nThis link will expire in 24 hours.`
@@ -65,7 +67,7 @@ const register = async (req, res) => {
 };
 
 // Login user
-const login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -84,11 +86,11 @@ const login = async (req, res) => {
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
       if (user.status === "Inactive") {
-            return res.status(404).json({ message: "User account is inactive" });
-        }
-          if (user.status === "Deleted") {
-            return res.status(404).json({ message: "User account is deleted, if want to recover contact admin" });
-        }
+        return res.status(404).json({ message: "User account is inactive" });
+      }
+      if (user.status === "Deleted") {
+        return res.status(404).json({ message: "User account is deleted, if want to recover contact admin" });
+      }
 
     }
 
@@ -104,50 +106,50 @@ const login = async (req, res) => {
 
 
 // Send OTP
-const sendOtp = async (req, res) => {
-    const { email } = req.body;
+export const sendOtp = async (req, res) => {
+  const { email } = req.body;
 
-    try {
-        const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: "Email not registered" });
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "Email not registered" });
 
-        await Otp.deleteMany({ email });
+    await Otp.deleteMany({ email });
 
-        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-        await Otp.create({ email, otp: otpCode });
+    await Otp.create({ email, otp: otpCode });
 
-        await transporter.sendMail({
-            to: email,
-            subject: "Your OTP Code",
-            html: `<h3>Your OTP is: ${otpCode}</h3><p>This code will expire in 5 minutes.</p>`,
-        });
+    await transporter.sendMail({
+      to: email,
+      subject: "Your OTP Code",
+      html: `<h3>Your OTP is: ${otpCode}</h3><p>This code will expire in 5 minutes.</p>`,
+    });
 
-        res.status(200).json({ message: "OTP sent successfully" });
-    } catch (error) {
-        console.error("OTP Send Error:", error);
-        res.status(500).json({ message: "Server error" });
-    }
+    res.status(200).json({ message: "OTP sent successfully" });
+  } catch (error) {
+    console.error("OTP Send Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
-const verifyOtp = async (req, res) => {
-    const { email, otp } = req.body;
+export const verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
 
-    try {
-        const validOtp = await Otp.findOne({ email, otp });
-        if (!validOtp) return res.status(400).json({ message: "Invalid or expired OTP" });
+  try {
+    const validOtp = await Otp.findOne({ email, otp });
+    if (!validOtp) return res.status(400).json({ message: "Invalid or expired OTP" });
 
-        // You can now proceed to password reset
-        await Otp.deleteMany({ email }); // Remove all OTPs after verification
-        res.status(200).json({ message: "OTP verified" });
-    } catch (error) {
-        console.error("OTP Verify Error:", error);
-        res.status(500).json({ message: "Server error" });
-    }
+    // You can now proceed to password reset
+    await Otp.deleteMany({ email }); // Remove all OTPs after verification
+    res.status(200).json({ message: "OTP verified" });
+  } catch (error) {
+    console.error("OTP Verify Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 // Reset Password
-const resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
   try {
     const { email, newPassword } = req.body;
     const hashed = await bcrypt.hash(newPassword, 10);
@@ -158,7 +160,7 @@ const resetPassword = async (req, res) => {
   }
 };
 // Verify Email
-const verifyEmail = async (req, res) => {
+export const verifyEmail = async (req, res) => {
   try {
     const { token } = req.query;
     if (!token) {
@@ -186,26 +188,26 @@ const verifyEmail = async (req, res) => {
 };
 
 //update password
-const updatePassword = async (req, res) => {
-    try {
-      const { email, currentPassword, newPassword } = req.body;
+export const updatePassword = async (req, res) => {
+  try {
+    const { email, currentPassword, newPassword } = req.body;
 
-      const user = await User.findOne({ email });
-      if (!user) return res.status(404).json({ message: "User not found" });
-  
-      const isMatch = await bcrypt.compare(currentPassword, user.password);
-      if (!isMatch) return res.status(400).json({ message: "Current password is incorrect" });
-  
-      const hashed = await bcrypt.hash(newPassword, 10);
-      await User.findOneAndUpdate({ email }, { password: hashed });
-      res.json({ message: "Password updated successfully" });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  };
-  
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Current password is incorrect" });
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await User.findOneAndUpdate({ email }, { password: hashed });
+    res.json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Create User (Admin use case)
-const createUser = async (req, res) => {
+export const createUser = async (req, res) => {
   try {
     const { firstName, lastName, email, mobile, password, authType, firebaseUid } = req.body;
 
@@ -239,9 +241,9 @@ const createUser = async (req, res) => {
 };
 
 // Get All Users
-const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({ status: { $ne: "Deleted" } , role:"User"});
+    const users = await User.find({ status: { $ne: "Deleted" }, role: "User" });
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -249,7 +251,7 @@ const getAllUsers = async (req, res) => {
 };
 
 // Get Single User
-const getUserById = async (req, res) => {
+export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -259,7 +261,7 @@ const getUserById = async (req, res) => {
   }
 };
 
-const updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
   try {
     const { firstName, lastName, mobile, status, password } = req.body;
     let { profilePicture } = req.body;
@@ -289,7 +291,7 @@ const updateUser = async (req, res) => {
 };
 
 // Delete User
-const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.params.id,
@@ -308,81 +310,65 @@ const deleteUser = async (req, res) => {
 };
 
 // POST /api/auth/google-login
-const googleLogin = async (req, res) => {
-    try {
-      const { email, authType } = req.body;
-  
-      if (!email || !authType) {
-        return res.status(400).json({ message: "Email and authType are required" });
-      }
-  
-      // Check if user already exists
-      let user = await User.findOne({ email });
-  
-      if (!user) {
-        // New user → register
-        user = await User.create({
-          email,
-          authType, // Should be 'google'
-          status: "Active",
-        });
-  
-        return res.status(201).json({
-          message: "User registered successfully",
-          userId: user._id,
-          email: user.email,
-          isNewUser: true,
-        });
-        }
-      else{
-        // Existing user → login
-        return res.status(200).json({
-            message: "Login successful",
-            userId: user._id,
-            email: user.email,
-            isNewUser: false,
-        });
-      }
-     
-  
-    } catch (error) {
-      console.error("Google login error:", error);
-      res.status(500).json({ message: "Internal server error" });
+export const googleLogin = async (req, res) => {
+  try {
+    const { email, authType } = req.body;
+
+    if (!email || !authType) {
+      return res.status(400).json({ message: "Email and authType are required" });
     }
-  };
-  const checkEmail = async (req, res) => {
-    try {
-      const { email } = req.body;
-  
-      if (!email) {
-        return res.status(400).json({ message: "Email is required" });
-      }
-  
-      const user = await User.findOne({ email,authType:"Email" });
-  
-      if (user) {
-        return res.status(200).json({ exists: true });
-      } else {
-        return res.status(200).json({ exists: false });
-      }
-    } catch (err) {
-      console.error("Check email error:", err);
-      return res.status(500).json({ message: "Internal server error" });
+
+    // Check if user already exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // New user → register
+      user = await User.create({
+        email,
+        authType, // Should be 'google'
+        status: "Active",
+      });
+
+      return res.status(201).json({
+        message: "User registered successfully",
+        userId: user._id,
+        email: user.email,
+        isNewUser: true,
+      });
     }
-  };
-module.exports = {
-  register,
-  login,
-  sendOtp,
-  verifyOtp,
-  resetPassword,
-  createUser,
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser, 
-  verifyEmail,
-  updatePassword,
-  googleLogin,
-  checkEmail
+    else {
+      // Existing user → login
+      return res.status(200).json({
+        message: "Login successful",
+        userId: user._id,
+        email: user.email,
+        isNewUser: false,
+      });
+    }
+
+
+  } catch (error) {
+    console.error("Google login error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+export const checkEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email, authType: "Email" });
+
+    if (user) {
+      return res.status(200).json({ exists: true });
+    } else {
+      return res.status(200).json({ exists: false });
+    }
+  } catch (err) {
+    console.error("Check email error:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };

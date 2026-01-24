@@ -1,6 +1,6 @@
-const ContactPage = require("../models/ContactPage");
+import ContactPage from "../models/ContactPage.js";
 
-const getContactPage = async (req, res) => {
+export const getContactPage = async (req, res) => {
   try {
     const contactPage = await ContactPage.findOne();
     if (!contactPage) {
@@ -12,7 +12,7 @@ const getContactPage = async (req, res) => {
   }
 };
 
-const updateContactPage = async (req, res) => {
+export const updateContactPage = async (req, res) => {
   const { contactEmail, contactNumber } = req.body;
   try {
     let contactPage = await ContactPage.findOne();
@@ -30,9 +30,4 @@ const updateContactPage = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
-};
-
-module.exports = {
-  getContactPage,
-  updateContactPage
 };

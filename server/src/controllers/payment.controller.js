@@ -1,12 +1,13 @@
 // controllers/paymentController.js
-const Razorpay = require("razorpay");
+import Razorpay from "razorpay";
+import config from "../config/index.js";
 
 const instance = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+  key_id: config.razorpay.keyId,
+  key_secret: config.razorpay.keySecret,
 });
 
-exports.createOrder = async (req, res) => {
+export const createOrder = async (req, res) => {
   const { amount } = req.body; // Amount in rupees
 
   const options = {

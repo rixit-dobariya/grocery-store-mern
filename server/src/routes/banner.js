@@ -1,13 +1,20 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const upload = require("../middlewares/multer.middleware");
-const bannerController = require("../controllers/banner.controller");
+import upload from "../middlewares/multer.middleware.js";
+import {
+    addBanner,
+    getAllBanners,
+    getBannerById,
+    updateBanner,
+    deleteBanner,
+    toggleBannerStatus,
+} from "../controllers/banner.controller.js";
 
-router.post("/", upload.single("bannerImage"), bannerController.addBanner);
-router.get("/", bannerController.getAllBanners);
-router.get("/:bannerId", bannerController.getBannerById);
-router.put("/:bannerId", upload.single("bannerImage"), bannerController.updateBanner);
-router.delete("/:bannerId", bannerController.deleteBanner);
-router.patch("/:bannerId/status", bannerController.toggleBannerStatus);
+router.post("/", upload.single("bannerImage"), addBanner);
+router.get("/", getAllBanners);
+router.get("/:bannerId", getBannerById);
+router.put("/:bannerId", upload.single("bannerImage"), updateBanner);
+router.delete("/:bannerId", deleteBanner);
+router.patch("/:bannerId/status", toggleBannerStatus);
 
-module.exports = router;
+export default router;

@@ -1,7 +1,7 @@
-const Banner = require("../models/Banner");
-const { uploadImage, deleteImage } = require("../utils/cloudinary");
+import Banner from "../models/Banner.js";
+import { uploadImage, deleteImage } from "../utils/cloudinary.js";
 
-const addBanner = async (req, res) => {
+export const addBanner = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "Banner image is required" });
@@ -23,7 +23,7 @@ const addBanner = async (req, res) => {
   }
 };
 
-const getAllBanners = async (req, res) => {
+export const getAllBanners = async (req, res) => {
   try {
     const banners = await Banner.find();
     res.status(200).json(banners);
@@ -32,7 +32,7 @@ const getAllBanners = async (req, res) => {
   }
 };
 
-const getBannerById = async (req, res) => {
+export const getBannerById = async (req, res) => {
   try {
     const banner = await Banner.findById(req.params.bannerId);
     if (!banner || banner.isDeleted) {
@@ -44,7 +44,7 @@ const getBannerById = async (req, res) => {
   }
 };
 
-const updateBanner = async (req, res) => {
+export const updateBanner = async (req, res) => {
   try {
     const { viewOrder, activeStatus, type } = req.body;
 
@@ -75,7 +75,7 @@ const updateBanner = async (req, res) => {
   }
 };
 
-const deleteBanner = async (req, res) => {
+export const deleteBanner = async (req, res) => {
   try {
     const banner = await Banner.findById(req.params.bannerId);
     if (!banner) return res.status(404).json({ message: "Banner not found" });
@@ -91,7 +91,7 @@ const deleteBanner = async (req, res) => {
   }
 };
 
-const toggleBannerStatus = async (req, res) => {
+export const toggleBannerStatus = async (req, res) => {
   try {
     const { bannerId } = req.params;
     const { status } = req.body;
@@ -114,13 +114,4 @@ const toggleBannerStatus = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Failed to update banner status", error });
   }
-};
-
-module.exports = {
-  addBanner,
-  getAllBanners,
-  getBannerById,
-  updateBanner,
-  deleteBanner,
-  toggleBannerStatus,
 };

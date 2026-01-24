@@ -1,7 +1,7 @@
-const Review = require("../models/Review");
+import Review from "../models/Review.js";
 
 // CREATE a new review
-exports.createReview = async (req, res) => {
+export const createReview = async (req, res) => {
   try {
     const newReview = new Review(req.body);
     const savedReview = await newReview.save();
@@ -12,7 +12,7 @@ exports.createReview = async (req, res) => {
 };
 
 // READ all reviews or by filters (optional: productId/userId)
-exports.getReviews = async (req, res) => {
+export const getReviews = async (req, res) => {
   try {
     const { productId, userId } = req.query;
     const filter = {};
@@ -20,7 +20,7 @@ exports.getReviews = async (req, res) => {
     if (userId) filter.userId = userId;
 
     const reviews = await Review.find(filter)
-        .populate("productId", "productName productImage")
+      .populate("productId", "productName productImage")
       .populate("userId", "firstName lastName email profilePicture");
 
     res.status(200).json(reviews);
@@ -30,7 +30,7 @@ exports.getReviews = async (req, res) => {
 };
 
 // READ a single review by ID
-exports.getReviewById = async (req, res) => {
+export const getReviewById = async (req, res) => {
   try {
     const review = await Review.findById(req.params.id)
       .populate("productId", "productName productImage")
@@ -45,7 +45,7 @@ exports.getReviewById = async (req, res) => {
 };
 
 // UPDATE a review (admin can reply or update fields)
-exports.updateReview = async (req, res) => {
+export const updateReview = async (req, res) => {
   try {
     const updatedReview = await Review.findByIdAndUpdate(
       req.params.id,
@@ -65,18 +65,18 @@ exports.updateReview = async (req, res) => {
 };
 
 // DELETE a review
-exports.deleteReview = async (req, res) => {
+export const deleteReview = async (req, res) => {
   try {
     const deleted = await Review.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: "Review not found" });
 
     res.status(200).json({ message: "Review deleted successfully" });
-  } catch (err) {a
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 // REPLY to a review (Admin only)
-exports.replyToReview = async (req, res) => {
+export const replyToReview = async (req, res) => {
   try {
     const { reply } = req.body;
 

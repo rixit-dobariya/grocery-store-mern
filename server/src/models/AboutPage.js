@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const AboutPageSchema = new mongoose.Schema({
   content: { type: String, required: true }
 }, { timestamps: true });
 
-module.exports = mongoose.model("AboutPage", AboutPageSchema);
+export default mongoose.model("AboutPage", AboutPageSchema);

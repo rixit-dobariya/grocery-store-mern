@@ -1,4 +1,4 @@
-const Offer = require("../models/Offer");
+import Offer from "../models/Offer.js";
 
 // Utility to determine if an offer is active based on dates
 const isActive = (startDate, endDate) => {
@@ -7,7 +7,7 @@ const isActive = (startDate, endDate) => {
 };
 
 // Create a new offer
-exports.createOffer = async (req, res) => {
+export const createOffer = async (req, res) => {
   try {
     const offer = new Offer(req.body);
     await offer.save();
@@ -21,7 +21,7 @@ exports.createOffer = async (req, res) => {
 };
 
 // Get all offers with activeStatus calculated
-exports.getAllOffers = async (req, res) => {
+export const getAllOffers = async (req, res) => {
   try {
     const offers = await Offer.find();
     const offersWithStatus = offers.map((offer) => {
@@ -37,7 +37,7 @@ exports.getAllOffers = async (req, res) => {
 };
 
 // Get offer by ID
-exports.getOfferById = async (req, res) => {
+export const getOfferById = async (req, res) => {
   try {
     const offer = await Offer.findById(req.params.id);
     if (!offer) {
@@ -53,7 +53,7 @@ exports.getOfferById = async (req, res) => {
 };
 
 // Update an offer
-exports.updateOffer = async (req, res) => {
+export const updateOffer = async (req, res) => {
   try {
     const updatedOffer = await Offer.findByIdAndUpdate(
       req.params.id,
@@ -73,7 +73,7 @@ exports.updateOffer = async (req, res) => {
 };
 
 // Delete an offer
-exports.deleteOffer = async (req, res) => {
+export const deleteOffer = async (req, res) => {
   try {
     const deletedOffer = await Offer.findByIdAndDelete(req.params.id);
     if (!deletedOffer) {

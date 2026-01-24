@@ -1,10 +1,11 @@
-const cloudinary = require("cloudinary").v2;
-const fs = require("fs");
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import config from "../config/index.js";
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: config.cloudinary.cloudName,
+  api_key: config.cloudinary.apiKey,
+  api_secret: config.cloudinary.apiSecret,
 });
 
 const uploadImage = async (filePath, folderName) => {
@@ -42,4 +43,4 @@ const deleteImage = async (publicId) => {
   }
 };
 
-module.exports = { uploadImage, deleteImage };
+export { uploadImage, deleteImage };

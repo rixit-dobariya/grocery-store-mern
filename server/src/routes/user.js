@@ -1,27 +1,42 @@
 // routes/userRoutes.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const userController = require("../controllers/user.controller");
-const upload = require("../middlewares/multer.middleware"); 
+import {
+    register,
+    login,
+    googleLogin,
+    checkEmail,
+    sendOtp,
+    verifyOtp,
+    resetPassword,
+    updatePassword,
+    verifyEmail,
+    createUser,
+    getAllUsers,
+    getUserById,
+    updateUser,
+    deleteUser
+} from "../controllers/user.controller.js";
+import upload from "../middlewares/multer.middleware.js";
 
 // Registration & Login
-router.post("/register", userController.register);
-router.post("/login", userController.login);
-router.post("/google-login", userController.googleLogin);
-router.post("/check-email", userController.checkEmail);
+router.post("/register", register);
+router.post("/login", login);
+router.post("/google-login", googleLogin);
+router.post("/check-email", checkEmail);
 
 // OTP & Password Reset
-router.post("/send-otp", userController.sendOtp);
-router.post("/verify-otp", userController.verifyOtp);
-router.post("/reset-password", userController.resetPassword);
-router.put("/update-password", userController.updatePassword);
-router.get("/verify-email", userController.verifyEmail);
+router.post("/send-otp", sendOtp);
+router.post("/verify-otp", verifyOtp);
+router.post("/reset-password", resetPassword);
+router.put("/update-password", updatePassword);
+router.get("/verify-email", verifyEmail);
 
 // User CRUD
-router.post("/", upload.single("profilePicture"), userController.createUser);
-router.get("/", userController.getAllUsers);
-router.get("/:id", userController.getUserById);
-router.put("/:id", upload.single("profilePicture"),  userController.updateUser);
-router.delete("/:id", userController.deleteUser);
+router.post("/", upload.single("profilePicture"), createUser);
+router.get("/", getAllUsers);
+router.get("/:id", getUserById);
+router.put("/:id", upload.single("profilePicture"), updateUser);
+router.delete("/:id", deleteUser);
 
-module.exports = router;
+export default router;

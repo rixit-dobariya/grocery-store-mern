@@ -1,6 +1,6 @@
-const AboutPage = require('../models/AboutPage');
+import AboutPage from "../models/AboutPage.js";
 
-const getAboutPage = async (req, res) => {
+export const getAboutPage = async (req, res) => {
   try {
     let aboutPage = await AboutPage.findOne();
     if (!aboutPage) {
@@ -16,7 +16,7 @@ const getAboutPage = async (req, res) => {
   }
 };
 
-const updateAboutPage = async (req, res) => {
+export const updateAboutPage = async (req, res) => {
   try {
     const { content } = req.body;
 
@@ -46,5 +46,3 @@ const updateAboutPage = async (req, res) => {
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
-
-module.exports = { getAboutPage, updateAboutPage };

@@ -1,13 +1,16 @@
-const Response = require("../models/Response");
-const nodemailer = require("nodemailer");
+import Response from "../models/Response.js";
+import nodemailer from "nodemailer";
+import config from "../config/index.js";
+
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: config.emailUser,
+    pass: config.emailPass,
   },
 });
-exports.createResponse = async (req, res) => {
+
+export const createResponse = async (req, res) => {
   try {
     const { name, email, phone, message } = req.body;
     const newResponse = new Response({ name, email, phone, message });
@@ -18,7 +21,7 @@ exports.createResponse = async (req, res) => {
   }
 };
 
-exports.getAllResponses = async (req, res) => {
+export const getAllResponses = async (req, res) => {
   try {
     const responses = await Response.find().sort({ createdAt: -1 });
     res.status(200).json(responses);
@@ -27,7 +30,7 @@ exports.getAllResponses = async (req, res) => {
   }
 };
 
-exports.getResponseById = async (req, res) => {
+export const getResponseById = async (req, res) => {
   try {
     const response = await Response.findById(req.params.id);
     if (!response) {
@@ -39,7 +42,7 @@ exports.getResponseById = async (req, res) => {
   }
 };
 
-exports.updateReply = async (req, res) => {
+export const updateReply = async (req, res) => {
   try {
     const { reply } = req.body;
     const response = await Response.findByIdAndUpdate(
@@ -50,9 +53,9 @@ exports.updateReply = async (req, res) => {
     if (!response) {
       return res.status(404).json({ message: "Response not found" });
     }
-    
+
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: config.emailUser,
       to: response.email,
       subject: "Response to your query",
       text: `Hi ${response.name},\n\nYour Query: ${response.message}\nReply: ${reply}`
@@ -64,7 +67,7 @@ exports.updateReply = async (req, res) => {
   }
 };
 
-exports.deleteResponse = async (req, res) => {
+export const deleteResponse = async (req, res) => {
   try {
     const response = await Response.findByIdAndDelete(req.params.id);
     if (!response) {

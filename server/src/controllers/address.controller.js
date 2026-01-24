@@ -1,6 +1,6 @@
-const Address = require('../models/Address');
+import Address from "../models/Address.js";
 
-const addAddress = async (req, res) => {
+export const addAddress = async (req, res) => {
   try {
     const address = new Address(req.body);
     const savedAddress = await address.save();
@@ -10,7 +10,7 @@ const addAddress = async (req, res) => {
   }
 };
 
-const getAddressById = async (req, res) => {
+export const getAddressById = async (req, res) => {
   try {
     const address = await Address.findById(req.params.addressId);
     if (!address) return res.status(404).json({ message: 'Address not found' });
@@ -20,7 +20,7 @@ const getAddressById = async (req, res) => {
   }
 };
 
-const getAddressesByUserId = async (req, res) => {
+export const getAddressesByUserId = async (req, res) => {
   try {
     const addresses = await Address.find({ userId: req.params.userId });
     res.status(200).json(addresses);
@@ -29,7 +29,7 @@ const getAddressesByUserId = async (req, res) => {
   }
 };
 
-const updateAddress = async (req, res) => {
+export const updateAddress = async (req, res) => {
   try {
     const updatedAddress = await Address.findByIdAndUpdate(
       req.params.addressId,
@@ -41,11 +41,4 @@ const updateAddress = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Failed to update address', error });
   }
-};
-
-module.exports = {
-  addAddress,
-  getAddressById,
-  getAddressesByUserId,
-  updateAddress
 };

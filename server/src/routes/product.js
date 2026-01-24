@@ -1,20 +1,29 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const productController = require("../controllers/product.controller");
-const upload = require("../middlewares/multer.middleware");
+import {
+    createProduct,
+    getAllProducts,
+    getTrendingProducts,
+    getLatestProducts,
+    getProductById,
+    getProductsByCategoryId,
+    updateProduct,
+    deleteProduct
+} from "../controllers/product.controller.js";
+import upload from "../middlewares/multer.middleware.js";
 
-router.post("/", upload.single("productImage"), productController.createProduct);
+router.post("/", upload.single("productImage"), createProduct);
 
-router.get("/", productController.getAllProducts);
-router.get("/trending", productController.getTrendingProducts);
-router.get("/latest", productController.getLatestProducts);
+router.get("/", getAllProducts);
+router.get("/trending", getTrendingProducts);
+router.get("/latest", getLatestProducts);
 
-router.get("/:id", productController.getProductById);
+router.get("/:id", getProductById);
 
-router.get('/category/:categoryId', productController.getProductsByCategoryId);
+router.get('/category/:categoryId', getProductsByCategoryId);
 
-router.put("/:id", upload.single("productImage"), productController.updateProduct);
+router.put("/:id", upload.single("productImage"), updateProduct);
 
-router.delete("/:id", productController.deleteProduct);
+router.delete("/:id", deleteProduct);
 
-module.exports = router;
+export default router;

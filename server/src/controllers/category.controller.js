@@ -1,7 +1,7 @@
-const Category = require("../models/Category");
-const { uploadImage, deleteImage } = require("../utils/cloudinary");
+import Category from "../models/Category.js";
+import { uploadImage, deleteImage } from "../utils/cloudinary.js";
 
-const createCategory = async (req, res) => {
+export const createCategory = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "Image is required" });
@@ -23,7 +23,7 @@ const createCategory = async (req, res) => {
   }
 };
 // Get all categories
-const getAllCategories = async (req, res) => {
+export const getAllCategories = async (req, res) => {
   try {
     const categories = await Category.find({ isDeleted: false });
     res.status(200).json(categories);
@@ -33,7 +33,7 @@ const getAllCategories = async (req, res) => {
 };
 
 // Get a single category by ID
-const getCategoryById = async (req, res) => {
+export const getCategoryById = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
     if (!category || category.isDeleted) {
@@ -44,7 +44,7 @@ const getCategoryById = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch category", error });
   }
 };
-const updateCategory = async (req, res) => {
+export const updateCategory = async (req, res) => {
   try {
     const { name, color } = req.body;
 
@@ -82,7 +82,7 @@ const updateCategory = async (req, res) => {
 };
 
 // Soft delete a category (mark as deleted without removing from database)
-const softDeleteCategory = async (req, res) => {
+export const softDeleteCategory = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
 
@@ -101,12 +101,4 @@ const softDeleteCategory = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Failed to delete category", error });
   }
-};
-
-module.exports = {
-  createCategory,
-  getAllCategories,
-  getCategoryById,
-  updateCategory,
-  softDeleteCategory,
 };

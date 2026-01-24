@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const BannerSchema = new mongoose.Schema({
   bannerImage: { type: String, required: true },
@@ -8,4 +8,4 @@ const BannerSchema = new mongoose.Schema({
 });
 
 
-module.exports = mongoose.model("Banner", BannerSchema);
+export default mongoose.model("Banner", BannerSchema);

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const OrderItemSchema = new mongoose.Schema({
   orderId: { type: mongoose.Schema.Types.ObjectId, ref: "Order", required: true },
@@ -8,4 +8,4 @@ const OrderItemSchema = new mongoose.Schema({
   discount: { type: mongoose.Schema.Types.Decimal128, default: 0 }
 });
 
-module.exports = mongoose.model("OrderItem", OrderItemSchema);
+export default mongoose.model("OrderItem", OrderItemSchema);

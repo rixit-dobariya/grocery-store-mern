@@ -1,10 +1,10 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const Product = require("../models/Product");
-const Order = require("../models/Order");
-const Category = require("../models/Category");
-const User = require("../models/User");
+import Product from "../models/Product.js";
+import Order from "../models/Order.js";
+import Category from "../models/Category.js";
+import User from "../models/User.js";
 
 router.get("/", async (req, res) => {
   try {
@@ -30,4 +30,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
