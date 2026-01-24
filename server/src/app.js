@@ -2,8 +2,10 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import connectDB from "./db/index.js";
 import config from "./config/index.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 //import routers
 import userRoutes from "./routes/user.js";
@@ -24,6 +26,7 @@ import paymentRoutes from "./routes/payment.js";
 
 const app = express();
 
+app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
@@ -47,11 +50,8 @@ app.use("/wishlist", wishlistRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/payment', paymentRoutes);
 
-app.use((_, res) => {
-    res.status(404).json({ message: "Route not found" });
-});
-
-app.get("/", (req, res) => res.send("hello world"));
+// Error Handling Middleware
+app.use(errorHandler);
 
 connectDB()
     .then(() => {
