@@ -1,80 +1,28 @@
-import Response from "../models/Response.js";
-import nodemailer from "nodemailer";
-import config from "../config/index.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import responseService from "../services/response.service.js";
 
-const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: config.emailUser,
-    pass: config.emailPass,
-  },
+export const createResponse = asyncHandler(async (req, res) => {
+  const newResponse = await responseService.createResponse(req.body);
+  res.status(201).json(newResponse);
 });
 
-export const createResponse = async (req, res) => {
-  try {
-    const { name, email, phone, message } = req.body;
-    const newResponse = new Response({ name, email, phone, message });
-    await newResponse.save();
-    res.status(201).json(newResponse);
-  } catch (error) {
-    res.status(500).json({ message: "Error creating response", error: error.message });
-  }
-};
+export const getAllResponses = asyncHandler(async (req, res) => {
+  const responses = await responseService.getAllResponses();
+  res.status(200).json(responses);
+});
 
-export const getAllResponses = async (req, res) => {
-  try {
-    const responses = await Response.find().sort({ createdAt: -1 });
-    res.status(200).json(responses);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching responses", error: error.message });
-  }
-};
+export const getResponseById = asyncHandler(async (req, res) => {
+  const response = await responseService.getResponseById(req.params.id);
+  res.status(200).json(response);
+});
 
-export const getResponseById = async (req, res) => {
-  try {
-    const response = await Response.findById(req.params.id);
-    if (!response) {
-      return res.status(404).json({ message: "Response not found" });
-    }
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching response", error: error.message });
-  }
-};
+export const updateReply = asyncHandler(async (req, res) => {
+  const response = await responseService.updateReply(req.params.id, req.body.reply);
+  res.status(200).json(response);
+});
 
-export const updateReply = async (req, res) => {
-  try {
-    const { reply } = req.body;
-    const response = await Response.findByIdAndUpdate(
-      req.params.id,
-      { reply },
-      { new: true, runValidators: true }
-    );
-    if (!response) {
-      return res.status(404).json({ message: "Response not found" });
-    }
-
-    await transporter.sendMail({
-      from: config.emailUser,
-      to: response.email,
-      subject: "Response to your query",
-      text: `Hi ${response.name},\n\nYour Query: ${response.message}\nReply: ${reply}`
-    });
-
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({ message: "Error updating reply", error: error.message });
-  }
-};
-
-export const deleteResponse = async (req, res) => {
-  try {
-    const response = await Response.findByIdAndDelete(req.params.id);
-    if (!response) {
-      return res.status(404).json({ message: "Response not found" });
-    }
-    res.status(200).json({ message: "Response deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Error deleting response", error: error.message });
-  }
-};
+export const deleteResponse = asyncHandler(async (req, res) => {
+  const result = await responseService.deleteResponse(req.params.id);
+  res.status(200).json(result);
+});

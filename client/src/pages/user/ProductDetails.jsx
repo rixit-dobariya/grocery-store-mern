@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useAuth } from "../../contexts/AuthContext";
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -12,15 +13,16 @@ const ProductDetails = () => {
     const [errors, setErrors] = useState({});
     const [hasPurchased, setHasPurchased] = useState(false);
     const [hasReviewed, setHasReviewed] = useState(false);
-  const [addingToCart, setAddingToCart] = useState(false);
-const [userId, setUserId] = useState(null);
+    const [addingToCart, setAddingToCart] = useState(false);
+    const [userId, setUserId] = useState(null);
+    const { updateCartCount } = useAuth();
 
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser && storedUser._id) {
-      setUserId(storedUser._id);
-    } 
-  }, []);
+    useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        if (storedUser && storedUser._id) {
+            setUserId(storedUser._id);
+        }
+    }, []);
 
     useEffect(() => {
         fetchProduct();
@@ -45,28 +47,28 @@ const [userId, setUserId] = useState(null);
         }
     };
     useEffect(() => {
-    fetchProduct();
-    fetchReviews();
-    checkPurchaseAndReview();
-}, [id]);
+        fetchProduct();
+        fetchReviews();
+        checkPurchaseAndReview();
+    }, [id]);
 
-const checkPurchaseAndReview = async () => {
-    try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (!user) return;
+    const checkPurchaseAndReview = async () => {
+        try {
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (!user) return;
 
-        const res = await axios.get(`http://localhost:8000/orders/has-purchased/${user._id}/${id}`);
-        setHasPurchased(res.data.purchased);
+            const res = await axios.get(`http://localhost:8000/orders/has-purchased/${user._id}/${id}`);
+            setHasPurchased(res.data.purchased);
 
-        // Check if user has already reviewed
-        const reviewRes = await axios.get(`http://localhost:8000/reviews?productId=${id}&userId=${user._id}`);
-        setHasReviewed(reviewRes.data.length > 0);
-        console.log(res);
-        console.log(reviewRes);
-    } catch (err) {
-        console.error("Error checking purchase/review", err);
-    }
-};
+            // Check if user has already reviewed
+            const reviewRes = await axios.get(`http://localhost:8000/reviews?productId=${id}&userId=${user._id}`);
+            setHasReviewed(reviewRes.data.length > 0);
+            console.log(res);
+            console.log(reviewRes);
+        } catch (err) {
+            console.error("Error checking purchase/review", err);
+        }
+    };
 
     const finalPrice = product ? (product.salePrice - (product.salePrice * product.discount / 100)).toFixed(2) : "0.00";
 
@@ -106,65 +108,65 @@ const checkPurchaseAndReview = async () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleCartSubmit = async(productId) => {
+    const handleCartSubmit = async (productId) => {
         if (validateQuantity()) {
             if (!userId) {
-      toast.error("Please log in to add to cart.");
-      return;
-    }
+                toast.error("Please log in to add to cart.");
+                return;
+            }
 
-    setAddingToCart(true);
-    try {
-      const response = await axios.post(`http://localhost:8000/cart`, {
-        userId,
-        productId,
-        quantity: selectedQuantity,
-      });
+            setAddingToCart(true);
+            try {
+                const response = await axios.post(`http://localhost:8000/cart`, {
+                    userId,
+                    productId,
+                    quantity: selectedQuantity,
+                });
 
-      toast.success("Product added to cart successfully!");
-       setSelectedQuantity(null);
-            setErrors({});
-      if (response.data?.items?.length) {
-        updateCartCount(response.data.items.length);
-      }
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-      toast.error("Failed to add to cart.");
-    } finally {
-      setAddingToCart(false);
-    }
-           
+                toast.success("Product added to cart successfully!");
+                setSelectedQuantity(null);
+                setErrors({});
+                if (response.data?.items?.length) {
+                    updateCartCount(response.data.items.length);
+                }
+            } catch (error) {
+                console.error("Error adding to cart:", error);
+                toast.error("Failed to add to cart.");
+            } finally {
+                setAddingToCart(false);
+            }
+
         }
     };
 
     const submitReview = async (e) => {
-    e.preventDefault();
-    if (!validateReview()) return;
+        e.preventDefault();
+        if (!validateReview()) return;
 
-    try {
-        const user = JSON.parse(localStorage.getItem("user")); // adjust key as per your storage key
-        const userId = user?._id;
+        try {
+            const user = JSON.parse(localStorage.getItem("user")); // adjust key as per your storage key
+            const userId = user?._id;
 
-        if (!userId) {
-            toast.error("You must be logged in to submit a review.");
-            return;
+            if (!userId) {
+                toast.error("You must be logged in to submit a review.");
+                return;
+            }
+
+            await axios.post("http://localhost:8000/reviews", {
+                productId: id,
+                userId,
+                rating: review.rating,
+                review: review.review,
+            });
+
+            toast.success("Review submitted!");
+            setHasReviewed(true);
+            setReview({ rating: "", review: "" });
+            fetchReviews();
+        } catch (err) {
+            toast.error("Failed to submit review");
         }
-
-        await axios.post("http://localhost:8000/reviews", {
-            productId: id,
-            userId,
-            rating: review.rating,
-            review: review.review,
-        });
-
-        toast.success("Review submitted!");
-        setHasReviewed(true);
-        setReview({ rating: "", review: "" });
-        fetchReviews();
-    } catch (err) {
-        toast.error("Failed to submit review");
-    }
-};
+    };
 
     if (!product) return <div className="text-center py-5">Loading...</div>;
 
@@ -206,15 +208,15 @@ const checkPurchaseAndReview = async () => {
                         </div>
                         {errors.quantity && <p className="text-danger">{errors.quantity}</p>}
                     </div>
-                   <button 
-  onClick={()=>handleCartSubmit(product._id)} 
-  className="add-to-cart-btn primary-btn w-100 mt-4"
-  disabled={addingToCart}
->
-  {addingToCart ? "Adding..." : "Add to Cart"}
-</button>
+                    <button
+                        onClick={() => handleCartSubmit(product._id)}
+                        className="add-to-cart-btn primary-btn w-100 mt-4"
+                        disabled={addingToCart}
+                    >
+                        {addingToCart ? "Adding..." : "Add to Cart"}
+                    </button>
 
-                    
+
                 </div>
             </div>
 
@@ -222,33 +224,33 @@ const checkPurchaseAndReview = async () => {
                 <h4 className="mb-4 text-center fw-bold">Customer Reviews</h4>
                 <div className="row">
                     <div className="col-6">
-                    {hasPurchased ? (
-    hasReviewed ? (
-        <div className="alert alert-info">You have already reviewed this product.</div>
-    ) : (
-        <form onSubmit={submitReview} className="mb-4">
-            {/* Rating and Review inputs go here (unchanged) */}
-            <div className="mb-3">
-                <label className="d-block">Rating</label>
-                <select name="rating" className="form w-100 p-2 rounded" onChange={handleReviewChange} value={review.rating}>
-                    <option value="">Select rating</option>
-                    {[1, 2, 3, 4, 5].map(r => (
-                        <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>
-                    ))}
-                </select>
-                {errors.rating && <p className="text-danger">{errors.rating}</p>}
-            </div>
-            <div className="mb-3">
-                <label className="d-block">Review</label>
-                <textarea name="review" className="w-100" rows="3" placeholder="Please add your review" onChange={handleReviewChange} value={review.review}></textarea>
-                {errors.review && <p className="text-danger">{errors.review}</p>}
-            </div>
-            <button type="submit" className="primary-btn">Submit Review</button>
-        </form>
-    )
-) : (
-    <div className="alert alert-warning">Only customers who purchased this product can write a review.</div>
-)}
+                        {hasPurchased ? (
+                            hasReviewed ? (
+                                <div className="alert alert-info">You have already reviewed this product.</div>
+                            ) : (
+                                <form onSubmit={submitReview} className="mb-4">
+                                    {/* Rating and Review inputs go here (unchanged) */}
+                                    <div className="mb-3">
+                                        <label className="d-block">Rating</label>
+                                        <select name="rating" className="form w-100 p-2 rounded" onChange={handleReviewChange} value={review.rating}>
+                                            <option value="">Select rating</option>
+                                            {[1, 2, 3, 4, 5].map(r => (
+                                                <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>
+                                            ))}
+                                        </select>
+                                        {errors.rating && <p className="text-danger">{errors.rating}</p>}
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="d-block">Review</label>
+                                        <textarea name="review" className="w-100" rows="3" placeholder="Please add your review" onChange={handleReviewChange} value={review.review}></textarea>
+                                        {errors.review && <p className="text-danger">{errors.review}</p>}
+                                    </div>
+                                    <button type="submit" className="primary-btn">Submit Review</button>
+                                </form>
+                            )
+                        ) : (
+                            <div className="alert alert-warning">Only customers who purchased this product can write a review.</div>
+                        )}
                     </div>
                     <div className="col-6">
                         <div className="row align-items-stretch">

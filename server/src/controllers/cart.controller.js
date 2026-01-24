@@ -1,89 +1,31 @@
-import Cart from "../models/Cart.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import cartService from "../services/cart.service.js";
 
-export const addToCart = async (req, res) => {
-  try {
-    const { userId, productId, quantity } = req.body;
+export const addToCart = asyncHandler(async (req, res) => {
+  const { userId, productId, quantity } = req.body;
+  const cart = await cartService.addToCart(userId, productId, quantity);
+  res.status(201).json(cart);
+});
 
-    let cart = await Cart.findOne({ userId });
-    if (!cart) {
-      cart = new Cart({ userId, items: [{ productId, quantity }] });
-      await cart.save();
-    } else {
-      const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
-      if (itemIndex >= 0) {
-        cart.items[itemIndex].quantity += quantity;
-      } else {
-        cart.items.push({ productId, quantity });
-      }
-      await cart.save();
-    }
+export const getCartByUserId = asyncHandler(async (req, res) => {
+  const cart = await cartService.getCartByUserId(req.params.userId);
+  res.status(200).json(cart);
+});
 
-    res.status(201).json(cart);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to add item to cart", error });
-  }
-};
+export const updateCartItem = asyncHandler(async (req, res) => {
+  const { productId, quantity } = req.body;
+  const cart = await cartService.updateCartItem(req.params.userId, productId, quantity);
+  res.status(200).json(cart);
+});
 
-export const getCartByUserId = async (req, res) => {
-  try {
-    const cart = await Cart.findOne({ userId: req.params.userId }).populate("items.productId");
-    if (!cart) return res.status(404).json({ message: "Cart not found" });
-    res.status(200).json(cart);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch cart", error });
-  }
-};
+export const removeCartItem = asyncHandler(async (req, res) => {
+  const { productId } = req.body;
+  const cart = await cartService.removeCartItem(req.params.userId, productId);
+  res.status(200).json(cart);
+});
 
-export const updateCartItem = async (req, res) => {
-  try {
-    const { productId, quantity } = req.body;
-    const cart = await Cart.findOne({ userId: req.params.userId });
-
-    if (!cart) return res.status(404).json({ message: "Cart not found" });
-
-    const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
-    if (itemIndex >= 0) {
-      cart.items[itemIndex].quantity = quantity;
-      await cart.save();
-      res.status(200).json(cart);
-    } else {
-      res.status(404).json({ message: "Product not in cart" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Failed to update cart item", error });
-  }
-};
-
-export const removeCartItem = async (req, res) => {
-  try {
-    const { productId } = req.body;
-    const cart = await Cart.findOne({ userId: req.params.userId });
-
-    if (!cart) return res.status(404).json({ message: "Cart not found" });
-
-    const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
-    if (itemIndex >= 0) {
-      cart.items.splice(itemIndex, 1);
-      await cart.save();
-      res.status(200).json(cart);
-    } else {
-      res.status(404).json({ message: "Product not in cart" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Failed to remove item from cart", error });
-  }
-};
-
-export const clearCart = async (req, res) => {
-  try {
-    const cart = await Cart.findOne({ userId: req.params.userId });
-
-    if (!cart) return res.status(404).json({ message: "Cart not found" });
-
-    cart.items = [];
-    await cart.save();
-    res.status(200).json({ message: "Cart cleared successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to clear cart", error });
-  }
-};
+export const clearCart = asyncHandler(async (req, res) => {
+  const result = await cartService.clearCart(req.params.userId);
+  res.status(200).json(result);
+});

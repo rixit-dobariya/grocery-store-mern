@@ -1,44 +1,23 @@
-import Address from "../models/Address.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import addressService from "../services/address.service.js";
 
-export const addAddress = async (req, res) => {
-  try {
-    const address = new Address(req.body);
-    const savedAddress = await address.save();
-    res.status(201).json(savedAddress);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to add address', error });
-  }
-};
+export const addAddress = asyncHandler(async (req, res) => {
+  const savedAddress = await addressService.addAddress(req.body);
+  res.status(201).json(savedAddress);
+});
 
-export const getAddressById = async (req, res) => {
-  try {
-    const address = await Address.findById(req.params.addressId);
-    if (!address) return res.status(404).json({ message: 'Address not found' });
-    res.status(200).json(address);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch address', error });
-  }
-};
+export const getAddressById = asyncHandler(async (req, res) => {
+  const address = await addressService.getAddressById(req.params.addressId);
+  res.status(200).json(address);
+});
 
-export const getAddressesByUserId = async (req, res) => {
-  try {
-    const addresses = await Address.find({ userId: req.params.userId });
-    res.status(200).json(addresses);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch addresses', error });
-  }
-};
+export const getAddressesByUserId = asyncHandler(async (req, res) => {
+  const addresses = await addressService.getAddressesByUserId(req.params.userId);
+  res.status(200).json(addresses);
+});
 
-export const updateAddress = async (req, res) => {
-  try {
-    const updatedAddress = await Address.findByIdAndUpdate(
-      req.params.addressId,
-      { $set: req.body },
-      { new: true }
-    );
-    if (!updatedAddress) return res.status(404).json({ message: 'Address not found' });
-    res.status(200).json(updatedAddress);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to update address', error });
-  }
-};
+export const updateAddress = asyncHandler(async (req, res) => {
+  const updatedAddress = await addressService.updateAddress(req.params.addressId, req.body);
+  res.status(200).json(updatedAddress);
+});
