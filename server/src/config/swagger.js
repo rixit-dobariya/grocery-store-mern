@@ -39,6 +39,7 @@ const options = {
     // Path to the API docs
     apis: [
         path.join(__dirname, '../routes/*.js'), // Path to routes
+        path.join(__dirname, '../docs/*.js'),   // Path to separate documentation files
         path.join(__dirname, '../models/*.js')  // Optional: if you want to reuse model schemas
     ],
 };
