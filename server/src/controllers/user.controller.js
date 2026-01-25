@@ -12,7 +12,7 @@ export const register = asyncHandler(async (req, res) => {
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const result = await userService.loginUser(email, password);
-  res.json(new ApiResponse(200, result, "Login successful"));
+  res.json(result);
 });
 
 // Send OTP
@@ -58,7 +58,7 @@ export const createUser = asyncHandler(async (req, res) => {
 // Get All Users
 export const getAllUsers = asyncHandler(async (req, res) => {
   const users = await userService.getAllUsers();
-  res.json(new ApiResponse(200, users, "Users fetched successfully"));
+  res.json(users);
 });
 
 // Get Single User

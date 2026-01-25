@@ -22,34 +22,38 @@ import EmailVerification from "../pages/user/EmailVerification";
 import VerifyEmail from "../pages/user/VerifyEmail";
 import ProtectedRoute from "../components/user/ProtectedRoute";
 import RoleGuard from "../components/user/RoleGuard";
+import { AppDataProvider } from "../contexts/AppDataContext";
+
 const UserRoutes = () => {
-  return ( 
-    <Routes>
+  return (
+    <AppDataProvider>
+      <Routes>
         <Route path="/" element={<RoleGuard><UserLayout /></RoleGuard>}>
-            <Route index element={<Home />} />
-            <Route path="/verify-email/:token" element={<VerifyEmail />} />
-            <Route path="shop" element={<Shop />} />
-            <Route path="product/:id" element={<ProductDetails />} />
-            <Route path="about" element={<About />} />
-            <Route path="contact" element={<Contact />} />
+          <Route index element={<Home />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="shop" element={<Shop />} />
+          <Route path="product/:id" element={<ProductDetails />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
 
-            <Route path="register" element={<Register />} />
-            <Route path="login" element={<Login />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="verify-otp" element={<OtpVerification />} />
-            <Route path="reset-password" element={<ResetPassword />} />
-            <Route path="verify-email" element={<EmailVerification />}  />
+          <Route path="register" element={<Register />} />
+          <Route path="login" element={<Login />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="verify-otp" element={<OtpVerification />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+          <Route path="verify-email" element={<EmailVerification />} />
 
-            <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-            <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-            <Route path="order-confirm" element={<ProtectedRoute><OrderConfirmation /></ProtectedRoute>} />
-            <Route path="order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
-            <Route path="order/:orderId" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>} />
-            <Route path="wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-            <Route path="account" element={<ProtectedRoute><MyAccount /></ProtectedRoute>} />
+          <Route path="cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+          <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+          <Route path="order-confirm" element={<ProtectedRoute><OrderConfirmation /></ProtectedRoute>} />
+          <Route path="order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+          <Route path="order/:orderId" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>} />
+          <Route path="wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+          <Route path="account" element={<ProtectedRoute><MyAccount /></ProtectedRoute>} />
 
         </Route>
-  </Routes>
+      </Routes>
+    </AppDataProvider>
   );
 };
 

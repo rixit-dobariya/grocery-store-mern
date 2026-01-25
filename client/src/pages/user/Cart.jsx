@@ -3,24 +3,25 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../../contexts/AuthContext"; // Importing AuthContext
+import { useAuth } from "../../contexts/AuthContext";
+import { useAppData } from "../../contexts/AppDataContext";
 
 const Cart = () => {
 	const shippingCharge = 50;
-	const { cartCount, updateCartCount } = useAuth(); // Accessing cart count and update method from AuthContext
+	const { updateCartCount } = useAppData();
 	const [cart, setCart] = useState([]);
 	const [offers, setOffers] = useState([]);
 	const [appliedOffer, setAppliedOffer] = useState(null);
 	const [discountAmount, setDiscountAmount] = useState(0);
-    useEffect(() => {
-        if (cart.length > 0) {
-            const storedOffer = sessionStorage.getItem("appliedOffer");
-            if (storedOffer) {
-                checkOffer(JSON.parse(storedOffer));
-            }
-        }
-    }, [cart]); // Run only when cart is updated
-const checkOffer = (offer) => {
+	useEffect(() => {
+		if (cart.length > 0) {
+			const storedOffer = sessionStorage.getItem("appliedOffer");
+			if (storedOffer) {
+				checkOffer(JSON.parse(storedOffer));
+			}
+		}
+	}, [cart]); // Run only when cart is updated
+	const checkOffer = (offer) => {
 		const subtotal = cart.reduce((total, item) => {
 			const salePrice = parseFloat(item.productId.salePrice) || 0;
 			const discount = parseFloat(item.productId.discount) || 0;
@@ -31,17 +32,17 @@ const checkOffer = (offer) => {
 		if (subtotal >= offer.minimumOrder) {
 			setAppliedOffer(offer);
 			const offerDiscount = subtotal * (offer.discount / 100);
-			 if(discountAmount > offer.maxDiscount){
-setDiscountAmount(offer.maxDiscount);
-            }
-            else{
-                setDiscountAmount(offerDiscount);
-            }
+			if (discountAmount > offer.maxDiscount) {
+				setDiscountAmount(offer.maxDiscount);
+			}
+			else {
+				setDiscountAmount(offerDiscount);
+			}
 			sessionStorage.setItem("appliedOffer", JSON.stringify(offer));
-		} 
-        else{
-            setAppliedOffer(null);
-        }
+		}
+		else {
+			setAppliedOffer(null);
+		}
 	};
 	const applyOffer = (offer) => {
 		const subtotal = cart.reduce((total, item) => {
@@ -54,13 +55,13 @@ setDiscountAmount(offer.maxDiscount);
 		if (subtotal >= offer.minimumOrder) {
 			setAppliedOffer(offer);
 			const offerDiscount = subtotal * (offer.discount / 100);
-            if(discountAmount > offer.maxDiscount){
-setDiscountAmount(offer.maxDiscount);
-            }
-            else{
-                setDiscountAmount(offerDiscount);
-            }
-			
+			if (discountAmount > offer.maxDiscount) {
+				setDiscountAmount(offer.maxDiscount);
+			}
+			else {
+				setDiscountAmount(offerDiscount);
+			}
+
 			sessionStorage.setItem("appliedOffer", JSON.stringify(offer));
 			toast.success("Offer applied successfully!");
 		} else {
@@ -163,11 +164,11 @@ setDiscountAmount(offer.maxDiscount);
 				Cart
 			</p>
 			{cart.length === 0 ? (
-							<div className="alert alert-info text-center">
-								Your cart is empty.{" "}
-								<Link to="/shop">Continue Shopping</Link>
-							</div>
-						) : (<div className="table-responsive">
+				<div className="alert alert-info text-center">
+					Your cart is empty.{" "}
+					<Link to="/shop">Continue Shopping</Link>
+				</div>
+			) : (<div className="table-responsive">
 				<table className="table cart-table text-nowrap mt-5">
 					<thead>
 						<tr className="heading text-center">

@@ -3,23 +3,25 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
+import { useAppData } from "../../contexts/AppDataContext";
 
 const ProductList = ({ products }) => {
-  const { user, updateCartCount, updateWishlistCount } = useAuth();
+  const { user } = useAuth();
+  const { updateCartCount, updateWishlistCount } = useAppData();
 
   const [wishlist, setWishlist] = useState([]);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const [addingToCartId, setAddingToCartId] = useState(null);
-const [currentPage, setCurrentPage] = useState(1);
-const productsPerPage = 8;
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 8;
 
-const indexOfLastProduct = currentPage * productsPerPage;
-const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-const totalPages = Math.ceil(products.length / productsPerPage);
+  const totalPages = Math.ceil(products.length / productsPerPage);
 
-const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -185,24 +187,24 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
         })
       )}
       {totalPages > 1 && (
-  <nav className="mt-4 d-flex justify-content-center">
-    <ul className="pagination">
-      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-        <button className="page-link" onClick={() => paginate(currentPage - 1)}>Previous</button>
-      </li>
+        <nav className="mt-4 d-flex justify-content-center">
+          <ul className="pagination">
+            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+              <button className="page-link" onClick={() => paginate(currentPage - 1)}>Previous</button>
+            </li>
 
-      {[...Array(totalPages)].map((_, i) => (
-        <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
-          <button className="page-link" onClick={() => paginate(i + 1)}>{i + 1}</button>
-        </li>
-      ))}
+            {[...Array(totalPages)].map((_, i) => (
+              <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                <button className="page-link" onClick={() => paginate(i + 1)}>{i + 1}</button>
+              </li>
+            ))}
 
-      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-        <button className="page-link" onClick={() => paginate(currentPage + 1)}>Next</button>
-      </li>
-    </ul>
-  </nav>
-)}
+            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+              <button className="page-link" onClick={() => paginate(currentPage + 1)}>Next</button>
+            </li>
+          </ul>
+        </nav>
+      )}
     </div>
   );
 };

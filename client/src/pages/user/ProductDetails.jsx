@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
+import { useAppData } from "../../contexts/AppDataContext";
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -15,7 +16,7 @@ const ProductDetails = () => {
     const [hasReviewed, setHasReviewed] = useState(false);
     const [addingToCart, setAddingToCart] = useState(false);
     const [userId, setUserId] = useState(null);
-    const { updateCartCount } = useAuth();
+    const { updateCartCount } = useAppData();
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem("user"));

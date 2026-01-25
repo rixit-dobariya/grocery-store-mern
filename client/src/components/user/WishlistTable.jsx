@@ -2,27 +2,28 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
+import { useAppData } from '../../contexts/AppDataContext';
 
 const WishlistTable = ({ userId }) => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const [addingToCartId, setAddingToCartId] = useState(null);
-  const { updateCartCount,updateWishlistCount } = useAuth();
+  const { updateCartCount, updateWishlistCount } = useAppData();
 
   // Fetch wishlist
-const fetchWishlist = async () => {
-  try {
-    const res = await axios.get(`http://localhost:8000/wishlist/${userId}`);
-    const productIds = res.data?.wishlist?.productIds || [];
-    setWishlist(productIds);
-    updateWishlistCount(productIds.length);
-  } catch (error) {
-    console.error('Error fetching wishlist:', error);
-    toast.error("Failed to load wishlist.");
-  } finally {
-    setLoading(false);
-  }
-};
+  const fetchWishlist = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8000/wishlist/${userId}`);
+      const productIds = res.data?.wishlist?.productIds || [];
+      setWishlist(productIds);
+      updateWishlistCount(productIds.length);
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+      toast.error("Failed to load wishlist.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   useEffect(() => {

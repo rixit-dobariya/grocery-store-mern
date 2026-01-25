@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAuth } from "../../contexts/AuthContext"; // ✅ Import context
+import { useAuth } from "../../contexts/AuthContext";
+import { useAppData } from "../../contexts/AppDataContext"; // ✅ Import new context
 
 const Header = () => {
-	const { isLoggedIn, logout, user, cartCount, wishlistCount, updateCartCount, updateWishlistCount } = useAuth(); // ✅ Grab new state and methods from context
-	const [query, setQuery] = useState("");
+	const { isLoggedIn, logout, user } = useAuth();
+	const { cartCount, wishlistCount, searchQuery, setSearchQuery } = useAppData(); // ✅ Get data from AppDataContext
 	const [isNavCollapsed, setIsNavCollapsed] = useState(true);
 	const navigate = useNavigate();
-  const { searchQuery, setSearchQuery } = useAuth();
 	useEffect(() => {
 		const navbarToggler = document.querySelector(".navbar-toggler");
 		const navbarCollapse = document.querySelector(".navbar-collapse");
@@ -46,7 +46,7 @@ const Header = () => {
 		toast.success("You have been logged out successfully!");
 		navigate("/");
 	};
-    
+
 
 	return (
 		<nav id="navibar" className="navbar navbar-expand-lg navbar-light sticky-top container-fluid">
@@ -86,7 +86,7 @@ const Header = () => {
 								type="search"
 								placeholder="Search for items..."
 								value={searchQuery}
-								 onChange={(e) => {setSearchQuery(e.target.value);}}
+								onChange={(e) => { setSearchQuery(e.target.value); }}
 							/>
 							<button className="primary-btn search-button">
 								<i className="fa fa-search" aria-hidden="true"></i>

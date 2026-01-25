@@ -3,11 +3,15 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import ProductList from "../../components/user/ProductList";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAppData } from "../../contexts/AppDataContext";
 
 export default function Shop() {
   const [filterVisible, setFilterVisible] = useState(false);
-  const {filters, setFilters, filteredProducts } = useAuth();
+  const { filters, setFilters, filteredProducts, fetchProducts, isProductsLoaded } = useAppData();
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -107,23 +111,23 @@ export default function Shop() {
               ))}
             </div>
 
-        {/* Clear Filters Button */}
-        <div className="col-md-3 col-sm-4 col-6 mb-2 d-flex align-items-end">
-            <button
+            {/* Clear Filters Button */}
+            <div className="col-md-3 col-sm-4 col-6 mb-2 d-flex align-items-end">
+              <button
                 type="button"
                 className="btn btn-secondary w-100"
                 onClick={() =>
-                    setFilters({
-                        ratings: "",
-                        priceRange: "",
-                        discount: "",
-                        // add other filter fields here if needed
-                    })
+                  setFilters({
+                    ratings: "",
+                    priceRange: "",
+                    discount: "",
+                    // add other filter fields here if needed
+                  })
                 }
-            >
+              >
                 Clear Filters
-            </button>
-        </div>
+              </button>
+            </div>
           </div>
         </form>
       )}

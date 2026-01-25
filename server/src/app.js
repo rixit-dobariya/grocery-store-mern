@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+import compression from "compression";
+import mongoSanitize from "express-mongo-sanitize";
 import connectDB from "./db/index.js";
 import config from "./config/index.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
@@ -28,6 +30,8 @@ const app = express();
 
 app.use(morgan("dev"));
 app.use(cors());
+app.use(compression());
+app.use(mongoSanitize());
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
