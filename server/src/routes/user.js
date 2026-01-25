@@ -20,7 +20,79 @@ import {
 import upload from "../middlewares/multer.middleware.js";
 
 // Registration & Login
+
+/**
+ * @swagger
+ * /users/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - firstName
+ *               - lastName
+ *               - email
+ *               - mobile
+ *               - password
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               mobile:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               authType:
+ *                 type: string
+ *                 default: Email
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *       400:
+ *         description: All fields are required
+ *       409:
+ *         description: User already exists
+ */
 router.post("/register", register);
+
+/**
+ * @swagger
+ * /users/login:
+ *   post:
+ *     summary: Login a user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       401:
+ *         description: Invalid credentials
+ *       403:
+ *         description: User account is inactive
+ *       404:
+ *         description: User not found or deleted
+ */
 router.post("/login", login);
 router.post("/google-login", googleLogin);
 router.post("/check-email", checkEmail);

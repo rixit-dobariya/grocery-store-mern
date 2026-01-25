@@ -5,6 +5,9 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import compression from "compression";
 import mongoSanitize from "express-mongo-sanitize";
+import swaggerUi from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerOptions from "./config/swagger.js";
 import connectDB from "./db/index.js";
 import config from "./config/index.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
@@ -53,6 +56,10 @@ app.use("/orders", orderRoutes);
 app.use("/wishlist", wishlistRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/payment', paymentRoutes);
+
+// Swagger
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Error Handling Middleware
 app.use(errorHandler);
